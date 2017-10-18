@@ -56,7 +56,7 @@ MA, 02139 USA. E-mail: yonadav@mit.edu.}% <-this % stops a space
 
 
 \begin{abstract}
-\textcolor{red}{Too long, re-write}
+\textcolor{red}{Too long, re-write --}
 In this paper, we propose a stable joint-space dynamical system that captures desired behaviors in joint-space while converging towards a reachable target in task-space with respect to the robot's kinematic constraints. Our method is fast to compute and smoothly moves through classic kinematic singularities by avoiding the use of the pseudo-inverse Jacobian; moreover, we prove that it stably moves towards its target and is guaranteed to obey the robot's kinematic joint limits. To encode complex joint-space behaviors while meeting these stability criteria, the dynamical system is constructed as a Linear Parameter Varying (LPV) system, enabling us to encode complex joint-space behaviors. We propose a method to train such complex behaviors from kinesthetic demonstrations, by learning the parameters of the LPV system. We begin by applying a latent-embedding and a probabilistic approach to discover and represent a set of local behaviors from the demonstrated motions. Then, the corresponding local joint-space behaviors are estimated by solving a convex semi-definite optimization problem that minimizes the joint velocity error from the demonstrations. Our proposed approach is validated on a variety of motions for a 7-DOF KUKA LWR4+ robot arm.\end{abstract}
 
 %\begin{IEEEkeywords}
@@ -78,9 +78,9 @@ A major drawback of these initial task-space methods was that despite learning m
 \centering
 \includegraphics[scale=.23,trim={0 0 0 0cm},clip]{Without_Obstcle_white_new.png}
 \includegraphics[scale=.23,trim={0 0 0 0cm},clip]{With_Obstcle.png}
-\caption{Two robot motions in joint-space accomplishing the same behavior in task-space (pouring chips in a bowl). Though the \textcolor{cyan}{\textbf{task-space trajectories}} are \textit{similar}, the \textcolor{orange}{\textbf{joint-space trajectories}} are different; e.g. the bottom example moves in joint-space to avoid an obstacle that the top one does not.}
+\caption{Two robot motions in \textcolor{orange}{\textbf{joint-space}} accomplishing \textit{similar} behavior in \textcolor{cyan}{\textbf{task-space}} (pouring chips in a bowl). The bottom example avoids a known obstacle in its workspace, while the top one does not.}
 \label{fig:robot_example}
-\vspace{-0.6cm}
+\vspace{-10pt}
 \end{figure}
 
 For all the previously mentioned task-space techniques, the robot is ultimately controlled by projecting the desired task-space velocity into joint-space via Jacobian Pseudo-Inverse based Inverse-Kinematic (IK) approximations and variants thereof \cite{kelly2006control}. When the main focus is on executing a complex task-space behavior, regardless of a specific joint-space constraint, this approach has been deemed sufficient \cite{figueroa2016HRIrolling,ureche2015taskconst}. However, for other applications, such an approach yields significant problems \cite{buss2004introduction}. First of all, finding the pseudo-inverse is computationally taxing. Moreover, when the Jacobian matrix cannot be inverted (i.e. when the robot is near a singularity) its behavior becomes erratic, requiring layers of additional engineering to generate smooth trajectories and ensure the desired task-space behavior. These problems encapsulate the main source of inaccuracies in tasks that require generating fast dynamical motions, such as catching or reaching for moving objects \cite{7439839,Salehian-RSS-16}. 
