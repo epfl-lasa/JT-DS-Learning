@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.11.24)  18 OCT 2017 16:18
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.11.24)  18 OCT 2017 16:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -816,26 +816,29 @@ File: omsptm.fd
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 53.
 
-<Without_Obstcle.jpg, id=76, 933.45738pt x 679.97037pt>
-File: Without_Obstcle.jpg Graphic file (type jpg)
+<Without_Obstcle_white_new.png, id=76, 787.2913pt x 296.48767pt>
+File: Without_Obstcle_white_new.png Graphic file (type png)
 
-<use Without_Obstcle.jpg>
-Package pdftex.def Info: Without_Obstcle.jpg used on input line 79.
-(pdftex.def)             Requested size: 214.69067pt x 64.77394pt.
- <With_Obstcle.jpg, id=78, 933.45738pt x 657.02464pt>
+<use Without_Obstcle_white_new.png>
+Package pdftex.def Info: Without_Obstcle_white_new.png used on input line 79.
+(pdftex.def)             Requested size: 181.07318pt x 68.19072pt.
+
+<With_Obstcle.jpg, id=79, 933.45738pt x 657.02464pt>
 File: With_Obstcle.jpg Graphic file (type jpg)
-
-<use With_Obstcle.jpg>
+ <use With_Obstcle.jpg>
 Package pdftex.def Info: With_Obstcle.jpg used on input line 80.
 (pdftex.def)             Requested size: 214.69067pt x 92.21652pt.
+
+Underfull \vbox (badness 1454) has occurred while \output is active []
+
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
- <./Without_Obstcle.jpg> <./With_Obstcle.jpg>] [2]
+ <./Without_Obstcle_white_new.png> <./With_Obstcle.jpg>] [2]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/sc' in size <10> not available
 (Font)              Font shape `OT1/ptm/b/sc' tried instead on input line 142.
 
-<Pic/A_comparison_positions.pdf, id=128, 1276.77pt x 733.74126pt>
+<Pic/A_comparison_positions.pdf, id=130, 1276.77pt x 733.74126pt>
 File: Pic/A_comparison_positions.pdf Graphic file (type pdf)
 
 <use Pic/A_comparison_positions.pdf>
@@ -873,14 +876,14 @@ Overfull \hbox (11.09799pt too wide) in paragraph at lines 296--305
  [][] 
  []
 
-[5] <Pic/cropped_Sing_1.pdf, id=218, 1348.03625pt x 766.865pt>
+[5] <Pic/cropped_Sing_1.pdf, id=220, 1348.03625pt x 766.865pt>
 File: Pic/cropped_Sing_1.pdf Graphic file (type pdf)
 
 <use Pic/cropped_Sing_1.pdf>
 Package pdftex.def Info: Pic/cropped_Sing_1.pdf used on input line 336.
 (pdftex.def)             Requested size: 245.71811pt x 139.77325pt.
 
-<Pic/cropped_Sing_2.pdf, id=219, 1249.6135pt x 385.705pt>
+<Pic/cropped_Sing_2.pdf, id=221, 1249.6135pt x 385.705pt>
 File: Pic/cropped_Sing_2.pdf Graphic file (type pdf)
 
 <use Pic/cropped_Sing_2.pdf>
@@ -894,7 +897,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 335--345
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<Pic/Foot.pdf, id=220, 1014.00229pt x 761.42065pt>
+<Pic/Foot.pdf, id=222, 1014.00229pt x 761.42065pt>
 File: Pic/Foot.pdf Graphic file (type pdf)
  <use Pic/Foot.pdf>
 Package pdftex.def Info: Pic/Foot.pdf used on input line 356.
@@ -903,32 +906,32 @@ Package pdftex.def Info: Pic/Foot.pdf used on input line 356.
 Underfull \vbox (badness 1231) has occurred while \output is active []
 
 
-<Pic/Luggage1.png, id=258, 1583.9175pt x 891.33pt>
+<Pic/Luggage1.png, id=260, 1583.9175pt x 891.33pt>
 File: Pic/Luggage1.png Graphic file (type png)
  <use Pic/Luggage1.png>
 Package pdftex.def Info: Pic/Luggage1.png used on input line 379.
 (pdftex.def)             Requested size: 110.57239pt x 62.22266pt.
 
-<Pic/Luggage2.png, id=259, 501.875pt x 891.33pt>
+<Pic/Luggage2.png, id=261, 501.875pt x 891.33pt>
 File: Pic/Luggage2.png Graphic file (type png)
  <use Pic/Luggage2.png>
 Package pdftex.def Info: Pic/Luggage2.png used on input line 380.
 (pdftex.def)             Requested size: 35.139pt x 62.39948pt.
 
-<Pic/Luggage3.png, id=260, 1323.94624pt x 891.33pt>
+<Pic/Luggage3.png, id=262, 1323.94624pt x 891.33pt>
 File: Pic/Luggage3.png Graphic file (type png)
  <use Pic/Luggage3.png>
 Package pdftex.def Info: Pic/Luggage3.png used on input line 381.
 (pdftex.def)             Requested size: 92.63545pt x 62.35867pt.
 
-<Pic/Luggage4_SEDS.png, id=261, 1927.2pt x 1084.05pt>
+<Pic/Luggage4_SEDS.png, id=263, 1927.2pt x 1084.05pt>
 File: Pic/Luggage4_SEDS.png Graphic file (type png)
 
 <use Pic/Luggage4_SEDS.png>
 Package pdftex.def Info: Pic/Luggage4_SEDS.png used on input line 386.
 (pdftex.def)             Requested size: 81.08742pt x 45.60422pt.
 
-<Pic/Luggage3_SEDS.png, id=262, 1927.2pt x 1084.05pt>
+<Pic/Luggage3_SEDS.png, id=264, 1927.2pt x 1084.05pt>
 File: Pic/Luggage3_SEDS.png Graphic file (type png)
 
 <use Pic/Luggage3_SEDS.png>
@@ -939,25 +942,25 @@ File: Pic/Luggage3_SEDS.png Graphic file (type png)
 Package pdftex.def Info: Pic/Luggage3_SEDS.png used on input line 388.
 (pdftex.def)             Requested size: 78.63159pt x 44.21475pt.
 
-<Pic/1.png, id=263, 1927.2pt x 1084.05pt>
+<Pic/1.png, id=265, 1927.2pt x 1084.05pt>
 File: Pic/1.png Graphic file (type png)
  <use Pic/1.png>
 Package pdftex.def Info: Pic/1.png used on input line 394.
 (pdftex.def)             Requested size: 110.57239pt x 62.1951pt.
 
-<Pic/3.png, id=264, 1927.2pt x 1084.05pt>
+<Pic/3.png, id=266, 1927.2pt x 1084.05pt>
 File: Pic/3.png Graphic file (type png)
  <use Pic/3.png>
 Package pdftex.def Info: Pic/3.png used on input line 395.
 (pdftex.def)             Requested size: 110.57239pt x 62.1951pt.
 
-<Pic/4.png, id=265, 1927.2pt x 1084.05pt>
+<Pic/4.png, id=267, 1927.2pt x 1084.05pt>
 File: Pic/4.png Graphic file (type png)
  <use Pic/4.png>
 Package pdftex.def Info: Pic/4.png used on input line 396.
 (pdftex.def)             Requested size: 110.57239pt x 62.1951pt.
 
-<Pic/2.png, id=266, 1927.2pt x 1084.05pt>
+<Pic/2.png, id=268, 1927.2pt x 1084.05pt>
 File: Pic/2.png Graphic file (type png)
  <use Pic/2.png>
 Package pdftex.def Info: Pic/2.png used on input line 397.
@@ -1013,12 +1016,12 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 476.
  ) 
 Here is how much of TeX's memory you used:
  18894 strings out of 493304
- 353457 string characters out of 6139870
+ 353507 string characters out of 6139870
  472421 words of memory out of 5000000
  21869 multiletter control sequences out of 15000+600000
  47465 words of font info for 100 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 56i,16n,56p,1665b,483s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,16n,56p,1669b,483s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist
@@ -1043,10 +1046,10 @@ rr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/
 share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/font
 s/type1/urw/times/utmri8a.pfb>
-Output written on main_RA-L_v1.pdf (9 pages, 11181405 bytes).
+Output written on main_RA-L_v1.pdf (9 pages, 21503659 bytes).
 PDF statistics:
- 443 PDF objects out of 1000 (max. 8388607)
- 374 compressed objects within 4 object streams
+ 445 PDF objects out of 1000 (max. 8388607)
+ 375 compressed objects within 4 object streams
  107 named destinations out of 1000 (max. 500000)
  236 words of extra memory for PDF output out of 10000 (max. 10000000)
 
