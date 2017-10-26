@@ -206,4 +206,16 @@ T.~Petri{\v{c}} and L.~{\v{Z}}lajpah, ``Smooth continuous transition between
   problem,'' \emph{Robotics and Autonomous Systems}, vol.~61, no.~9, pp.
   948--959, 2013.
 
+
+\bibitem{allesandro2013muscle}
+C.~Allesandro and I.~Delis and F.~Nori and S.~Panzeri and B.~Berret, ``Muscle
+  synergies in neuroscience and robotics: from input-space to task-space perspectives,''
+  \emph{Frontiers in Computational Neuroscience}, vol.~7, 2013.
+
+\bibitem{scholkopf1997kernel}
+B.~Sch{\"o}lkopf and A.~Smola and K.~R.~M{\"u}ller, ``Kernel principal component analysis,''
+  \emph{International Conference on Artificial Neural Networks}, pp. 583--588, 1997.
+
+
+
 \end{thebibliography}
