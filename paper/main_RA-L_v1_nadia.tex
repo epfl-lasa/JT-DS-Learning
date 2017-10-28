@@ -303,9 +303,9 @@ where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \
 To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 6 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include (as shown in Fig. \ref{fig:behaviors} ):
 \begin{itemize}[leftmargin=*]
 \item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
-\item \textit{(3-4) Pouring motions:} 
-\item \textit{(5) Footstep-like motion:} This behavior begins with a straight leg, moving through a singularity, and finally bringing the knee up (Fig. \ref{fig:snapshot:c})
-\item \textit{(6) Singularity motions:} 
+\item \textit{(3-4) Pouring motions:} We guide the robot to pour chips on a bowl. The first instance is without an obstacle in the workspace, which is demonstrated as a linear joint interpolation. The second instance is with an obstacle, where the human is seen folding the elbow and lowering the shoulder of the robot arm to avoid the obstacle. 
+\item \textit{(5) Footstep-like motion:} We demonstrate a footstep motion which begins with a straight leg, moving through a singularity, and finally bringing the knee up.
+\item \textit{(6) Singularity motions:} For this behavior we simulate joint trajectories in which the base rotates and all of the other joints are locked in a singular configuration.
 \end{itemize}
 
 For each behavior, we collected $M$ demonstrations consisting of ($14$-D) time-series $\boldsymbol{\xi}^{(i)} = \{\xi_1^{(i)},\dots,\xi_T^{(i)}\}$ for $i= \{1,\dots,M\}$. The $14$ dimensions in $\xi_t = [q_t,\dot{q_t}]^T$ correspond to joints angles and velocities. We also record the final task-space configurations ${x^*}^{(i)}$, which we assume is the attractor in task-space. The recordings are initially collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $M$ and samples per \textit{behavior dataset} $M^*T$ are provided in Table \ref{tab:learning}. Given these datasets, we seek to: 
@@ -314,7 +314,9 @@ For each behavior, we collected $M$ demonstrations consisting of ($14$-D) time-s
 \item Find the dimensionality approach which yields the best trade-off between accuracy and model complexity; i.e. the least dimensions $\delta$ and synergies $K$.
 \end{enumerate}
 We thus evaluate three learning approaches with different dimensionality reduction algorithms: (1) None, (2) PCA and (3) K-PCA with RBF kernel.
-We perform 10-fold cross-validation on all datasets, for each learning approach, with a training/testing ratio of $60 \%$. To evaluate the performance of each learning approach, we take the square root of the MSE defined in \eqref{eq:optim_error}, which we refer to as the joint-velocity RMSE. Performing such cross-validation in our case, is however not straight-forward, as our $\mathcal{A}(q)$ formulation has several hyper-parameters, namely the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$ in the RBF kernel. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
+We perform 10-fold cross-validation on all datasets, for each learning approach, with a training/testing ratio of $60 \%$. To evaluate performance, we take the square root of the MSE defined in \eqref{eq:optim_error}, which we refer to as the joint-velocity RMSE. 
+
+Performing such cross-validation in our case, is however not straight-forward, as our $\mathcal{A}(q)$ formulation has several hyper-parameters, namely the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$ in the RBF kernel. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
 \textcolor{red}{\begin{enumerate}[leftmargin=*]
 \item Explain how optimal $\delta$ is computed for PCA. 
 \item Explain how optimal $\delta$ and $\sigma$ are found for K-PCA.
@@ -346,7 +348,7 @@ We perform 10-fold cross-validation on all datasets, for each learning approach,
 
 \begin{table*}[!t]
 \scriptsize
-\caption{Performance Comparison of Learning Approach with different Dimensionality Reduction Schemes. We present the \texttt{mean(std)} for the optimal lower-dimensional $d$ and behavior synergies $K$ and RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
+\caption{\scriptsize Performance Comparison of Learning Approach with different Dimensionality Reduction Schemes. We present the \texttt{mean(std)} for the optimal lower-dimensional $d$ and behavior synergies $K$ and RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
 \begin{center}
 \begin{tabular}{cc|cc|cc}
     \hline
@@ -401,7 +403,7 @@ This learning pipeline was implemented in MATLAB. In order to solve the definite
 
 
 \subsection{Comparison with Cartesian DS + IK Solver}
-We now evaluate the performance of the properties of JT-DS\footnote{With the optimal learning approach found in the previous section.} against a standard Cartesian motion generator + IK solver approach. In this evaluation we seek to compare the capabilities (or lack thereof) of both approaches to: 
+We now evaluate the performance of JT-DS\footnote{With the optimal learning approach found in the previous section.} against a standard Cartesian motion generator + IK solver approach. In this evaluation we seek to compare the capabilities (or lack thereof) of both approaches to: 
 \begin{enumerate}
 \item Follow desired behaviors in both joint and task spaces.
 \item Achieve fast computation/convergence time.
