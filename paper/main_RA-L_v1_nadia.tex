@@ -298,9 +298,17 @@ where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \
 
 \clearpage
 \section{Experimental Validation} \label{Sec:Exp}
-\textcolor{red}{We should try to have page 5 start with this section, i.e. we must reduce 1 full column from the previous sections.}
+%\textcolor{red}{We should try to have page 5 start with this section, i.e. we must reduce 1 full column from the previous sections.}
 \subsection{JT-DS Learning Performance  Evaluation}
-To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 6 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include: a (1) backhand and (2) forehand stroke, a pouring motion (3) with and (4) without an obstacle in its workspace, (5) a foot swing and (6) singularity motions. For each behavior, we collected $M$ demonstrations consisting of ($14$-D) time-series $\boldsymbol{\xi}^{(i)} = \{\xi_1^{(i)},\dots,\xi_T^{(i)}\}$ for $i= \{1,\dots,M\}$. The $14$ dimensions in $\xi_t = [q_t,\dot{q_t}]^T$ correspond to joints angles and velocities. We also record the final task-space configurations ${x^*}^{(i)}$, which we assume is the attractor in task-space. The recordings are initially collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $M$ and samples per \textit{behavior dataset} $M^*T$ are provided in Table \ref{tab:learning}. Given these datasets, we seek to: 
+To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 6 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include (as shown in Fig. \ref{fig:behaviors} ):
+\begin{itemize}[leftmargin=*]
+\item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
+\item \textit{(3-4) Pouring motions:} 
+\item \textit{(5) Footstep-like motion:} This behavior begins with a straight leg, moving through a singularity, and finally bringing the knee up (Fig. \ref{fig:snapshot:c})
+\item \textit{(6) Singularity motions:} 
+\end{itemize}
+
+For each behavior, we collected $M$ demonstrations consisting of ($14$-D) time-series $\boldsymbol{\xi}^{(i)} = \{\xi_1^{(i)},\dots,\xi_T^{(i)}\}$ for $i= \{1,\dots,M\}$. The $14$ dimensions in $\xi_t = [q_t,\dot{q_t}]^T$ correspond to joints angles and velocities. We also record the final task-space configurations ${x^*}^{(i)}$, which we assume is the attractor in task-space. The recordings are initially collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $M$ and samples per \textit{behavior dataset} $M^*T$ are provided in Table \ref{tab:learning}. Given these datasets, we seek to: 
 \begin{enumerate}[leftmargin=*]
 \item Verify that the learned \textit{behavior synergies} are capable of generating the desired joint-space behaviors.  
 \item Find the dimensionality approach which yields the best trade-off between accuracy and model complexity; i.e. the least dimensions $\delta$ and synergies $K$.
@@ -312,6 +320,29 @@ We perform 10-fold cross-validation on all datasets, for each learning approach,
 \item Explain how optimal $\delta$ and $\sigma$ are found for K-PCA.
 \item Explain how optimal $K$ is computed for GMM.
 \end{enumerate}}
+
+
+\begin{figure}[t]
+	\centering	
+		\begin{subfigure}[t]{\linewidth}
+		\centering
+			\includegraphics[width=0.5\linewidth]{new-pics/forehand_crop.png}\hspace{5pt}\includegraphics[width=0.43\linewidth]{new-pics/backhand_crop.png}
+					\caption{Tennis Strokes (left) Forehand (right) Backhand.}
+		\end{subfigure}
+		\begin{subfigure}[t]{\linewidth}
+\centering
+	\includegraphics[width=0.45\linewidth]{new-pics/pour-free_crop.png}\hspace{5pt}\includegraphics[width=0.477\linewidth]{new-pics/pour-obst_crop.png}
+						\caption{Pouring Motions (left) without obstacle (right) with obstacle.}
+			\end{subfigure}
+			\begin{subfigure}[t]{\linewidth}		
+\centering
+	\includegraphics[width=0.475\linewidth]{new-pics/footstep.png}\hspace{5pt}\includegraphics[width=0.4475\linewidth]{new-pics/singularity_crop.png}
+	\caption{(left) Foot-step motion (right) Singularity motions.}
+				\end{subfigure}
+	\caption{Demonstrated Joint-Space Behaviors with Task-Space Targets. \label{fig:behaviors}}
+	\vspace{-10pt}
+\end{figure}
+
 
 \begin{table*}[!t]
 \scriptsize
@@ -387,25 +418,56 @@ We continue our evaluation on a 7-DOF robot arm, the KUKA LWR 4+. The robot is c
 
 \subsubsection{Following Desired Joint Behaviors}
 To evaluate the system's ability to track learned joint behaviors, we devised two experiments (summarized in Table \ref{table:1}) comparing the tracking capabilities of our JT-DS method with those of the Cartesian-space SEDS \cite{khansari2011learning} algorithm using damped least square IK. In the first experiment, the robot was guided through a complex motion task, moving an object through an environment with an obstacle. 
-Human experts guided the robot through a series of demonstrations, ensuring that neither the robot's joints nor the held object intersected the obstacle. The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:b}. The JT-DS algorithm mimicked the joint-space behaviors of the demonstration (e.g. folding the elbow, lowering the shoulder), and therefore successfully avoided the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS only learned the demonstrated behavior in task-space (the position of the end-effector is signified by a black ball) meaning that the robot was not constrained in joint space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position.
-In the second experiment the robot was taught a footstep-like motion, beginning with a straight leg, moving through a singularity, and finally bringing the knee up (Fig. \ref{fig:snapshot:c}). JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
+%Human experts guided the robot through a series of demonstrations, ensuring that neither the robot's joints nor the held object intersected the obstacle. 
+The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:b}. The JT-DS algorithm mimicked the joint-space behaviors of the demonstration (e.g. folding the elbow, lowering the shoulder), and therefore successfully avoided the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS only learned the demonstrated behavior in task-space (the position of the end-effector is signified by a black ball) meaning that the robot was not constrained in joint space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position.
+. JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
 
 Further inspection reveals another advantage of JT-DS over stable Cartesian motion generators: not needing to preprocess demonstrations. In Cartesian-space dynamical systems, in order to guarantee stability, every demonstration must have the same target position. As a result, all demonstrated trajectories are warped to end at a single position, introducing a non-negligible difference between the original demonstrations and those used to train the DS. JT-DS, on the other hand, does not require any demonstration warping to learn. Rather than shifting demonstrations, the algorithm learns behavior regions with respect to the base frame of the manipulator. This effect can be seen in the diagrams in Fig. \ref{fig:Sin}, which show a comparison between JT-DS and a Cartesian-space DS trained through SEDS \cite{khansari2011learning}. The Cartesian-space system warps the demonstrations and as a result fails to track them, while JT-DS does not modify the demonstrations and thus succeeds.
 
 \begin{table}[t]
-	\tiny
 	\vspace{0.1cm}
 	\caption{  Each simulated trajectory is initialized at $q=[0~\dots~0]^T$. The convergence duration is the time required to move within $0.001$m of the target. The normalized convergence duration is the convergence duration divided by the distance between the initial and target positions.}
 	\label{table:2}
 	\centering
-	\begin{tabular}{l|l|l|l}
+	\resizebox{\linewidth}{!}{\begin{tabular}{l|l|l|l}
 		\hline\hline
 		& Norm. converg. [{s}/{m}] & Comp. time {[}ms{]} & Track. error {[}m{]} \\ \hline
 		SEDS  + IK    & $10.6566\pm2.1364$                          & $71.7752\pm4.9189$       & $0.0163\pm0.0063$      \\ 
 		JT-DS & $14.1926\pm5.26453$                         & $12.1736\pm0.8573$       & $0.0\pm0.0$            \\ \hline\hline
-	\end{tabular}
-	\hspace{0.1cm}
+	\end{tabular}}
+	\vspace{-10pt}
 \end{table}
+
+
+\begin{figure}[t]
+\vspace{-0.05cm}
+	\begin{subfigure}[t]{\linewidth}
+		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
+		\includegraphics[width=0.143\linewidth]{Pic/Luggage2.png}
+		\includegraphics[width=0.377\linewidth]{Pic/Luggage3.png}
+		\caption{Desired Joint Behavior: obstacle avoidance motion. The luggage is the obstacle.}
+		\label{fig:snapshot:a}
+	\end{subfigure}\\
+	\begin{subfigure}[t]{\linewidth}
+		\includegraphics[width=0.33\linewidth]{Pic/Luggage4_SEDS.png}
+		\includegraphics[width=0.33\linewidth]{Pic/Luggage3_SEDS.png}
+		\includegraphics[width=0.32\linewidth]{Pic/Luggage3_SEDS.png}
+		\caption{Desired Behavior: The Cartesian DS is used to generate the motion.}
+		\label{fig:snapshot:b}
+	\end{subfigure}\\
+	\begin{subfigure}[t]{\linewidth}
+	\centering	
+		\includegraphics[width=0.45\linewidth]{Pic/1.png}~~
+		\includegraphics[width=0.45\linewidth]{Pic/3.png}\\\vspace{0.1cm}
+		\includegraphics[width=0.45\linewidth]{Pic/4.png}~~
+		\includegraphics[width=0.45\linewidth]{Pic/2.png}
+		\caption{Desired Joint Behavior: Foot step-like motion.}
+		\label{fig:snapshot:c}
+	\end{subfigure}\\	
+	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{https://youtu.be/1dgKfmN1UgE}.}
+	\label{fig:snapshot}
+	\vspace{-0.8cm}
+\end{figure}
 
 \subsubsection{Systematic Assessment}
 To systematically determine the performance properties (tracking error, computation time, and convergence time) of JT-DS \eqref{eq:ds} and compare it to a Cartesian motion generator, we simulated $400$ simple motions on each system. The systems were tasked with moving to a fixed target randomly chosen from the region $\begin{bmatrix} -0.0081\pm0.3&-0.0188\pm0.3&0.4974\pm0.21 \end{bmatrix}^T$. The Cartesian motion generator was SEDS-based, and mapping from Cartesian motions to joint-space motions was done using a damped least-squares IK solver. To save on computation time, both the JT-DS and SEDS algorithms were taught behaviors defined by a single synergy, i.e. uniform behaviors.  The results, summarized in Table \ref{table:2}, indicate that the computation time of the proposed approach is significantly faster than the Cartesian-based DS, because the algorithm does not require calculating the Jacobian pseudo-inverse. Furthermore, as the generated joint motion by \eqref{eq:ds} is directly transmitted to the robot, the tracking error is zero. Nevertheless, the convergence time of  \eqref{eq:ds} is slightly higher than the Cartesian motion generator.
@@ -462,40 +524,9 @@ A drawback of the approach is that the controller is not guaranteed to converge 
 One application that we have discussed for this algorithm is obstacle avoidance. In an environment with static obstacles, the system would, through demonstration, learn joint-space behaviors that avoid those obstacles. One can compare this form of joint-space obstacle avoidance with other methods from the literature \cite{sciavicco1988solution,petrivc2013smooth}. The main difference is that these previous methods require explicit knowledge of the obstacles' position, whereas our algorithm learns the obstacle positions only implicitly by learning motions that avoid those positions. This lack of explicit obstacle location can be an advantage: encoding obstacles' geometry can be expensive and cumbersome. However, it is also a drawback: without knowing the exact location of obstacles, the algorithm cannot be guaranteed to avoid collisions, especially away from demonstrations.
 
 %Finally, we are currently working on improving the performance of this method \eqref{eq:ds} by considering a the second order dynamical system. This would provide numerous improvements: a guaranteed smoothness in the velocity profile, the ability to integrate critically damped filter, and the versatility to learn more complex behaviors. \textcolor{red}{Are we actually still doing this?}
-%\footnotesize
+
+\footnotesize
 \appendices
-
-
-\begin{figure}[t]
-\vspace{-0.05cm}
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
-		\includegraphics[width=0.143\linewidth]{Pic/Luggage2.png}
-		\includegraphics[width=0.377\linewidth]{Pic/Luggage3.png}
-		\caption{Desired Joint Behavior: obstacle avoidance motion. The luggage is the obstacle.}
-		\label{fig:snapshot:a}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=0.33\linewidth]{Pic/Luggage4_SEDS.png}
-		\includegraphics[width=0.33\linewidth]{Pic/Luggage3_SEDS.png}
-		\includegraphics[width=0.32\linewidth]{Pic/Luggage3_SEDS.png}
-		\caption{Desired Behavior: The Cartesian DS is used to generate the motion.}
-		\label{fig:snapshot:b}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-	\centering	
-		\includegraphics[width=0.45\linewidth]{Pic/1.png}~~
-		\includegraphics[width=0.45\linewidth]{Pic/3.png}\\\vspace{0.1cm}
-		\includegraphics[width=0.45\linewidth]{Pic/4.png}~~
-		\includegraphics[width=0.45\linewidth]{Pic/2.png}
-		\caption{Desired Joint Behavior: Foot step-like motion.}
-		\label{fig:snapshot:c}
-	\end{subfigure}\\	
-	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{https://youtu.be/1dgKfmN1UgE}.}
-	\label{fig:snapshot}
-	\vspace{-0.8cm}
-\end{figure}
-
 \section{Proving Stability of the Dynamical System}
 \label{appendix:stability}
 \small
