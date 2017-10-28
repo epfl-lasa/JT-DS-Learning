@@ -341,7 +341,7 @@ Performing such cross-validation in our case, is however not straight-forward, a
 	\includegraphics[width=0.475\linewidth]{new-pics/footstep.png}\hspace{5pt}\includegraphics[width=0.4475\linewidth]{new-pics/singularity_crop.png}
 	\caption{(left) Foot-step motion (right) Singularity motions.}
 				\end{subfigure}
-	\caption{Demonstrated Joint-Space Behaviors with Task-Space Targets. \label{fig:behaviors}}
+	\caption{Demonstrated Joint-Space Behaviors with Task-Space Targets. \href{https://www.dropbox.com/sh/3vx512oldgbnkq5/AABP5iEqO0oYn7dlE-gvK1kPa?dl=0}{[videos]} \label{fig:behaviors}}
 	\vspace{-10pt}
 \end{figure}
 
@@ -411,18 +411,20 @@ We now evaluate the performance of JT-DS\footnote{With the optimal learning appr
 \end{enumerate}
 We continue our evaluation on a 7-DOF robot arm, the KUKA LWR 4+. The robot is controlled on the joint position level (linearly interpolating from joint velocities) at a rate of $ 500 $ Hz. The resultant joint angles are filtered by a critically damped filter to avoid high torques. 
 
-\begin{figure}[t]
-\vspace{-5pt}
-	\centering
-	\includegraphics[width=0.8\linewidth]{Pic/Foot.pdf}
-	\caption{End-effector trajectories for the footstep motion in Cartesian space. The JT-DS motion moves smoothly closely resembles the demonstrated trajectories. On the other hand, the SEDS-based Cartesian motion generator (whose values here are simulated because they can not physically executable) quickly becomes unstable, as evidenced by the dotted paths starting on the left side and abruptly disappearing. \label{fig:foot}}
-\end{figure}
 
 \subsubsection{Following Desired Joint Behaviors}
 To evaluate the system's ability to track learned joint behaviors, we devised two experiments (summarized in Table \ref{table:1}) comparing the tracking capabilities of our JT-DS method with those of the Cartesian-space SEDS \cite{khansari2011learning} algorithm using damped least square IK. In the first experiment, the robot was guided through a complex motion task, moving an object through an environment with an obstacle. 
 %Human experts guided the robot through a series of demonstrations, ensuring that neither the robot's joints nor the held object intersected the obstacle. 
 The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:b}. The JT-DS algorithm mimicked the joint-space behaviors of the demonstration (e.g. folding the elbow, lowering the shoulder), and therefore successfully avoided the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS only learned the demonstrated behavior in task-space (the position of the end-effector is signified by a black ball) meaning that the robot was not constrained in joint space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position.
 . JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
+
+
+\begin{figure}[t]
+\vspace{-5pt}
+	\centering
+	\includegraphics[width=0.8\linewidth]{Pic/Foot.pdf}
+	\caption{End-effector trajectories for the footstep motion in Cartesian space. The JT-DS motion moves smoothly closely resembles the demonstrated trajectories. On the other hand, the SEDS-based Cartesian motion generator (whose values here are simulated because they can not physically executable) quickly becomes unstable, as evidenced by the dotted paths starting on the left side and abruptly disappearing. \label{fig:foot}}
+\end{figure}
 
 Further inspection reveals another advantage of JT-DS over stable Cartesian motion generators: not needing to preprocess demonstrations. In Cartesian-space dynamical systems, in order to guarantee stability, every demonstration must have the same target position. As a result, all demonstrated trajectories are warped to end at a single position, introducing a non-negligible difference between the original demonstrations and those used to train the DS. JT-DS, on the other hand, does not require any demonstration warping to learn. Rather than shifting demonstrations, the algorithm learns behavior regions with respect to the base frame of the manipulator. This effect can be seen in the diagrams in Fig. \ref{fig:Sin}, which show a comparison between JT-DS and a Cartesian-space DS trained through SEDS \cite{khansari2011learning}. The Cartesian-space system warps the demonstrations and as a result fails to track them, while JT-DS does not modify the demonstrations and thus succeeds.
 
