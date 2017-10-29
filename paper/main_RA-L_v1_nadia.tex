@@ -328,36 +328,36 @@ where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \
     & & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $\delta$}} & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $K$}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Train}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Test}}	\\ \\ \hline
            
 	
-	\multicolumn{1}{c}{\multirow{3}{*}{Forehand Stroke}} & None & 7 & 5.5 $\pm$ (2.99) & \textbf{ 0.271 $\pm$ (0.038) } & \cellcolor{blue!5} 0.827 $\pm$ (0.697)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(1) Forehand Stroke}} & None & 7 & 5.5 $\pm$ (2.99) & \textbf{ 0.271 $\pm$ (0.038) } & \cellcolor{blue!5} 0.827 $\pm$ (0.697)  \\
     \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1424$)}} & PCA & 4.1 $\pm$ (0.316) & 4.8 $\pm$ (2.347) & 0.276 $\pm$ (0.033)  & \cellcolor{blue!10} 0.589 $\pm$ (0.367) \\	
 		& K-PCA ($\sigma_{opt} = 5.488$) & \textbf{3.9 $\pm$ (0.316)} & \textbf{3.2 $\pm$ (0.421)} & 0.305 $\pm$ (0.021) & \cellcolor{blue!15} 0.433 $\pm$ (0.104)  \\
 		\hline
 		
-	\multicolumn{1}{c}{\multirow{3}{*}{Backhand Stroke}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(2) Backhand Stroke}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
 		    \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1223$)}} & PCA & 3.1 $\pm$ (0.316) & 3.5 $\pm$ (0.971) & 0.216 $\pm$ (0.021) & \cellcolor{blue!10} 0.469 $\pm$ (0.164) \\	
 			& K-PCA ($\sigma_{opt} = 6.238$) & \textbf{3.1 $\pm$ (0.316)} & \textbf{3.1 $\pm$ (0.316)} & 0.219 $\pm$ (0.013) & \cellcolor{blue!15} 0.355 $\pm$ (0.068)   \\
 			\hline
 		
-	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Free}} & None & 7 & \textbf{ 4.1 $\pm$ (1.286)} & 0.163 $\pm$ (0.026) & 7.609 $\pm$ (18.99) \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(3) Pouring - Free}} & None & 7 & \textbf{ 4.1 $\pm$ (1.286)} & 0.163 $\pm$ (0.026) & 7.609 $\pm$ (18.99) \\
    \multicolumn{1}{c}{\multirow{3}{*}{($N=9,M=1032$)}} & PCA & \textbf{ 2.3 $\pm$ (0.483)} & 4.8 $\pm$ (2.044) & \textbf{ 0.161 $\pm$ (0.034) } & \cellcolor{blue!10} 0.623 $\pm$ (0.301) \\	
 	& K-PCA ($\sigma_{opt} = 3.92$) & 3 & 4.3 $\pm$ (1.767) & 0.171 $\pm$ (0.106) & \cellcolor{blue!15} 0.511 $\pm$ (0.305)   \\
 				\hline
-	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Obstacle 1}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(4) Pouring - Obstacle 1}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
    \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1232$)}} & PCA & 3.8 $\pm$ (0.421) & 3.8 $\pm$ (1.549) & 0.292 $\pm$ (0.018) & \cellcolor{blue!10} 0.486 $\pm$ (0.125) \\	
-				& K-PCA ($\sigma_{opt} = 7.695$) & \textbf{ 3.1 $\pm$ (0.421) } & 3.1 $\pm$ (0.316) & 0.288 $\pm$ (0.020) & \cellcolor{blue!15} 0.482 $\pm$ (0.078)   \\
+				& K-PCA ($\sigma_{opt} = 7.695$) & \textbf{ 3.1 $\pm$ (0.421) } & \textbf{ 3.1 $\pm$ (0.316) } & 0.288 $\pm$ (0.020) & \cellcolor{blue!15} 0.482 $\pm$ (0.078)   \\
 				\hline	
 
-	\multicolumn{1}{c}{\multirow{3}{*}{\textcolor{red}{Pouring - Obstacle 2}}} & None & 7 & 4.3 $\pm$ (1.418) & \textbf{ 0.122 $\pm$ (0.014) } & 3.095 $\pm$ (3.406) \\
-   \multicolumn{1}{c}{\multirow{3}{*}{($N=7,M=1406$)}} & PCA & \textbf{ 2.9 $\pm$ 0.316 } & 3.7 $\pm$ (2.213) & 0.126 $\pm$ (0.02) & \cellcolor{blue!15} 0.825 $\pm$ (0.764) \\	
-	& K-PCA ($\sigma_{opt} = 7.25$) & 3 $\pm$ (0.421) & \textbf{3} & 0.091 $\pm$ (0.007) & \cellcolor{blue!10} 1.089 $\pm$ (1.218)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(5) Pouring - Obstacle 2}} & None & 7 & 4.3 $\pm$ (1.418) & \textbf{ 0.122 $\pm$ (0.014) } & 3.095 $\pm$ (3.406) \\
+   \multicolumn{1}{c}{\multirow{3}{*}{($N=7,M=1406$)}} & PCA & \textbf{ 2.9 $\pm$ 0.316 } & 3.7 $\pm$ (2.213) & 0.126 $\pm$ (0.02) & \cellcolor{blue!10} 0.825 $\pm$ (0.764) \\	
+	& K-PCA ($\sigma_{opt} = 2.86$) & 3.9 $\pm$ (0.316) & \textbf{3} & 0.129 $\pm$ (0.013) & \cellcolor{blue!15} 0.738 $\pm$ (0.507)  \\
 				\hline
 
-	\multicolumn{1}{c}{\multirow{3}{*}{Foot Step}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(6) Foot Step}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
 	\multicolumn{1}{c}{\multirow{3}{*}{($N=8,M=1058$)}} & PCA & \textbf{1} & 3.2 $\pm$ (0.421) & 0.084 $\pm$ (0.004) & \cellcolor{blue!10}  0.123 $\pm$ (0.011) \\	
 	& K-PCA ($\sigma_{opt} = 1.513$) & 3.2 $\pm$ (0.421) & \textbf{3} &  0.091 $\pm$ (0.007) & \cellcolor{blue!15} 0.115 $\pm$ (0.015)   \\
 				\hline		
 	
-	\multicolumn{1}{c}{\multirow{3}{*}{Singularity Motions}} & None & 7 & 6.2 $\pm$ (2.898) & 0.054 $\pm$ (0.009) & 0.137 $\pm$ (0.098)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(7) Singularity Motions}} & None & 7 & 6.2 $\pm$ (2.898) & 0.054 $\pm$ (0.009) & 0.137 $\pm$ (0.098)  \\
     \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1467$)}} & PCA & \textbf{2} & 6 $\pm$ (2.357) & \textbf{ 0.053 $\pm$ (0.010) } & \cellcolor{blue!10} 0.105 $\pm$ (0.046) \\	
 	& K-PCA ($\sigma_{opt} = 1.769$) & 3.6 $\pm$ (0.516) & \textbf{5.3 $\pm$ (2.452)} & 0.055 $\pm$ (0.018) & \cellcolor{blue!15} 0.071 $\pm$ (0.010)   \\ \hline\hline
 \end{tabular}}
@@ -369,7 +369,7 @@ where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \
 \newpage
 \section{Experimental Validation} \label{Sec:Exp}
 \subsection{JT-DS Learning Performance  Evaluation}
-To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 7 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include (as shown in Fig. \ref{fig:behaviors}):
+To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 7 different tasks (see Table \ref{tab:learning} and Fig. \ref{fig:behaviors}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space:
 \begin{itemize}[leftmargin=*]
 \item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
 \item \textit{(3-5) Pouring motions:} We guide the robot to pour chips in a bowl with three different joint-space behaviors. The first is without an obstacle in the workspace. The second is with an obstacle in the upper hemisphere of the workspace, where the human is seen folding the elbow and lowering the shoulder of the robot arm to avoid the obstacle. The third instance is with an obstacle in the lower hemisphere, and now the human raises the shoulder to avoid it.
@@ -385,19 +385,42 @@ To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demon
 We thus evaluate three learning approaches with different dimensionality reduction algorithms: (1) None, (2) PCA and (3) K-PCA with RBF kernel.
 We perform 10-fold cross-validation on all datasets, for each learning approach, with a training/testing ratio of $60 \%$. To evaluate performance, we take the square root of the MSE defined in \eqref{eq:optim_error}, which we refer to as the joint-velocity RMSE. 
 
-Performing such cross-validation in our case, is however not trivial, as our $\mathcal{A}(q)$ formulation has several hyper-parameters, namely the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$ in the RBF kernel. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
+Performing such cross-validation in our case, is however not trivial, as our $\mathcal{A}(q)$ formulation has several hyper-parameters: the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
 \begin{enumerate}[leftmargin=*]
 \item \textit{$\delta$ for PCA:} We choose $\delta$ such that the projection is capable of explaining $95\%$ of the variance in the data.
 \item \textit{$\delta$ and $\sigma$ for K-PCA:} The interaction of these two parameters plays a major roll in the resulting projection obtained from K-PCA. Hence, we do a grid search on a log-spaced range of $\sigma_{range} = [\sigma_{min}:\sigma_{max}]$ values, where 
-$\sigma_{min} = \frac{1}{\kappa\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i - q_j||^2\}$ and $\sigma_{max} = \frac{2\kappa}{\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i - q_j||^2\}$ for $\kappa = cte.$ This yields a feasible range for $\sigma$ that is guided by the pairwise Euclidean distances between all points in the dataset. Moreover, K-PCA is not limited to providing a $\delta \ll d$, in fact it can generate $\delta \le M$, this is a nuisance as in our datasets $M\approx1000$. To alleviate this we truncate $\sigma_{range}$ by compute the explained variance of the eigenvectors in feature space for different values of  $\sigma \in \sigma_{range}$. We then remove $\sigma$ values from $\sigma_{range}$ whose number of \textit{optimal} eigenvectors $\delta > d$ and resample it. By doing this procedure, we can ensure that for all values in truncated $\bar{\sigma}_{range}$ we will obtain $\delta \le d$. We then choose $\sigma_{opt}$ by running 10-fold cross-validation for all $\sigma \in \bar{\sigma}_{range}$. 
+$\sigma_{min} = \frac{1}{\kappa\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i - q_j||^2\}$ and $\sigma_{max} = \frac{2\kappa}{\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i - q_j||^2\}$ for $\kappa = cte.$ This yields a feasible range for $\sigma$ that is guided by the pairwise Euclidean distances between all points in the dataset. Moreover, K-PCA is not limited to providing a $\delta \ll d$, in fact it can generate $\delta \le M$. This is a nuisance as in our datasets $M\approx1000$. To alleviate this we truncate $\sigma_{range}$ by compute the explained variance of the eigenvectors in feature space for different values of  $\sigma \in \sigma_{range}$. We then remove $\sigma$ values from $\sigma_{range}$ whose number of \textit{optimal} eigenvectors $\delta > d$ and resample it. By doing this procedure, we can ensure that for all values in truncated $\bar{\sigma}_{range}$ we will obtain $\delta \le d$. We then choose $\sigma_{opt}$ by running 10-fold cross-validation for all $\sigma \in \bar{\sigma}_{range}$. 
 \item \textit{$K$ for GMM:} We choose the optimal number of components $K$, by evaluating and selecting the best resulting model using the Bayesian Information Criterion (BIC) \cite{Bishop:PRM:2006}. Typically, one chooses the optimal $K$ manually, by visually identifying the point at which the BIC curve produced from $K_{range}$ stops changing or plateaus. To automate this process, we devised an approach which selects the optimal $K$ as the one which yields the highest inflection point on the second order derivative of the BIC curve.
 \end{enumerate}
 
 Once these optimal hyper-parameters are estimated for each fold, we solve for the definite convex optimization problem in order to find our synergy matrices $A$'s which best minimize the objective function \eqref{eq:opt}. We then select the initial joint configuration $q_0$ and target in task-space $x^*$ from each training/testing dataset, simulate the joint-space trajectories $\{\dot{q_1},\dots,\dot{q_T}\}$, with our learned $\mathcal{A}(q)$, and compute the joint-velocity RMSE between these simulations and the training/testing trajectories, as reported in Table \ref{tab:learning} 
 
-\textcolor{red}{Discuss results: As can be seen,  ... generalization capabilities, etc.} 
+As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to represent our activation functions $\theta(q)$ yields better generalization capabilities than the contrary. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learnt without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the number of $K$ needed to represent the motion. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations. 
 
-\noindent\texttt{Implementation Details:} The learning pipeline is implemented in MATLAB. \textcolor{red}{Mention Dimensionalrit Toolbox here.} In order to solve the definite convex optimization problem, the YALMIP framework \cite{lofberg2004yalmip} was used. In all the experiments, the optimization is initialized multiple times, and the best resulting run is used for performance analysis. Source code for the learning pipeline and cross-validation with simulation of multi-DOF robot arms can be found in:
+Both PCA and K-PCA yield comparable results, with K-PCA providing a slight improvement on some datasets. This suggests that perhaps a linear DR method might be sufficient for such tasks. However, if we seek to maximize accuracy a non-linear DR method should be employed. One of the drawbacks of K-PCA is its computational complexity for out-of-sample evaluations, which involves computing the kernel function between the new data-point and all the samples $M$. This is, however, not so taxing for our method as our datasets range in $M\approx1000$ and in previous work \cite{Mirrazavi:IJRR:2017} we have experimentally found that evaluating $<3000$ RBF kernel computations (on a 3.4-GHz i7 PC with 8GB RAM)) in a control-loop with 2ms rate is feasible. If one requires extremely fast computation; i.e. a control-loop rate of $<2$ms then PCA should be used as opposed to K-PCA.
+
+
+\begin{figure*}[!t]
+	\vspace{-0.05cm}
+	\begin{subfigure}[t]{0.42\linewidth}
+		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
+		\includegraphics[width=0.143\linewidth]{Pic/Luggage2.png}
+		\includegraphics[width=0.377\linewidth]{Pic/Luggage3.png}
+		\caption{Execution of Pour Obstacle 2 learned through JT-DS.}
+		\label{fig:snapshot:a}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.567\linewidth}
+		\includegraphics[width=0.33\linewidth]{Pic/Luggage4_SEDS.png}\includegraphics[width=0.33\linewidth]{Pic/Luggage3_SEDS.png}\includegraphics[width=0.33\linewidth]{Pic/Luggage3_SEDS.png}
+		\caption{Execution of Pour Obstacle 2 learned through SEDS.}
+		\label{fig:snapshot:b}
+	\end{subfigure}\\	
+	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{[video link]}.}
+	\label{fig:snapshot}
+	\vspace{-10pt}
+\end{figure*}
+
+
+\textit{Implementation Details:} The learning pipeline is implemented in MATLAB. We used the Matlab Toolbox for Dimensionality Reduction \cite{Maaten08dimensionalityreduction} for implementations of PCA, K-PCA and its out-of-sample extension. The YALMIP framework \cite{lofberg2004yalmip} was used to solve the definite convex optimization problem. Source code for the entire learning pipeline and cross-validation with simulation of multi-DOF robot arms can be found in:
 \footnotesize  \centerline{\underline{\url{https://github.com/epfl-lasa/JT-DS-Learning}}}
 \normalsize
 
@@ -407,14 +430,13 @@ For execution of the learnt JT-DS models on a real 7-DOF the KUKA LWR 4+ robot a
 The robot is controlled on the joint position level (linearly interpolating from joint velocities computed from JT-DS) at a rate of $ 500 $ Hz. The resultant joint angles are filtered by a critically damped filter to avoid high torques.
 
 
-\newpage
-\subsection{Comparison with Standard Approaches}
-In the previous subsection we have shown that our JT-DS model and learning algorithm are capable of following and generalizing the demonstrated joint-space behaviors. We now seek to elucidate the distinctive properties of our JT-DS model by comparing it against a standard DS-based Cartesian motion generator + IK solver approach for specific behaviors.
+\subsection{JT-DS Execution Performance Evaluation}
+We now seek to elucidate the distinctive properties of our JT-DS model by comparing its performance to a DS-based Cartesian motion generator + IK solver approach for behaviors \textit{(5-7)}. For the Cartesian motion generator we use the SEDS approach \cite{khansari2011learning} which learns an asymptotically stable DS in Cartesian space from demonstrations. We then generate joint trajectories through a damped least square IK solver. From herein we refer to this approach as SEDS+IK.
 
 \subsubsection{Following Desired Joint and Task-Based Behaviors}
-To evaluate the system's ability to track learned joint behaviors, we devised two experiments (summarized in Table \ref{table:1}) comparing the tracking capabilities of our JT-DS method with those of the Cartesian-space SEDS \cite{khansari2011learning} algorithm using damped least square IK for behaviors (5) and (6).
+To evaluate the system's ability to track learned joint behaviors, we devised two experiments (summarized in Table \ref{table:1}) comparing the tracking capabilities of our JT-DS method with those of the Cartesian-space SEDS  algorithm using  for behaviors (5) and (6).
 
-The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:b}. The JT-DS algorithm mimicked the joint-space behaviors of the demonstration (e.g. folding the elbow, lowering the shoulder), and therefore successfully avoided the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS only learned the demonstrated behavior in task-space (the position of the end-effector is signified by a black ball) meaning that the robot was not constrained in joint space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position.
+The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:b}. The JT-DS algorithm mimicked the joint-space behaviors of the demonstration (e.g. folding the elbow, lowering the shoulder), and therefore successfully avoided the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS only learned the demonstrated behavior in task-space meaning that the robot was not constrained in joint space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position.
 . JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
 
 %Further inspection reveals another advantage of JT-DS over stable Cartesian motion generators: not needing to preprocess demonstrations. In Cartesian-space dynamical systems, in order to guarantee stability, every demonstration must have the same target position. As a result, all demonstrated trajectories are warped to end at a single position, introducing a non-negligible difference between the original demonstrations and those used to train the DS. JT-DS, on the other hand, does not require any demonstration warping to learn. Rather than shifting demonstrations, the algorithm learns behavior regions with respect to the base frame of the manipulator. This effect can be seen in the diagrams in Fig. \ref{fig:Sin}, which show a comparison between JT-DS and a Cartesian-space DS trained through SEDS \cite{khansari2011learning}. The Cartesian-space system warps the demonstrations and as a result fails to track them, while JT-DS does not modify the demonstrations and thus succeeds.
@@ -424,12 +446,7 @@ The results can be seen in Fig. \ref{fig:snapshot:a} and Fig. \ref{fig:snapshot:
 To systematically determine the performance properties (tracking error, computation time, and convergence time) of JT-DS \eqref{eq:ds} and compare it to a Cartesian motion generator, we simulated $400$ simple motions on each system. The systems were tasked with moving to a fixed target randomly chosen from the region $\begin{bmatrix} -0.0081\pm0.3&-0.0188\pm0.3&0.4974\pm0.21 \end{bmatrix}^T$. The Cartesian motion generator was SEDS-based, and mapping from Cartesian motions to joint-space motions was done using a damped least-squares IK solver. To save on computation time, both the JT-DS and SEDS algorithms were taught behaviors defined by a single synergy, i.e. uniform behaviors.  The results, summarized in Table \ref{table:2}, indicate that the computation time of the proposed approach is significantly faster than the Cartesian-based DS, because the algorithm does not require calculating the Jacobian pseudo-inverse. Furthermore, as the generated joint motion by \eqref{eq:ds} is directly transmitted to the robot, the tracking error is zero. Nevertheless, the convergence time of  \eqref{eq:ds} is slightly higher than the Cartesian motion generator.
 
 
-\begin{figure}[t]
-\vspace{-5pt}
-	\centering
-	\includegraphics[width=0.8\linewidth]{Pic/Foot.pdf}
-	\caption{End-effector trajectories for the footstep motion in Cartesian space. The JT-DS motion moves smoothly closely resembles the demonstrated trajectories. On the other hand, the SEDS-based Cartesian motion generator (whose values here are simulated because they can not physically executable) quickly becomes unstable, as evidenced by the dotted paths starting on the left side and abruptly disappearing. \label{fig:foot}}
-\end{figure}
+
 
 \begin{table}[t]
 	\centering
@@ -450,36 +467,20 @@ To systematically determine the performance properties (tracking error, computat
 
 
 \begin{figure}[t]
-	\vspace{-0.05cm}
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
-		\includegraphics[width=0.143\linewidth]{Pic/Luggage2.png}
-		\includegraphics[width=0.377\linewidth]{Pic/Luggage3.png}
-		\caption{Desired Joint Behavior: obstacle avoidance motion. The luggage is the obstacle.}
-		\label{fig:snapshot:a}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=0.33\linewidth]{Pic/Luggage4_SEDS.png}
-		\includegraphics[width=0.33\linewidth]{Pic/Luggage3_SEDS.png}
-		\includegraphics[width=0.32\linewidth]{Pic/Luggage3_SEDS.png}
-		\caption{Desired Behavior: The Cartesian DS is used to generate the motion.}
-		\label{fig:snapshot:b}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-		\centering	
-		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/1.png}~~
-		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/3.png}\\\vspace{0.1cm}
-		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/4.png}~~
-		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/2.png}
-		\caption{Desired Joint Behavior: Foot step-like motion.}
+\begin{minipage}[b]{\linewidth}
+\centering
+		\includegraphics[angle=180,origin=c,width=0.5\linewidth]{new-pics/footstep_execution_crop.png}\hspace{5pt}\includegraphics[width=0.4\linewidth]{new-pics/singularity_crop.png}
+		\caption{Execution of \textit{problematic} joint-space behaviors learned through JT-DS: (left) Foot step-like motion and (right) Singularity motions.}
 		\label{fig:snapshot:c}
-	\end{subfigure}\\	
-	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{[video link]}. \textcolor{red}{REDO} }
-	\label{fig:snapshot}
+\end{minipage}
+\begin{minipage}[b]{\linewidth}
+	\centering
+	\includegraphics[width=0.8\linewidth]{Pic/Foot.pdf}
+	\caption{End-effector trajectories for the footstep motion in Cartesian space. The JT-DS motion moves smoothly closely resembles the demonstrated trajectories. On the other hand, the SEDS-based Cartesian motion generator (whose values here are simulated because they can not physically executable) quickly becomes unstable, as evidenced by the dotted paths starting on the left side and abruptly disappearing. \label{fig:foot}}
 	\vspace{-10pt}
+	\end{minipage}
+	\vspace{-20pt}
 \end{figure}
-
-
 
 
 \begin{table}[h]
@@ -500,22 +501,6 @@ To systematically determine the performance properties (tracking error, computat
 
 \subsubsection{Transiting in singular configurations}
 One of the main advantages of the proposed dynamical system is its ability to generate accurate paths in classical singular configurations. The first scenario, shown in Fig. \ref{fig:Sin}, was designed to assess this capability. The $10$ training demonstrations were constructed as follows: movement was constrained to the boundary of the workspace by fixing $ q^i=0~\forall i\in\{3,\dots,7\}$, the second joint was fixed to $q^2\in\{10^\circ,20^\circ,\dots,100^\circ\}$, and only the first joint was moved by a human demonstrator back-driving it. This restricted the motion to a series of arcs of different radii along the robot's motion boundary. In other words, the demonstrated motions were entirely within a classic kinematic singularity. Fig. \ref{fig:Sin} shows the \textit{demonstrated} motions and the motion  \textit{generated} by JT-DS \eqref{eq:ds}. The algorithm never requires the pseudo-inverse of the Jacobian matrix, so the generated motion perfectly follows the demonstrations throughout the workspace boundary.
-
-
-\begin{figure}[t]
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=\linewidth]{Pic/cropped_Sing_1.pdf}
-		\caption{ }
-		\label{fig:Sin}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=\linewidth]{Pic/cropped_Sing_2.pdf}
-		\caption{ }
-		\label{fig:Det}
-	\end{subfigure}\\
-	\caption{The experiment generated $K=3$ Gaussian components. As the first joint is the only joint which was not fixed during the demonstration, the learned augmentation matrices had only one nonzero entry $A_k(1,1)\neq0~\forall k\in \{1, 2, 3\} $.  In (a), the end-effector positions for the demonstrations and executed motions are plotted in Cartesian space. The JT-DS trajectory was generated closed-loop, while the SEDS trajectory was generated open-loop (otherwise it would be unstable). In (b), the determinants of the Jacobian $(|J(q)J^T(q)|)$ for all $10$ JT-DS motions are superimposed. Due to sensory noise, the determinants are not exactly zero, but are very close.  }
-	\vspace{-10pt}
-\end{figure}
 
 \section{Discussion and Future Work} 
 \label{Sec:Dis}
@@ -549,6 +534,24 @@ A drawback of the approach is that the controller is not guaranteed to converge 
 One application that we have discussed for this algorithm is obstacle avoidance. In an environment with static obstacles, the system would, through demonstration, learn joint-space behaviors that avoid those obstacles. One can compare this form of joint-space obstacle avoidance with other methods from the literature \cite{sciavicco1988solution,petrivc2013smooth}. The main difference is that these previous methods require explicit knowledge of the obstacles' position, whereas our algorithm learns the obstacle positions only implicitly by learning motions that avoid those positions. This lack of explicit obstacle location can be an advantage: encoding obstacles' geometry can be expensive and cumbersome. However, it is also a drawback: without knowing the exact location of obstacles, the algorithm cannot be guaranteed to avoid collisions, especially away from demonstrations.
 
 %Finally, we are currently working on improving the performance of this method \eqref{eq:ds} by considering a the second order dynamical system. This would provide numerous improvements: a guaranteed smoothness in the velocity profile, the ability to integrate critically damped filter, and the versatility to learn more complex behaviors. \textcolor{red}{Are we actually still doing this?}
+
+
+
+\begin{figure}[t]
+	\begin{subfigure}[t]{\linewidth}
+		\includegraphics[width=\linewidth]{Pic/cropped_Sing_1.pdf}
+		\caption{ }
+		\label{fig:Sin}
+	\end{subfigure}\\
+	\begin{subfigure}[t]{\linewidth}
+		\includegraphics[width=\linewidth]{Pic/cropped_Sing_2.pdf}
+		\caption{ }
+		\label{fig:Det}
+	\end{subfigure}\\
+	\caption{The experiment generated $K=3$ Gaussian components. As the first joint is the only joint which was not fixed during the demonstration, the learned augmentation matrices had only one nonzero entry $A_k(1,1)\neq0~\forall k\in \{1, 2, 3\} $.  In (a), the end-effector positions for the demonstrations and executed motions are plotted in Cartesian space. The JT-DS trajectory was generated closed-loop, while the SEDS trajectory was generated open-loop (otherwise it would be unstable). In (b), the determinants of the Jacobian $(|J(q)J^T(q)|)$ for all $10$ JT-DS motions are superimposed. Due to sensory noise, the determinants are not exactly zero, but are very close.  }
+	\vspace{-10pt}
+\end{figure}
+
 
 \footnotesize
 \appendices
