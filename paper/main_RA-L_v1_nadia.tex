@@ -296,86 +296,64 @@ Intuitively, each ``synergy region" in synergy space is defined by a Gaussian di
 where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \eqref{eq:ds} with \eqref{eq:A}, and $x^*_{n}$ is defined as the endpoint of the $ n^{\text{th}} $ demonstrated trajectory.
 
 
-\clearpage
-\section{Experimental Validation} \label{Sec:Exp}
-%\textcolor{red}{We should try to have page 5 start with this section, i.e. we must reduce 1 full column from the previous sections.}
-\subsection{JT-DS Learning Performance  Evaluation}
-To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 6 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include (as shown in Fig. \ref{fig:behaviors} ):
-\begin{itemize}[leftmargin=*]
-\item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
-\item \textit{(3-4) Pouring motions:} We guide the robot to pour chips on a bowl. The first instance is without an obstacle in the workspace, which is demonstrated as a linear joint interpolation. The second instance is with an obstacle, where the human is seen folding the elbow and lowering the shoulder of the robot arm to avoid the obstacle. 
-\item \textit{(5) Footstep-like motion:} We demonstrate a footstep motion which begins with a straight leg, moving through a singularity, and finally bringing the knee up.
-\item \textit{(6) Singularity motions:} For this behavior we simulate joint trajectories in which the base rotates and all of the other joints are locked in a singular configuration.
-\end{itemize}
-
-For each behavior, we collected $M$ demonstrations consisting of ($14$-D) time-series $\boldsymbol{\xi}^{(i)} = \{\xi_1^{(i)},\dots,\xi_T^{(i)}\}$ for $i= \{1,\dots,M\}$. The $14$ dimensions in $\xi_t = [q_t,\dot{q_t}]^T$ correspond to joints angles and velocities. We also record the final task-space configurations ${x^*}^{(i)}$, which we assume is the attractor in task-space. The recordings are initially collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $M$ and samples per \textit{behavior dataset} $M^*T$ are provided in Table \ref{tab:learning}. Given these datasets, we seek to: 
-\begin{enumerate}[leftmargin=*]
-\item Verify that the learned \textit{behavior synergies} are capable of generating the desired joint-space behaviors.  
-\item Find the dimensionality approach which yields the best trade-off between accuracy and model complexity; i.e. the least dimensions $\delta$ and synergies $K$.
-\end{enumerate}
-We thus evaluate three learning approaches with different dimensionality reduction algorithms: (1) None, (2) PCA and (3) K-PCA with RBF kernel.
-We perform 10-fold cross-validation on all datasets, for each learning approach, with a training/testing ratio of $60 \%$. To evaluate performance, we take the square root of the MSE defined in \eqref{eq:optim_error}, which we refer to as the joint-velocity RMSE. 
-
-Performing such cross-validation in our case, is however not straight-forward, as our $\mathcal{A}(q)$ formulation has several hyper-parameters, namely the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$ in the RBF kernel. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
-\textcolor{red}{\begin{enumerate}[leftmargin=*]
-\item Explain how optimal $\delta$ is computed for PCA. 
-\item Explain how optimal $\delta$ and $\sigma$ are found for K-PCA.
-\item Explain how optimal $K$ is computed for GMM.
-\end{enumerate}}
-
-
-\begin{figure}[t]
+\begin{figure*}[!ht]
+  \begin{minipage}[b]{0.3\textwidth}
 	\centering	
 		\begin{subfigure}[t]{\linewidth}
 		\centering
 			\includegraphics[width=0.5\linewidth]{new-pics/forehand_crop.png}\hspace{5pt}\includegraphics[width=0.43\linewidth]{new-pics/backhand_crop.png}
-					\caption{Tennis Strokes (left) Forehand (right) Backhand.}
+					\caption{Tennis Strokes (1-2).}
 		\end{subfigure}
 		\begin{subfigure}[t]{\linewidth}
 \centering
 	\includegraphics[width=0.45\linewidth]{new-pics/pour-free_crop.png}\hspace{5pt}\includegraphics[width=0.477\linewidth]{new-pics/pour-obst_crop.png}
-						\caption{Pouring Motions (left) without obstacle (right) with obstacle.}
+						\caption{ Pouring Motions (3-4)}
 			\end{subfigure}
 			\begin{subfigure}[t]{\linewidth}		
 \centering
-	\includegraphics[width=0.475\linewidth]{new-pics/footstep.png}\hspace{5pt}\includegraphics[width=0.4475\linewidth]{new-pics/singularity_crop.png}
-	\caption{(left) Foot-step motion (right) Singularity motions.}
+	\includegraphics[width=0.45\linewidth]{new-pics/pour-obst-2_crop.png}\hspace{5pt}\includegraphics[width=0.5\linewidth]{new-pics/footstep.png}
+	\caption{ Pouring Motion (5) and Foot-step (6).}
 				\end{subfigure}
-	\caption{Demonstrated Joint-Space Behaviors with Task-Space Targets. \href{https://www.dropbox.com/sh/3vx512oldgbnkq5/AABP5iEqO0oYn7dlE-gvK1kPa?dl=0}{[videos]} \label{fig:behaviors}}
-	\vspace{-10pt}
-\end{figure}
-
-
-\begin{table*}[!t]
-\scriptsize
-\caption{\scriptsize Performance Comparison of Learning Approach with different Dimensionality Reduction Schemes. We present the \texttt{mean(std)} for the optimal lower-dimensional $d$ and behavior synergies $K$ and RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
-\begin{center}
-\begin{tabular}{cc|cc|cc}
+    \captionof{figure}{Demonstrated Joint-Space Behaviors with Task-Space Targets. \href{https://www.dropbox.com/sh/3vx512oldgbnkq5/AABP5iEqO0oYn7dlE-gvK1kPa?dl=0}{[videos]} \label{fig:behaviors}}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.7\textwidth}
+    \scriptsize
+    \centering
+\resizebox{\linewidth}{!}{\begin{tabular}{cc|cc|cc}
     \hline
     \hline
     \multicolumn{1}{c}{\multirow{4}{*}{Behavior Dataset}} & \multicolumn{1}{c}{\multirow{4}{*}{Dim. Red. Approach}} & \multicolumn{4}{c}{\multirow{2}{*}{Optimal Parameters | Joint Velocity RMSE [$rad/s$]}}
 	\\  
     & & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $\delta$}} & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $K$}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Train}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Test}}	\\ \\ \hline
-            
-    \multicolumn{1}{c}{\multirow{3}{*}{Backhand Stroke}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
-    \multicolumn{1}{c}{\multirow{3}{*}{($M=11,M^*T=1223$)}} & PCA & 3.1 $\pm$ (0.316) & 3.5 $\pm$ (0.971) & 0.216 $\pm$ (0.021) & \cellcolor{blue!10} 0.469 $\pm$ (0.164) \\	
-	& K-PCA ($\sigma = 6.238$) & \textbf{3.1 $\pm$ (0.316)} & \textbf{3.1 $\pm$ (0.316)} & 0.219 $\pm$ (0.013) & \cellcolor{blue!15} 0.355 $\pm$ (0.068)   \\
-	\hline
+           
 	
 	\multicolumn{1}{c}{\multirow{3}{*}{Forehand Stroke}} & None & 7 & 5.5 $\pm$ (2.99) & \textbf{ 0.271 $\pm$ (0.038) } & \cellcolor{blue!5} 0.827 $\pm$ (0.697)  \\
     \multicolumn{1}{c}{\multirow{3}{*}{($M=10,M^*T=1424$)}} & PCA & 4.1 $\pm$ (0.316) & 4.8 $\pm$ (2.347) & 0.276 $\pm$ (0.033)  & \cellcolor{blue!10} 0.589 $\pm$ (0.367) \\	
 		& K-PCA ($\sigma = 5.488$) & \textbf{3.9 $\pm$ (0.316)} & \textbf{3.2 $\pm$ (0.421)} & 0.305 $\pm$ (0.021) & \cellcolor{blue!15} 0.433 $\pm$ (0.104)  \\
 		\hline
 		
+	\multicolumn{1}{c}{\multirow{3}{*}{Backhand Stroke}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
+		    \multicolumn{1}{c}{\multirow{3}{*}{($M=11,M^*T=1223$)}} & PCA & 3.1 $\pm$ (0.316) & 3.5 $\pm$ (0.971) & 0.216 $\pm$ (0.021) & \cellcolor{blue!10} 0.469 $\pm$ (0.164) \\	
+			& K-PCA ($\sigma = 6.238$) & \textbf{3.1 $\pm$ (0.316)} & \textbf{3.1 $\pm$ (0.316)} & 0.219 $\pm$ (0.013) & \cellcolor{blue!15} 0.355 $\pm$ (0.068)   \\
+			\hline
+		
 	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Free}} & None & 7 & \textbf{ 4.1 $\pm$ (1.286)} & 0.163 $\pm$ (0.026) & 7.609 $\pm$ (18.99) \\
    \multicolumn{1}{c}{\multirow{3}{*}{($M=9,M^*T=1032$)}} & PCA & \textbf{ 2.3 $\pm$ (0.483)} & 4.8 $\pm$ (2.044) & \textbf{ 0.161 $\pm$ (0.034) } & \cellcolor{blue!10} 0.623 $\pm$ (0.301) \\	
 	& K-PCA ($\sigma = 3.92$) & 3 & 4.3 $\pm$ (1.767) & 0.171 $\pm$ (0.106) & \cellcolor{blue!15} 0.511 $\pm$ (0.305)   \\
 				\hline
-	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Obstacle}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
+	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Obstacle 1}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
    \multicolumn{1}{c}{\multirow{3}{*}{($M=11,M^*T=1232$)}} & PCA & 3.8 $\pm$ (0.421) & 3.8 $\pm$ (1.549) & 0.292 $\pm$ (0.018) & \cellcolor{blue!10} 0.486 $\pm$ (0.125) \\	
 				& K-PCA ($\sigma = 7.695$) & \textbf{ 3.1 $\pm$ (0.421) } & 3.1 $\pm$ (0.316) & 0.288 $\pm$ (0.020) & \cellcolor{blue!15} 0.482 $\pm$ (0.078)   \\
 				\hline	
-	\multicolumn{1}{c}{\multirow{3}{*}{Foot Swing}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
+
+	\multicolumn{1}{c}{\multirow{3}{*}{\textcolor{red}{Pouring - Obstacle 2}}} & None & 7 & X $\pm$ (Y) & X $\pm$ (Y) & X $\pm$ (Y) \\
+   \multicolumn{1}{c}{\multirow{3}{*}{($M=X,M^*T=Y$)}} & PCA & X $\pm$ (Y) & X $\pm$ (Y) & X $\pm$ (Y) & X $\pm$ (Y) \\	
+				& K-PCA ($\sigma = X$) & X $\pm$ (Y) & X $\pm$ (Y) & X $\pm$ (Y) & X $\pm$ (Y)  \\
+				\hline
+
+
+	\multicolumn{1}{c}{\multirow{3}{*}{Foot Step}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
 	\multicolumn{1}{c}{\multirow{3}{*}{($M=8,M^*T=1058$)}} & PCA & \textbf{1} & 3.2 $\pm$ (0.421) & 0.084 $\pm$ (0.004) & \cellcolor{blue!10}  0.123 $\pm$ (0.011) \\	
 	& K-PCA ($\sigma = 1.513$) & 3.2 $\pm$ (0.421) & \textbf{3} &  0.091 $\pm$ (0.007) & \cellcolor{blue!15} 0.115 $\pm$ (0.015)   \\
 				\hline		
@@ -383,11 +361,101 @@ Performing such cross-validation in our case, is however not straight-forward, a
 	\multicolumn{1}{c}{\multirow{3}{*}{Singularity Motions}} & None & 7 & 6.2 $\pm$ (2.898) & 0.054 $\pm$ (0.009) & 0.137 $\pm$ (0.098)  \\
     \multicolumn{1}{c}{\multirow{3}{*}{($M=10,M^*T=1467$)}} & PCA & \textbf{2} & 6 $\pm$ (2.357) & \textbf{ 0.053 $\pm$ (0.010) } & \cellcolor{blue!10} 0.105 $\pm$ (0.046) \\	
 	& K-PCA ($\sigma = 1.769$) & 3.6 $\pm$ (0.516) & \textbf{5.3 $\pm$ (2.452)} & 0.055 $\pm$ (0.018) & \cellcolor{blue!15} 0.071 $\pm$ (0.010)   \\ \hline\hline
-\end{tabular}
-\end{center}
-\vspace{-10pt}
+\end{tabular}}
+      \captionof{table}{\scriptsize Performance Comparison of Learning Approach with different Dim. Red. Schemes. We present the \texttt{mean(std)} for the optimal $\delta$, $K$ and joint-velocity RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
+    \end{minipage}
+\end{figure*}
 
-\end{table*}
+\newpage
+\section{Experimental Validation} \label{Sec:Exp}
+\subsection{JT-DS Learning Performance  Evaluation}
+To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demonstrations on a 7-DOF KUKA LWR 4+ robot arm, for 7 different tasks (see Table \ref{tab:learning}) which require mimicking the demonstrated joint-space behavior while reaching for a single target in task space. These behaviors include (as shown in Fig. \ref{fig:behaviors} ):
+\begin{itemize}[leftmargin=*]
+\item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
+\item \textit{(3-5) Pouring motions:} We guide the robot to pour chips in a bowl with three different joint-space behaviors. The first is without an obstacle in the workspace. The second is with an obstacle in the upper hemisphere of the workspace, where the human is seen folding the elbow and lowering the shoulder of the robot arm to avoid the obstacle. The third instance is with an obstacle in the lower hemisphere, and now the human raises the shoulder to avoid it.
+\item \textit{(6) Footstep-like motion:} We demonstrate a footstep motion which begins with a straight leg, moving through a singularity, and finally bringing the knee up.
+\item \textit{(7) Singularity motions:} For this behavior we simulate joint trajectories in which the base rotates and all of the other joints are locked in singular configurations.
+\end{itemize}
+
+\noindent For each behavior, we collected $N$ demonstrations consisting of ($14$-D) time-series $D=\{\{ q_{t,n},\dot{q}_{t,n} \}_{t=1,\dots, T_n}\}_{n=1,\dots,N}$ where each demonstration has duration $T_n$. We also record the final task-space configurations ${x^*}^{(n)}$, which we assume is the attractor in task-space. The recordings are collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $N$ and samples per \textit{dataset} $M = \sum_{n=1}^{N}T_n$ are provided in Table \ref{tab:learning}. Given these datasets, we seek to: 
+\begin{enumerate}[leftmargin=*]
+\item Verify that the learned \textit{behavior synergies} are capable of generating the demonstrated joint-space behaviors.  
+\item Find the dimensionality approach which yields the best trade-off between accuracy and model complexity; i.e. the least dimensions $\delta$ and synergies $K$.
+\end{enumerate}
+We thus evaluate three learning approaches with different dimensionality reduction algorithms: (1) None, (2) PCA and (3) K-PCA with RBF kernel.
+We perform 10-fold cross-validation on all datasets, for each learning approach, with a training/testing ratio of $60 \%$. To evaluate performance, we take the square root of the MSE defined in \eqref{eq:optim_error}, which we refer to as the joint-velocity RMSE. 
+
+Performing such cross-validation in our case, is however not trivial, as our $\mathcal{A}(q)$ formulation has several hyper-parameters, namely the dimensionality $\delta$ of our lower-dimensional embedding $\phi(q)$ and the number of local behavior synergies $K$. Moreover, when using K-PCA (with RBF kernel $k(q,q') = \exp(-\frac{||q-q'||^2}{2\sigma^2})$) we must also find the optimal width $\sigma$ in the RBF kernel. Thus, for each fold and each learning approach we find the optimal hyper-parameters $\delta$, $K$ and $\sigma$ (when applicable), as follows:
+\textcolor{red}{\begin{enumerate}[leftmargin=*]
+\item Explain how optimal $\delta$ is computed for PCA. 
+\item Explain how optimal $\delta$ and $\sigma$ are found for K-PCA.
+\item Explain how optimal $K$ is computed for GMM.
+\end{enumerate}}
+
+
+%\begin{figure}[t]
+%	\centering	
+%		\begin{subfigure}[t]{\linewidth}
+%		\centering
+%			\includegraphics[width=0.5\linewidth]{new-pics/forehand_crop.png}\hspace{5pt}\includegraphics[width=0.43\linewidth]{new-pics/backhand_crop.png}
+%					\caption{Tennis Strokes (left) Forehand (right) Backhand.}
+%		\end{subfigure}
+%		\begin{subfigure}[t]{\linewidth}
+%\centering
+%	\includegraphics[width=0.45\linewidth]{new-pics/pour-free_crop.png}\hspace{5pt}\includegraphics[width=0.477\linewidth]{new-pics/pour-obst_crop.png}
+%						\caption{Pouring Motions (left) without obstacle (right) with obstacle 1.}
+%			\end{subfigure}
+%			\begin{subfigure}[t]{\linewidth}		
+%\centering
+%	\includegraphics[width=0.45\linewidth]{new-pics/pour-obst-2_crop.png}\hspace{5pt}\includegraphics[width=0.5\linewidth]{new-pics/footstep.png}
+%	\caption{(left) Pouring Motions with obstacle (right) with obstacle 2 (right) Foot-step motion.}
+%				\end{subfigure}
+%	\caption{Demonstrated Joint-Space Behaviors with Task-Space Targets. \href{https://www.dropbox.com/sh/3vx512oldgbnkq5/AABP5iEqO0oYn7dlE-gvK1kPa?dl=0}{[videos]} \label{fig:behaviors}}
+%	\vspace{-10pt}
+%\end{figure}
+%
+%\begin{table*}[!t]
+%\scriptsize
+%\begin{center}
+%\begin{tabular}{cc|cc|cc}
+%    \hline
+%    \hline
+%    \multicolumn{1}{c}{\multirow{4}{*}{Behavior Dataset}} & \multicolumn{1}{c}{\multirow{4}{*}{Dim. Red. Approach}} & \multicolumn{4}{c}{\multirow{2}{*}{Optimal Parameters | Joint Velocity RMSE [$rad/s$]}}
+%	\\  
+%    & & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $\delta$}} & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $K$}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Train}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Test}}	\\ \\ \hline
+%            
+%    \multicolumn{1}{c}{\multirow{3}{*}{Backhand Stroke}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
+%    \multicolumn{1}{c}{\multirow{3}{*}{($M=11,M^*T=1223$)}} & PCA & 3.1 $\pm$ (0.316) & 3.5 $\pm$ (0.971) & 0.216 $\pm$ (0.021) & \cellcolor{blue!10} 0.469 $\pm$ (0.164) \\	
+%	& K-PCA ($\sigma = 6.238$) & \textbf{3.1 $\pm$ (0.316)} & \textbf{3.1 $\pm$ (0.316)} & 0.219 $\pm$ (0.013) & \cellcolor{blue!15} 0.355 $\pm$ (0.068)   \\
+%	\hline
+%	
+%	\multicolumn{1}{c}{\multirow{3}{*}{Forehand Stroke}} & None & 7 & 5.5 $\pm$ (2.99) & \textbf{ 0.271 $\pm$ (0.038) } & \cellcolor{blue!5} 0.827 $\pm$ (0.697)  \\
+%    \multicolumn{1}{c}{\multirow{3}{*}{($M=10,M^*T=1424$)}} & PCA & 4.1 $\pm$ (0.316) & 4.8 $\pm$ (2.347) & 0.276 $\pm$ (0.033)  & \cellcolor{blue!10} 0.589 $\pm$ (0.367) \\	
+%		& K-PCA ($\sigma = 5.488$) & \textbf{3.9 $\pm$ (0.316)} & \textbf{3.2 $\pm$ (0.421)} & 0.305 $\pm$ (0.021) & \cellcolor{blue!15} 0.433 $\pm$ (0.104)  \\
+%		\hline
+%		
+%	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Free}} & None & 7 & \textbf{ 4.1 $\pm$ (1.286)} & 0.163 $\pm$ (0.026) & 7.609 $\pm$ (18.99) \\
+%   \multicolumn{1}{c}{\multirow{3}{*}{($M=9,M^*T=1032$)}} & PCA & \textbf{ 2.3 $\pm$ (0.483)} & 4.8 $\pm$ (2.044) & \textbf{ 0.161 $\pm$ (0.034) } & \cellcolor{blue!10} 0.623 $\pm$ (0.301) \\	
+%	& K-PCA ($\sigma = 3.92$) & 3 & 4.3 $\pm$ (1.767) & 0.171 $\pm$ (0.106) & \cellcolor{blue!15} 0.511 $\pm$ (0.305)   \\
+%				\hline
+%	\multicolumn{1}{c}{\multirow{3}{*}{Pouring - Obstacle}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
+%   \multicolumn{1}{c}{\multirow{3}{*}{($M=11,M^*T=1232$)}} & PCA & 3.8 $\pm$ (0.421) & 3.8 $\pm$ (1.549) & 0.292 $\pm$ (0.018) & \cellcolor{blue!10} 0.486 $\pm$ (0.125) \\	
+%				& K-PCA ($\sigma = 7.695$) & \textbf{ 3.1 $\pm$ (0.421) } & 3.1 $\pm$ (0.316) & 0.288 $\pm$ (0.020) & \cellcolor{blue!15} 0.482 $\pm$ (0.078)   \\
+%				\hline	
+%	\multicolumn{1}{c}{\multirow{3}{*}{Foot Swing}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
+%	\multicolumn{1}{c}{\multirow{3}{*}{($M=8,M^*T=1058$)}} & PCA & \textbf{1} & 3.2 $\pm$ (0.421) & 0.084 $\pm$ (0.004) & \cellcolor{blue!10}  0.123 $\pm$ (0.011) \\	
+%	& K-PCA ($\sigma = 1.513$) & 3.2 $\pm$ (0.421) & \textbf{3} &  0.091 $\pm$ (0.007) & \cellcolor{blue!15} 0.115 $\pm$ (0.015)   \\
+%				\hline		
+%	
+%	\multicolumn{1}{c}{\multirow{3}{*}{Singularity Motions}} & None & 7 & 6.2 $\pm$ (2.898) & 0.054 $\pm$ (0.009) & 0.137 $\pm$ (0.098)  \\
+%    \multicolumn{1}{c}{\multirow{3}{*}{($M=10,M^*T=1467$)}} & PCA & \textbf{2} & 6 $\pm$ (2.357) & \textbf{ 0.053 $\pm$ (0.010) } & \cellcolor{blue!10} 0.105 $\pm$ (0.046) \\	
+%	& K-PCA ($\sigma = 1.769$) & 3.6 $\pm$ (0.516) & \textbf{5.3 $\pm$ (2.452)} & 0.055 $\pm$ (0.018) & \cellcolor{blue!15} 0.071 $\pm$ (0.010)   \\ \hline\hline
+%\end{tabular}
+%\caption{\scriptsize Performance Comparison of Learning Approach with different Dimensionality Reduction Schemes. We present the \texttt{mean(std)} for the optimal lower-dimensional $d$ and behavior synergies $K$ and RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
+%\end{center}
+%\vspace{-10pt}
+%\end{table*}
+
 
 
 Once these optimal hyper-parameters are estimated for each fold, we solve for the definite convex optimization problem in order to find our synergy matrices $A$'s which best minimize the objective function \eqref{eq:opt}. We then select the initial joint configuration $q_0$ and target in task-space $x^*$ from the training/testing datasets, simulate the joint-space trajectories $\{\dot{q_1},\dots,\dot{q_T}\}$, with our learned $\mathcal{A}(q)$, and compute the joint-velocity RMSE between these simulations and the training/testing set trajectories. 
@@ -400,7 +468,6 @@ This learning pipeline was implemented in MATLAB. In order to solve the definite
 \footnotesize Learning:  \underline{\url{https://github.com/epfl-lasa/JT-DS-Learning}}\\
 \normalsize
 \textcolor{red}{In bla, we provide the necessary code to run this learning approach on our test datasets as well as on your own. We also provide code for the cross-validation evaluation.}
-
 
 \subsection{Comparison with Cartesian DS + IK Solver}
 We now evaluate the performance of JT-DS\footnote{With the optimal learning approach found in the previous section.} against a standard Cartesian motion generator + IK solver approach. In this evaluation we seek to compare the capabilities (or lack thereof) of both approaches to: 
@@ -443,8 +510,29 @@ Further inspection reveals another advantage of JT-DS over stable Cartesian moti
 \end{table}
 
 
+
+
+\subsubsection{Systematic Assessment}
+To systematically determine the performance properties (tracking error, computation time, and convergence time) of JT-DS \eqref{eq:ds} and compare it to a Cartesian motion generator, we simulated $400$ simple motions on each system. The systems were tasked with moving to a fixed target randomly chosen from the region $\begin{bmatrix} -0.0081\pm0.3&-0.0188\pm0.3&0.4974\pm0.21 \end{bmatrix}^T$. The Cartesian motion generator was SEDS-based, and mapping from Cartesian motions to joint-space motions was done using a damped least-squares IK solver. To save on computation time, both the JT-DS and SEDS algorithms were taught behaviors defined by a single synergy, i.e. uniform behaviors.  The results, summarized in Table \ref{table:2}, indicate that the computation time of the proposed approach is significantly faster than the Cartesian-based DS, because the algorithm does not require calculating the Jacobian pseudo-inverse. Furthermore, as the generated joint motion by \eqref{eq:ds} is directly transmitted to the robot, the tracking error is zero. Nevertheless, the convergence time of  \eqref{eq:ds} is slightly higher than the Cartesian motion generator.
+
+
+\begin{table}[t]
+	\centering
+	\resizebox{\linewidth}{!}{\begin{tabular}{l|c|c|c|c}
+		\hline \hline
+		& No. Dem. & No. K & $\phi(q)$ dim. & $e_{totol}$ [{rad}/{s}] \\ \hline
+		Obstacle avoidance (JT-DS)  &      7                &     4             &        4  &  0.0137    \\ 
+		Obstacle avoidance (SEDS) &      7                &     3             &        -  &   -   \\		
+		\hline
+		Foot step  (JT-DS) &       3               &     1             &          1 & 0.01344   \\ 
+		Foot step (SEDS)&       3               &     1             &          - & -   \\ \hline \hline
+	\end{tabular}}
+	\caption{Parameters and Performance of Comparative Experiments \textcolor{red}{(REDO)} }
+	\label{table:1}
+\end{table}
+
 \begin{figure}[t]
-\vspace{-0.05cm}
+	\vspace{-0.05cm}
 	\begin{subfigure}[t]{\linewidth}
 		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
 		\includegraphics[width=0.143\linewidth]{Pic/Luggage2.png}
@@ -460,28 +548,26 @@ Further inspection reveals another advantage of JT-DS over stable Cartesian moti
 		\label{fig:snapshot:b}
 	\end{subfigure}\\
 	\begin{subfigure}[t]{\linewidth}
-	\centering	
-		\includegraphics[width=0.45\linewidth]{Pic/1.png}~~
-		\includegraphics[width=0.45\linewidth]{Pic/3.png}\\\vspace{0.1cm}
-		\includegraphics[width=0.45\linewidth]{Pic/4.png}~~
-		\includegraphics[width=0.45\linewidth]{Pic/2.png}
+		\centering	
+		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/1.png}~~
+		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/3.png}\\\vspace{0.1cm}
+		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/4.png}~~
+		\includegraphics[angle=180,origin=c,width=0.45\linewidth]{Pic/2.png}
 		\caption{Desired Joint Behavior: Foot step-like motion.}
 		\label{fig:snapshot:c}
 	\end{subfigure}\\	
-	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{https://youtu.be/1dgKfmN1UgE}.}
+	\caption{Snapshots of the robot experiments. A corresponding video is available on-line \href{https://youtu.be/1dgKfmN1UgE}{[video link]}. \textcolor{red}{REDO} }
 	\label{fig:snapshot}
 	\vspace{-0.8cm}
 \end{figure}
 
-\subsubsection{Systematic Assessment}
-To systematically determine the performance properties (tracking error, computation time, and convergence time) of JT-DS \eqref{eq:ds} and compare it to a Cartesian motion generator, we simulated $400$ simple motions on each system. The systems were tasked with moving to a fixed target randomly chosen from the region $\begin{bmatrix} -0.0081\pm0.3&-0.0188\pm0.3&0.4974\pm0.21 \end{bmatrix}^T$. The Cartesian motion generator was SEDS-based, and mapping from Cartesian motions to joint-space motions was done using a damped least-squares IK solver. To save on computation time, both the JT-DS and SEDS algorithms were taught behaviors defined by a single synergy, i.e. uniform behaviors.  The results, summarized in Table \ref{table:2}, indicate that the computation time of the proposed approach is significantly faster than the Cartesian-based DS, because the algorithm does not require calculating the Jacobian pseudo-inverse. Furthermore, as the generated joint motion by \eqref{eq:ds} is directly transmitted to the robot, the tracking error is zero. Nevertheless, the convergence time of  \eqref{eq:ds} is slightly higher than the Cartesian motion generator.
 
 
 \subsubsection{Transiting in singular configurations}
 One of the main advantages of the proposed dynamical system is its ability to generate accurate paths in classical singular configurations. The first scenario, shown in Fig. \ref{fig:Sin}, was designed to assess this capability. The $10$ training demonstrations were constructed as follows: movement was constrained to the boundary of the workspace by fixing $ q^i=0~\forall i\in\{3,\dots,7\}$, the second joint was fixed to $q^2\in\{10^\circ,20^\circ,\dots,100^\circ\}$, and only the first joint was moved by a human demonstrator back-driving it. This restricted the motion to a series of arcs of different radii along the robot's motion boundary. In other words, the demonstrated motions were entirely within a classic kinematic singularity. Fig. \ref{fig:Sin} shows the \textit{demonstrated} motions and the motion  \textit{generated} by JT-DS \eqref{eq:ds}. The algorithm never requires the pseudo-inverse of the Jacobian matrix, so the generated motion perfectly follows the demonstrations throughout the workspace boundary.
 
 
-\begin{figure}[h]
+\begin{figure}[t]
 	\begin{subfigure}[t]{\linewidth}
 		\includegraphics[width=\linewidth]{Pic/cropped_Sing_1.pdf}
 		\caption{ }
