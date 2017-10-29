@@ -6,7 +6,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'pour_obst'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'pour_obst_2'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -24,6 +24,9 @@ switch choosen_dataset
     case 'pour_obst'
         demos_location = strcat(data_path,'pour_obst/data.mat');
         demo_ids = [1:10];
+    case 'pour_obst_2'
+        demos_location = strcat(data_path,'pour_obst_2/data.mat');
+        demo_ids = [1:7];                
     case 'foot'        % This dataset was recorded at 50 Hz! thinning_ratio = 1 or 2
         demos_location = strcat(data_path,'foot/data.mat');
         demo_ids = [1:8];                
@@ -44,7 +47,7 @@ end
 % demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
 % satisfactorily reconstruct the shape of the trajectory.
 % In the KUKA case, we get 500 datapoints per second, so we recommend shrinking the data density considerably
-thinning_ratio = 10; % Same as demonstrations recorded at 10->50Hz, 20->25Hz
+thinning_ratio = 20; % Same as demonstrations recorded at 10->50Hz, 20->25Hz
 Qs = []; Ts= [];
 for i = 1:length(demo_ids)
     Qs{i,1} = Qs_{demo_ids(i)}(:, 1:thinning_ratio:end);

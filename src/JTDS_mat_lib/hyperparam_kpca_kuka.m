@@ -6,7 +6,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'pour_obst_2'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -24,6 +24,9 @@ switch choosen_dataset
     case 'pour_obst'
         demos_location = strcat(data_path,'pour_obst/data.mat');
         demo_ids = [1:10];
+    case 'pour_obst_2'
+        demos_location = strcat(data_path,'pour_obst_2/data.mat');
+        demo_ids = [1:7];
     case 'foot'        % This dataset was recorded at 50 Hz! thinning_ratio = 1 or 2
         demos_location = strcat(data_path,'foot/data.mat');
         demo_ids = [1:8];                
@@ -91,7 +94,7 @@ clc;
 %%% Type of DR Methods %%%
 do_plots = 1;
 mapping_name = 'KPCA';
-rbf_range = logspace(log10(max_rbf/2),log10(max_rbf*4),10);
+rbf_range = logspace(log10(max_rbf/2),log10(max_rbf*5),10);
 
 %%% Learning options %%%
 options = [];
