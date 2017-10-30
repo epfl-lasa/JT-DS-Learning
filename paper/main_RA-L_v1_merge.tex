@@ -48,13 +48,13 @@ Linear Parameter Varying and Synergetic Control Approach}
 
 %
 %
-\author{Yonadav~Shavit*,  Seyed~Sina~Mirrazavi~Salehian*, Nadia~Figueroa*, Aude~Billard
+\author{Yonadav~Shavit*, Nadia~Figueroa*, Seyed~Sina~Mirrazavi~Salehian*, Aude~Billard
 % <-this % stops a space
 \thanks{*These authors contributed equally to this work.}
 \thanks{Y. Shavit is with the Department
 of Electrical Engineering and Computer Science, Massachusetts Institute of Technology, Cambridge,
 MA, 02139 USA. E-mail: yonadav.shavit@gmail.com.}% <-this % stops a space
-\thanks{S. S. M. Salehian, N. Figueroa, and A. Billard are with the Swiss Federal Institute of Technology (EPFL), 1015 Lausanne, Switzerland. \\E-mail: \{sina.mirrazavi,nadia.figueroafernandez,aude.billard\}@epfl.ch.}
+\thanks{N. Figueroa, S. S. M. Salehian, and A. Billard are with the Swiss Federal Institute of Technology (EPFL), 1015 Lausanne, Switzerland. \\E-mail: \{nadia.figueroafernandez,sina.mirrazavi,aude.billard\}@epfl.ch.}
 }% <-this % 
 
 
@@ -99,11 +99,11 @@ learned joint-space behaviors are helpful in playing ping-pong \cite{huang2016jo
 \vspace{-20pt}
 \end{figure}
 
-Furthermore, learning a motion in joint space allows us to avoid inverse kinematic (IK) approximations. The previously discussed task-space dynamical systems all rely on projecting the desired task-space velocity into joint-space via Jacobian Pseudo-Inverse IK approximations and variants thereof \cite{kelly2006control}. When the main focus is on executing a complex task-space behavior, regardless of a specific joint-space constraint, this approach has been deemed sufficient \cite{figueroa2016HRIrolling,ureche2015taskconst}. However, for other applications, such an approach yields significant problems \cite{buss2004introduction}. First of all, finding the pseudo-inverse is computationally taxing. Moreover, when the Jacobian matrix cannot be inverted (i.e. when the robot is near a singularity) its behavior becomes erratic, requiring layers of additional engineering to generate smooth trajectories and ensure the desired task-space behavior. These problems encapsulate the main source of inaccuracies in tasks that require generating fast dynamical motions, such as catching or reaching for moving objects \cite{7439839,Salehian-RSS-16}. By defining a controller in joint space directly, one can avoid IK and all its associated drawbacks.
+Furthermore, learning a motion in joint space allows us to avoid inverse kinematic (IK) approximations. The previously discussed task-space dynamical systems all rely on projecting the desired task-space velocity into joint-space via Jacobian Pseudo-Inverse IK approximations and variants thereof \cite{kelly2006control}. When the main focus is on executing a complex task-space behavior, regardless of a specific joint-space constraint, this approach has been deemed sufficient \cite{figueroa2016HRIrolling,ureche2015taskconst}. However, for other applications, such an approach yields significant problems \cite{buss2004introduction}. First of all, finding the pseudo-inverse is computationally taxing. Moreover, when the Jacobian matrix cannot be inverted (i.e. when the robot is near a singularity) its behavior becomes erratic, requiring layers of additional engineering to generate smooth trajectories and ensure the desired task-space behavior. These problems encapsulate the main source of inaccuracies in tasks that require generating fast dynamical motions, such as catching or reaching for moving objects \cite{7439839,Salehian-RSS-16}. By defining a controller in joint space, one can avoid IK and all its associated drawbacks.
 
 Several approaches have tackled the problem of learning joint-space behaviors with task-space objectives. \cite{calinon2008probabilistic} notably attempted to address this problem by learning separate motion policies in task space and the null space of the Jacobian (which would not affect task-space position), and driving the robot with a weighted sum of the two.  However, this approach does not seek convergence to the desired task-space target and is still reliant on computing the pseudo-inverse Jacobian. \cite{calinon2010learning} and \cite{silverio2017learning} expand on this approach by projecting task-space constraints into joint space using IK, and then learning a joint-space policy that incorporates both task and joint space constraints, but this similarly relies on IK approximations and does not ensure convergence to an attractor.
 % FACT-CHECK: is this what Calinon 2009 and Silverio et al. 2017 are doing? They don't ensure convergence, right? TP-GMM never seems to address it ->CORRECT
-\cite{lee2014unifying} learns from demonstration in both joint and task space within the "thin-plate spline" trajectory warping framework. % but does not propose a dynamical system for generating motions. 
+\cite{lee2014unifying} learns from demonstration in both joint and task space within the ``thin-plate spline" trajectory warping framework. % but does not propose a dynamical system for generating motions. 
 \cite{hersch2008reaching} proposed an approach with similar properties to this desiderata, where two concurrent DS, one in task-space and one in joint-space, are modulated by enforcing kinematic coherence constraints to avoid singularities. The resulting DS avoids singularities through generalization of the pseudo-inverse approximations. However, because the two DS have their own unique attractors, the non-linear interaction between them imposed by the kinematic constraints does not ensure that the combined DS has a unique attractor. This gives rise to spurious attractors or cycles, and thus must be carefully tuned in order to avoid them. 
 %Most recently, \cite{huang2016jointly} proposed an approach that learns a controller for playing table tennis by combining joint-space Dynamic Movement Primitives (DMP) \cite{schaal2006dynamic} to mimic a desired task-space racket swing.. \textcolor{red}{ must re-read this... I think they are doing something very similar... can remove if problematic}
 % Do DMPs count as learning joint space behaviors? If yes, I'm having a hard time differentiating huang2016 from us -> Yes they do
@@ -112,9 +112,9 @@ Several approaches have tackled the problem of learning joint-space behaviors wi
 In this work, we seek to devise an augmented \textbf{J}oint-space \textbf{T}ask-oriented \textbf{D}ynamical \textbf{S}ystem (JT-DS) that not only incorporates task-space attractors, but also avoids the problems generated by pseudo-inverse approximations. To approximate this DS, we further propose an algorithm to learn a set of \emph{behavior synergies}, each of which corresponds to a different provably stable behaviors in joint space, and modulates the use of these synergies throughout joint-space using a learned LPV system. We determine the scheduling parameters for the LPV by finding a \emph{lower-dimensional embedding} of the joint space, which accounts for the variation in the demonstrated motions, and then learning a policy in embedding space for combining our behavior synergies to accurately reconstruct the demonstrated trajectories. %We specifically chose to focus on linear parameter-varying dynamical systems because they are fast to compute and thus allow a controller to quickly react in a changing environment, a capability that is further improved by our not needing to compute pseudo-inverses. 
 Hence, our dynamical system:
 \begin{enumerate}[leftmargin=*]
-\item computes a \begin{bf}complex motion in joint-space\end{bf} that provably and asymptotically converges to a \begin{bf}task-space \end{bf} target.
-%\item \textbf{avoids} the need for computing \textbf{pseudo-inverses}, and cleanly moves through kinematic ``singularities".
+\item computes a \begin{bf}complex motion in joint-space\end{bf} that provably and asymptotically converges to a \begin{bf}task-space \end{bf}target.
 \item is formulated such that complex \textbf{joint-space behaviors} can be \textbf{learned} from demonstrations in \textbf{synergy space}.
+\item can cleanly moves through kinematic \textbf{singularities}.
 \end{enumerate}
 
 
@@ -138,7 +138,7 @@ Consider a robotic system with $d$ task-space dimensions and $m$ degrees of free
 We wish to formulate a dynamical system $\dot{q} = f(q)$ which satisfies the following two criteria:
 \renewcommand{\labelenumi}{(\Roman{enumi})}
 \begin{enumerate}
-\item The dynamical system must be asymptotically stable\footnote{Unless otherwise specified, "stability" in this paper always refers to asymptotic stability within the workspace of the robot, and assumes no joint limits. We make no claim to proving global asymptotic stability, which is in fact impossible to achieve in a joint-constrained kinematic system.} with respect to a fixed task-space target $x^*$. This can be expressed by ensuring that the following Lyapunov function
+\item The dynamical system must be asymptotically stable\footnote{Unless otherwise specified,``stability" in this paper always refers to asymptotic stability within the workspace of the robot, and assumes no joint limits. We make no claim to proving global asymptotic stability, which is in fact impossible to achieve in a joint-constrained kinematic system.} with respect to a fixed task-space target $x^*$. This can be expressed by ensuring that the following Lyapunov function
 \begin{equation}
 V(q) = (H(q) - x^*)^T(H(q) - x^*) 
 \label{eq:Lyp}
@@ -157,7 +157,7 @@ e_{total} = \frac{1}{NT_n}\sum_{n=1}^N\sum_{t=0}^{T_n} \left \| \dot{q}_{d; t,n}
 
 %If instead of \eqref{eq:optim_error}, the error feature was the joint position distance $\sum_i\left \| q_{d,i} - q_i \right \|$ where $q_d$ is a vector of demonstrated positions, then executing a "behavior" would imply mimicking position, but not velocity. Alternatively, if the error feature was the joint velocity direction $\sum_i \left | \frac{\dot{q}_{d,i}}{\left \| \dot{q}_{d,i} \right \|} - \frac{\dot{q}_i}{\left \| \dot{q}_i \right \|} \right |$ mimicking a "behavior" would involve following the motion profile, but not the motion's speed (so for example a slap and a push would exhibit the same behavior). By choosing the combined direction and magnitude of the joint velocity as the error, we are choosing to mimic the magnitude and direction of the motion, which \cite{gielniak2010stylized} suggests is visually most similar to the human definition of "joint motion style".
 
-The error metric \eqref{eq:optim_error} is advantageous in a way that it mimics the magnitude and direction of the demonstrated motions. Hence, as suggested by \cite{gielniak2010stylized}, it is visually most similar to the human definition of "joint motion style".
+The error metric \eqref{eq:optim_error} is advantageous in a way that it mimics the magnitude and direction of the demonstrated motions. Hence, as suggested by \cite{gielniak2010stylized}, it is visually most similar to the human definition of ``joint motion style".
 
 % ways. First, it implicitly suggests that behaviors are defined by expert motions of the behavior
 
@@ -196,7 +196,6 @@ $\mathcal{A}(q)$ as the \begin{bf} joint augmentation matrix \end{bf} as it augm
 \begin{prop1}
 \label{prop:stability}
 The flow of motion generated by the dynamical system \eqref{eq:ds} accomplishes criteria (I) if $ \forall k \in \{1,\dots,K\}  $ \eqref{eq:ds} meets the following constraints. 
-
 \begin{equation}
 \label{eq:first_criteria_stability}
 \begin{cases}
@@ -206,9 +205,8 @@ The flow of motion generated by the dynamical system \eqref{eq:ds} accomplishes 
 \end{cases}
 \end{equation}    
 \end{prop1}
-
+\vspace{5pt}
 \textbf{Proof}: See Appendix \ref{appendix:stability}. $\blacksquare$
-
 %It is worth mentioning that the constraints in \eqref{eq:first_criteria_stability}  only ensure that JT-DS \eqref{eq:ds} asymptotically converges to the desired target position $x^*$ if the robot does not have kinematic joint limits. If we introduce kinematic joint limits, then it's possible we may find $\exists q\in Q-Q^* $ such that both $\dot{V}(q)=0$ and $H(q) \neq x^*$. This happens if the target position is kinematically unreachable; i.e. for each task-space axis $i$,  $\big ( J^T(q)P(H(q)-x^*) \big)_i = 0 $ (meaning that moving joints increases the value of \eqref{eq:Lyp}), or the joint has reached a kinematic limit. In this case, the proof in Appendix \ref{appendix:stability} shows instead that the system converges in the sense of Lyapunov, meaning that its distance to the attractor is always monotonically decreasing.
 
 Criterion (II) (i.e. encoding specific joint-space behaviors) is achieved by embedding the desired dynamics in the matrices $A_k(q)~ \forall k \in\{1,\dots,K\}$. We describe in the next section an approach to automatically learn these matrices from demonstrated data. 
@@ -223,18 +221,18 @@ Criterion (II) (i.e. encoding specific joint-space behaviors) is achieved by emb
 
 The behavior of the JT-DS algorithm can be best understood through the lens of synergy control \cite{7954741}. In robotic synergy control, a robot's movements can be decomposed into a small number of synergies: principal components of the joint-space that are sufficient to accurately recreate the desired robotic behaviors. In our case, the synergies are represented by $A_1, A_2, \dots, A_k$, and $\mathcal{A}(q)$ represents the resulting motion constructed from a superposition of different synergies (through \eqref{eq:ds}). 
 
-A central question becomes, how to modulate the synergies in different regions to yield our desired behavior? First, we assume that our desired behavior can be efficiently described\footnote{Given some original space $A$ and some behavior policy $\pi_A(a)$ in $A$, we say that an embedding $\phi(\cdot)$ and embedding space $B: \{b = \phi(a) | a \in A\}$ "efficiently describe" $\pi_A$ if there exists some policy $\pi_B(b)$ in $B$ such that we can deterministically reconstruct $\pi_A(a)$ given $\pi_B(\phi(a))$} using a sub-manifold of the joint-space, called the \emph{embedding space}. We would like to define the robot's policy in embedding space such that in different regions of the space, we will prioritize different synergies. We are thus left with three problems: finding an underlying synergy-space $Z$ in which the behavior can be accurately controlled (defined by a mapping $\phi: Q \rightarrow Z$), finding a policy for modulating the synergies in different regions of the synergy space (defined by $\theta_k(q)~\forall k\in\{1,\dots,K\}$), and finding parameters for the synergies themselves (defined by $A_k~\forall k\in\{1,\dots,K\}$). Our choice of parameters must also obey the constraints laid out in \eqref{eq:first_criteria_stability}. We propose the following procedure:
+A central question becomes, how to modulate the synergies in different regions to yield our desired behavior? First, we assume that our desired behavior can be efficiently described\footnote{Given some original space $A$ and some behavior policy $\pi_A(a)$ in $A$, we say that an embedding $\phi(\cdot)$ and embedding space $B: \{b = \phi(a) | a \in A\}$ "efficiently describe" $\pi_A$ if there exists some policy $\pi_B(b)$ in $B$ such that we can deterministically reconstruct $\pi_A(a)$ given $\pi_B(\phi(a))$} using a sub-manifold of the joint-space, called the \emph{embedding space}. We would like to define the robot's policy in embedding space such that in different regions of the space, we will prioritize different synergies. We are thus left with three problems: (I) finding an underlying synergy-space $Z$ in which the behavior can be accurately controlled (defined by a mapping $\phi: Q \rightarrow Z$), (II) finding a policy for modulating the synergies in different regions of the synergy space (defined by $\theta_k(q)~\forall k\in\{1,\dots,K\}$), and (III) finding parameters for the synergies themselves (defined by $A_k~\forall k\in\{1,\dots,K\}$). Our choice of parameters must also obey the constraints laid out in \eqref{eq:first_criteria_stability}. We thus propose the following 3-step learning procedure:
 
 \begin{enumerate}
 \item We first construct our embedding, which provides us a lower-dimensional manifold through which to control the robot, by projecting the demonstration data (i.e. collections of joint positions $q$) into a lower-dimensional embedding $\phi(q)\in \mathbb{R}^{\delta\leq d}$. In each experiment, we used either Principal Component Analysis (PCA) \cite{jolliffe1986pca} or Kernel PCA (KPCA) with RBF kernel \cite{scholkopf1997kernel}.
 
-\item We then jointly estimate the optimal number $K$ of synergy "regions" and the parameters of the scalar functions that determine the scheduling parameters $\theta_k(q)$ for weighting these synergies, by fitting a Gaussian Mixture Model (GMM) on the projected joint positions $\phi(q)$ seen in the demonstrations.
+\item We then jointly estimate the optimal number $K$ of synergy ``regions" and the parameters of the scalar functions that determine the scheduling parameters $\theta_k(q)$ for weighting these synergies, by fitting a Gaussian Mixture Model (GMM) on the projected joint positions $\phi(q)$ seen in the demonstrations.
 
 \item Finally, once the local synergy regions have been found (described by each of the Gaussian distributions $\theta_k(q)$), we compute the corresponding joint synergy matrices $A_k~\forall k\in\{1,\dots,K\}$ for each region by formulating a convex optimization problem that finds the optimal set of $A_k$'s that minimize the overall velocity error with respect to the demonstrations \eqref{eq:optim_error}.
 \end{enumerate}
 
 \subsection{Embedding Joint Configurations in Low-Dim. Space}
-The search for a lower-dimensional embedding of the joint space stems from the desire to identify a simplified coordinate system in which each principal component corresponded to an important source of variation in the demonstrated trajectories, and which is thus suitable for learning the demonstrated behavior. For example, motor control studies have postulated that human arm motions like reaching or following straight/curved line trajectories, rather than utilizing the full joint space $|q|$, are the result of compromising between planning a straight line in the task space and a straight line in the joint space \cite{Cruse1987humanarm,Okadome1999arm}. This suggests that human arm motion in general tends to move on a plane, and thus can be represented in such a lower-dimensional space. 
+The search for a lower-dimensional embedding of the joint space stems from the desire to identify a simplified coordinate system in which each principal component corresponded to an important source of variation in the demonstrated trajectories, and which is thus suitable for learning the demonstrated behavior. Motor control studies have postulated that human arm motions like reaching or following straight/curved line trajectories, rather than utilizing the full joint space $|q|$, are the result of compromising between planning a straight line in the task space and a straight line in the joint space \cite{Cruse1987humanarm,Okadome1999arm}. This suggests that human arm motion in general tends to move on a plane, and thus can be represented in such a lower-dimensional space. 
 
 In this work, we assume that configurations that are nearby in joint-space should exhibit similar behaviors, and thus it is natural that we choose a low-dimensional embedding that preserves the variance in our demonstrations. To this end, we construct an embedding $\phi(q)$ by training dimensionality reduction techniques on the demonstrated trajectories. The learned embedding $\phi(\cdot)$ maps a joint configuration $q \in \mathbb{R}^d$ into a lower-dimensional configuration $z \in \mathbb{R}^\delta$, where $\delta < d$. Specifically, we experimented with Principal Component Analysis (PCA) and Kernel PCA \cite{scholkopf1997kernel}. 
 %In previous work, PCA has shown to be sufficient to encapsulate the correlations in joint-space data \cite{calinon2005recognition}, and this work further explores the usefulness of joint-space dimensionality reduction.
@@ -242,9 +240,9 @@ In this work, we assume that configurations that are nearby in joint-space shoul
 \nocite{*}
 
 \subsection{Discovering Local Behavior Synergies}
-The next step is identifying the regions of space in which to activate different synergies (though the synergies' parameters have not yet been specified). Specifically, given the set of projected joint position trajectories $D=\{\{\phi(q_{t,n})\}_{t=1,\dots, T}\}_{n=1,\dots,N}$ where $\phi(q_{t,n})$ is the lower-dimensional embedding of $q_{t,n}$, $t$ is the time-step and $N$ is the number of demonstrations, we seek to learn a set of regions of distinct local synergies, each defined by their corresponding scheduling parameter $\theta_k(q) = \theta'_k(\phi(q))$. Moreover, we would like for our scheduling parameters $\theta'_k(\phi(q))$ to have the following properties: (i) $0 \prec \theta'_k(\phi(q))$ and (ii) $\sum_{k=1}^{K}\theta'_k(\phi(q)) = 1$.
+The next step is identifying the regions of space in which to activate different synergies. Given the set of projected joint position trajectories $D=\{\{\phi(q_{t,n})\}_{t=1,\dots, T}\}_{n=1,\dots,N}$ where $\phi(q_{t,n})$ is the lower-dimensional embedding of $q_{t,n}$, $t$ is the time-step and $N$ is the number of demonstrations, we seek to learn a set of regions of distinct local synergies, each defined by their corresponding scheduling parameter $\theta_k(q) = \theta'_k(\phi(q))$. Moreover, we would like for our scheduling parameters $\theta'_k(\phi(q))$ to have the following properties: (i) $0 \prec \theta'_k(\phi(q))$ and (ii) $\sum_{k=1}^{K}\theta'_k(\phi(q)) = 1$.
  
-Scheduling parameters for LPV systems with such properties have been modeled in previous work as probability distributions \cite{7439839, Salehian-RSS-16}. Intuitively, we search for a probabilistic model that "explains" the variance in the demonstrated trajectories, and treat each cluster as expressing a local behavior, which the synergy will then approximate. In this work, we adopt this approach and use a GMM to estimate the joint distribution over the projected joint positions\footnote{It must be noted that, although we present GMM as the approach to estimate the scheduling parameters, alternative algorithms can be used.}, $p(\phi(q)) = \sum_{k=1}^K\pi_k\mathcal{N}(\phi(q);\mu_k,\Sigma_k)$, where $\pi_k$ are the prior probabilities and $\{\mu_k,\Sigma_k\}$ are the mean and covariance matrices that parametrize the $k$-th multivariate Gaussian distribution. Each such distribution represents a local region of projected joint positions $\phi(q)$, and will be used to construct the scheduling parameter $\theta'_k$ of our LPV system relating to the $k$th synergy. We will define $\theta'_k(\phi(q))$ as $p(k|\phi(q))$:
+Scheduling parameters for LPV systems with such properties have been modeled in previous work as probability distributions \cite{7439839, Salehian-RSS-16}. Intuitively, we search for a probabilistic model that ``explains" the variance in the demonstrated trajectories, and treat each cluster as expressing a local behavior, which the synergy will then approximate. In this work, we adopt this approach and use a GMM to estimate the joint distribution over the projected joint positions\footnote{It must be noted that, although we present GMM as the approach to estimate the scheduling parameters, alternative algorithms can be used.}, $p(\phi(q)) = \sum_{k=1}^K\pi_k\mathcal{N}(\phi(q);\mu_k,\Sigma_k)$, where $\pi_k$ are the prior probabilities and $\{\mu_k,\Sigma_k\}$ are the mean and covariance matrices that parametrize the $k$-th multivariate Gaussian distribution. Each distribution represents a local region of projected joint positions $\phi(q)$, and will be used to construct the scheduling parameter $\theta'_k$ to the $k$th synergy of \eqref{eq:A_def}. We define $\theta'_k(\phi(q))$ as $p(k|\phi(q))$:
 \begin{equation}
 \label{eq:theta}
 \theta'_k(\phi(q))= \frac{\pi_k\mathcal{N} (\phi(q); \mu_k, \Sigma_k)}{\sum_{k=1}^K \pi_k\mathcal{N} (\phi(q); \mu_k, \Sigma_k)}
@@ -277,7 +275,7 @@ where $f(q_{t,n})$ is calculated by %combining our dynamical system formulation
 
 
 \begin{figure*}[!ht]
-  \begin{minipage}[b]{0.30\textwidth}
+  \begin{minipage}[b]{0.31\textwidth}
 	\centering	
 		\begin{subfigure}[t]{\linewidth}
 		\centering
@@ -297,7 +295,7 @@ where $f(q_{t,n})$ is calculated by %combining our dynamical system formulation
     \captionof{figure}{Demonstrated Joint-Space Behaviors with Task-Space Targets. \href{https://www.dropbox.com/sh/3vx512oldgbnkq5/AABP5iEqO0oYn7dlE-gvK1kPa?dl=0}{[videos]} \label{fig:behaviors}}
   \end{minipage}
   \hfill
-  \begin{minipage}[b]{0.7\textwidth}
+  \begin{minipage}[b]{0.69\textwidth}
     \scriptsize
     \centering
 \resizebox{\linewidth}{!}{\begin{tabular}{cc|cc|cc}
@@ -378,10 +376,7 @@ $\sigma_{min} = \frac{1}{\kappa\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i 
 
 Once these optimal hyper-parameters are estimated for each fold, we solve for the convex optimization problem in order to find our synergy matrices $A$'s which best minimize the objective function \eqref{eq:opt}. We then select the initial joint configuration $q_0$ and target in task-space $x^*$ from each training/testing dataset, simulate the joint-space trajectories $\{\dot{q_1},\dots,\dot{q_T}\}$, with our learned $\mathcal{A}(q)$, and compute the joint-velocity RMSE between these simulations and the training/testing trajectories, as reported in Table \ref{tab:learning} 
 
-As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to represent our activation functions $\theta(q)$ yields better generalization capabilities than the contrary. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learnt without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the number of $K$ needed to represent the motion. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations. 
-
-
-\begin{figure*}[ht]
+\begin{figure*}[th]
 	\vspace{-0.05cm}
 	\begin{subfigure}[t]{0.42\linewidth}
 		\includegraphics[width=0.45\linewidth]{Pic/Luggage1.png}
@@ -399,6 +394,9 @@ As can be seen, for all datasets there is a significant increase in performance 
 	\label{fig:snapshot}
 	\vspace{-10pt}
 \end{figure*}
+
+As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to represent our activation functions $\theta(q)$ yields better generalization capabilities than the contrary. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learnt without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the number of $K$ needed to represent the motion. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations. 
+
 
 Both PCA and K-PCA yield comparable results, with K-PCA providing a slight improvement on some datasets. This suggests that perhaps a linear DR method might be sufficient for such tasks. However, if we seek to maximize accuracy a non-linear DR method should be employed. One of the drawbacks of K-PCA is its computational complexity for out-of-sample evaluations, which involves computing the kernel function between the new data-point and all the samples $M$. This is, however, not so taxing for our method as our datasets range in $M\approx1000$ and in previous work \cite{Mirrazavi:IJRR:2017} we have experimentally found that evaluating $<3000$ RBF kernel computations (on a 3.4-GHz i7 PC with 8GB RAM)) in a control-loop with 2ms rate is feasible. If one requires extremely fast computation; i.e. a control-loop rate of $<2$ms then PCA should be used as opposed to K-PCA.
 
