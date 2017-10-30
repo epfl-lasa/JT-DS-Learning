@@ -401,7 +401,7 @@ In this paper, we have presented a dynamical system in joint space that is prova
 	\vspace{-24pt}
 \end{figure}
 
-One of the most important points when validating a learning from demonstration method is to evaluate the system's behavior away from demonstrations. When the current joint configuration is far from any of the local synergy regions, computing the scheduling parameters $\theta_k(\cdot)$ becomes numerically infeasible (all the Gaussians in \eqref{eq:A} $\rightarrow 0$), and so $\sum\limits_{k=1}^{K}\frac{A_k}{K}$ is used to move the robot, which is still guaranteed to move towards the target. Moreover, in overlapping local regions where multiple $A_k$'s might be in conflict, the presented system compromises between them while still stably moving to the target. The reason for this is that rather than ``determining" the velocity of the system, our $\mathcal{A}$ matrix only warps it. This means that adding multiple ``conflicting" synergies together amounts to nothing more than repeatedly warping the velocity, and still maintains the original stability property. 
+One of the most important points when validating a learning from demonstration method is to evaluate the system's behavior away from demonstrations. When the current joint configuration is far from any of the local synergy regions, computing the scheduling parameters $\theta_k(\cdot)$ becomes numerically infeasible (all the Gaussians in \eqref{eq:A} $\rightarrow 0$), and so $\sum\limits_{k=1}^{K}\frac{A_k}{K}$ is used to move the robot, which is still guaranteed to move towards the target. Moreover, in overlapping local regions where multiple $A_k$'s might be in conflict, the presented system compromises between them while still stably converging to the target. The reason for this is that rather than ``determining" the velocity of the system, our $\mathcal{A}$ matrix only warps it. This means that adding multiple ``conflicting" synergies together amounts to nothing more than repeatedly warping the velocity, and still maintains the original stability property. 
 
 One of the major advantages of the proposed dynamical system is that it avoids the undesirable effects of traditional Inverse Kinematic (IK) solvers. Fast dynamical motions require not only fast and accurate motion planning, but also precise IK mapping, which is not practically feasible. By utilizing the JT-DS method, even a fast system could reactively generate stable motions to its target.
 
@@ -472,7 +472,7 @@ We wish to prove Proposition \ref{prop:stability}, that is, that JT-DS \eqref{eq
 accomplishes criterion (I), where $\mathcal{A}(q)$ is positive definite, and $P$ is positive definite.
 \newtheorem{theorem}{Theorem}[section]
 \begin{theorem}[Proof of Lyapunov Stability]
-JT-DS \eqref{eq:ds} is stable in the sense of Lyapunov with respect to the Lyapunov candidate
+JT-DS \eqref{eq:ds} is asymptotically stable with respect to the Lyapunov candidate
 \[ V(q) = \frac{1}{2}(H(q) - x^*)^TP(H(q) - x^*) \]
 That is, 
 \begin{equation}
@@ -492,7 +492,7 @@ The first two statements are trivially true because $P$ is positive definite and
 &= -(H(q) - x^*)^TPJ(q)\sum_{k=1}^{K}\underbrace{\theta_k(q)}_{0\prec}\underbrace{A_k}_{0\prec}\\&~~~~~~ \cdot J^T(q)P(H(q) - x^*) < 0
 \end{aligned}
 \end{equation}
-By observation, each and every term in the final expression is multiplied by its transpose (creating a square) except for $\mathcal{A}(q)$, which is positive definite. This means that the expression is guaranteed to be negative definite. Therefore, JT-DS \eqref{eq:ds} is globally Lyapunov stable; i.e. $ \| H(q)-x^*\| $ and $ \dot{q} $ are bounded.
+By observation, each and every term in the final expression is multiplied by its transpose (creating a square) except for $\mathcal{A}(q)$, which is positive definite. This means that the expression is guaranteed to be negative definite. Therefore, JT-DS \eqref{eq:ds} is globally asymptotically stable with respect to a task-space attractor; i.e. $ \| H(q)-x^*\| $ and $ \dot{q} $ are bounded.
 
 \section*{Acknowledgment}
 \footnotesize
