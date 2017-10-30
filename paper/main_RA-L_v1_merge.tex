@@ -54,7 +54,7 @@ Linear Parameter Varying and Synergetic Control Approach}
 \thanks{Y. Shavit is with the Department
 of Electrical Engineering and Computer Science, Massachusetts Institute of Technology, Cambridge,
 MA, 02139 USA. E-mail: yonadav.shavit@gmail.com.}% <-this % stops a space
-\thanks{S. S. M. Salehyan, N. Figueroa, and A. Billard are with the Swiss Federal Institute of Technology (EPFL), 1015 Lausanne, Switzerland. \\E-mail: \{sina.mirrazavi,nadia.figueroafernandez,aude.billard\}@epfl.ch.}
+\thanks{S. S. M. Salehian, N. Figueroa, and A. Billard are with the Swiss Federal Institute of Technology (EPFL), 1015 Lausanne, Switzerland. \\E-mail: \{sina.mirrazavi,nadia.figueroafernandez,aude.billard\}@epfl.ch.}
 }% <-this % 
 
 
@@ -65,7 +65,9 @@ MA, 02139 USA. E-mail: yonadav.shavit@gmail.com.}% <-this % stops a space
 
 
 \begin{abstract}
-In this paper, we propose an asymptotically stable joint-space dynamical system that captures desired behaviors in joint-space while converging towards a reachable target in task-space. Our method is fast to compute and smoothly moves through classic kinematic singularities by avoiding the use of the pseudo-inverse Jacobian; moreover, it stably converges towards its task-space attractor. To encode complex joint-space behaviors while meeting these stability criteria, the dynamical system is constructed as a Linear Parameter Varying (LPV) system combining different motor synergies, and we provide a method for learning these synergy matrices from demonstrations. Specifically, we use dimensionality reduction to find a low-dimensional embedding space for modulating joint synergies, and then estimate the parameters of the corresponding synergies by solving a convex semi-definite optimization problem that minimizes the joint velocity prediction error from the demonstrations. Our proposed approach is validated on a variety of motions for a 7-DOF KUKA LWR4+ robot arm.\end{abstract}
+In this paper, we propose an asymptotically stable joint-space dynamical system that captures desired behaviors in joint-space while stably converging towards a its task-space attractor. % Our method is fast to compute and smoothly moves through classic kinematic singularities by avoiding the use of the pseudo-inverse Jacobian; moreover, it stably converges towards its task-space attractor. 
+ To encode complex joint-space behaviors while meeting the stability criteria, the dynamical system is constructed as a Linear Parameter Varying (LPV) system combining different motor synergies, and we provide a method for learning these synergy matrices from demonstrations. Specifically, we use dimensionality reduction to find a low-dimensional embedding space for modulating joint synergies, and then estimate the parameters of the corresponding synergies by solving a convex semi-definite optimization problem that minimizes the joint velocity prediction error from the demonstrations. Our proposed approach is empirically validated on a variety of motions. %for a 7-DOF KUKA LWR4+ robot arm.
+ \end{abstract}
 
 %\begin{IEEEkeywords}
 %Dynamical Systems, Imitation learning, Robot Kinematics, Gaussian Mixture Models
@@ -76,39 +78,49 @@ In this paper, we propose an asymptotically stable joint-space dynamical system 
 \IEEEpeerreviewmaketitle
 \section{Introduction}
 \label{sec:intro}
-Robot motion planning in joint-space has long been a major field of study \cite{kelly2006control}. For manipulation problems with an objective defined in task space (i.e. target or desired trajectory), we can often find a myriad of joint-space trajectories to achieve the same task-space goal. In many cases, however, certain joint-space trajectories are favored over others; for example, when we expect the robot to follow a desired joint-space behavior or ``style", as illustrated in Fig. \ref{fig:robot_example}. In this paper, we will explore the problem of learning a preferred joint-space behavior from previously demonstrated trajectories while still accomplishing a task-space goal, through the Learning from Demonstrations (LfD) paradigm \cite{billard2008robot,Argall:RAS:2009}.
+Robot motion planning in joint-space has long been a major field of study \cite{kelly2006control}. For manipulation problems with an objective defined in the task space, %(i.e. target or desired trajectory)
+ we can often find a myriad of joint-space trajectories to achieve the same task-space goal. In many cases, however, certain joint-space trajectories are favored over others; for example, when we expect the robot to follow a desired joint-space behavior or ``style", as illustrated in Fig. \ref{fig:robot_example}. In this paper, we will explore the problem of learning a preferred joint-space behavior from previously demonstrated trajectories while still accomplishing a task-space goal, through the Learning from Demonstrations (LfD) paradigm \cite{billard2008robot,Argall:RAS:2009}.
 
-Many LfD approaches learn motions in either joint space \cite{Calinon:HRI:2007, Garrido:Neuro:2015, Schaal:IROS:2003,Schaal:AI:2002} or task space \cite{Pastor:ICRA:2009,Gribovskaya:IJRR:2011,Calinon:ISR:2015}. These approaches generally learn probabilistic model of the demonstrated motions, and construct a dynamical system that chooses behaviors according to the learned model.
-Both joint and task space are independently useful: joint-space behaviors let us directly influence the behavior of the physical robot, while task-space behaviors let us control the most task-relevant component of the robot's behavior. In particular, a number of approaches have pioneered stable convergence to an attractor in task space \cite{khansari2011learning, Neumann:RAS:2015, Kronander:RAS:2015} as a desirable capability for a dynamical system.
+Many LfD approaches learn motions in either joint space %\cite{Calinon:HRI:2007, Garrido:Neuro:2015, Schaal:IROS:2003,Schaal:AI:2002}
+\cite{Garrido:Neuro:2015,Schaal:AI:2002} or task space %\cite{Pastor:ICRA:2009,Gribovskaya:IJRR:2011,Calinon:ISR:2015}
+\cite{Pastor:ICRA:2009,Calinon:ISR:2015}. These approaches generally learn probabilistic model of the demonstrated motions. %, and construct a dynamical system that chooses behaviors according to the learned model.
+Both %joint and task 
+spaces are independently useful:  task-space behaviors let us control the most task-relevant component of the robot's behavior. In particular, a number of approaches have pioneered stable convergence to an attractor in task space % \cite{khansari2011learning, Neumann:RAS:2015, Kronander:RAS:2015} 
+ \cite{khansari2011learning, Neumann:RAS:2015}as a desirable capability for a dynamical system.
 
-In many cases, one may want to specify a joint-space behavior while simultaneously fulfilling a task-space objective. For example, throwing a ball is a motion characterized both by a task-space behavior (the ball moves backwards and then forwards) and also more obviously by its joint-space behavior (the elbow folding, the shoulder moving back and then swinging forward, and then the elbow straightening and the wrist snapping down). Similarly, learned joint-space behaviors are helpful in playing ping-pong \cite{huang2016jointly}, grasping \cite{calinon2010learning}, and avoiding self-collisions of bi-manual manipulators \cite{silverio2017learning}. For a visual example of a task-space problem in which joint behavior is essential, see Fig. \ref{fig:robot_example}.
+	In many cases, one may want to specify a joint-space behavior to directly define the behavior of the physical robot while simultaneously fulfilling a task-space objective. For example, %throwing a ball is a motion characterized both by a task-space behavior (the ball moves backwards and then forwards) and also more obviously by its joint-space behavior (the elbow folding, the shoulder moving back and then swinging forward, and then the elbow straightening and the wrist snapping down). Similarly, 
+learned joint-space behaviors are helpful in playing ping-pong \cite{huang2016jointly}, grasping \cite{calinon2010learning}, and avoiding self-collisions of bi-manual manipulators \cite{silverio2017learning}. For a visual example of a task-space problem in which joint behavior is essential, see Fig.\ref{fig:robot_example}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[scale=.16,trim={0 0 0 0cm},clip]{Without_Obstcle_white_new.png}\includegraphics[scale=.135,trim={0 0 0 0cm},clip]{With_Obstcle.png}
 \caption{Two robot motions in \textcolor{orange}{\textbf{joint-space}} accomplishing \textit{similar} behavior in \textcolor{cyan}{\textbf{task-space}} (pouring chips in a bowl). The left example avoids a known obstacle in its workspace, while the right one does not.}
 \label{fig:robot_example}
-\vspace{-15pt}
+\vspace{-20pt}
 \end{figure}
 
-Furthermore, learning a motion in joint space allows us to avoid inverse kinematic (IK) approximations. The previously discussed task-space dynamical systems all rely on projecting the desired task-space velocity into joint-space via Jacobian Pseudo-Inverse based Inverse-Kinematic (IK) approximations and variants thereof \cite{kelly2006control}. When the main focus is on executing a complex task-space behavior, regardless of a specific joint-space constraint, this approach has been deemed sufficient \cite{figueroa2016HRIrolling,ureche2015taskconst}. However, for other applications, such an approach yields significant problems \cite{buss2004introduction}. First of all, finding the pseudo-inverse is computationally taxing. Moreover, when the Jacobian matrix cannot be inverted (i.e. when the robot is near a singularity) its behavior becomes erratic, requiring layers of additional engineering to generate smooth trajectories and ensure the desired task-space behavior. These problems encapsulate the main source of inaccuracies in tasks that require generating fast dynamical motions, such as catching or reaching for moving objects \cite{7439839,Salehian-RSS-16}. By defining a controller in joint space directly, one can avoid IK and all its associated drawbacks.
+Furthermore, learning a motion in joint space allows us to avoid inverse kinematic (IK) approximations. The previously discussed task-space dynamical systems all rely on projecting the desired task-space velocity into joint-space via Jacobian Pseudo-Inverse IK approximations and variants thereof \cite{kelly2006control}. When the main focus is on executing a complex task-space behavior, regardless of a specific joint-space constraint, this approach has been deemed sufficient \cite{figueroa2016HRIrolling,ureche2015taskconst}. However, for other applications, such an approach yields significant problems \cite{buss2004introduction}. First of all, finding the pseudo-inverse is computationally taxing. Moreover, when the Jacobian matrix cannot be inverted (i.e. when the robot is near a singularity) its behavior becomes erratic, requiring layers of additional engineering to generate smooth trajectories and ensure the desired task-space behavior. These problems encapsulate the main source of inaccuracies in tasks that require generating fast dynamical motions, such as catching or reaching for moving objects \cite{7439839,Salehian-RSS-16}. By defining a controller in joint space directly, one can avoid IK and all its associated drawbacks.
 
 Several approaches have tackled the problem of learning joint-space behaviors with task-space objectives. \cite{calinon2008probabilistic} notably attempted to address this problem by learning separate motion policies in task space and the null space of the Jacobian (which would not affect task-space position), and driving the robot with a weighted sum of the two.  However, this approach does not seek convergence to the desired task-space target and is still reliant on computing the pseudo-inverse Jacobian. \cite{calinon2010learning} and \cite{silverio2017learning} expand on this approach by projecting task-space constraints into joint space using IK, and then learning a joint-space policy that incorporates both task and joint space constraints, but this similarly relies on IK approximations and does not ensure convergence to an attractor.
 % FACT-CHECK: is this what Calinon 2009 and Silverio et al. 2017 are doing? They don't ensure convergence, right? TP-GMM never seems to address it ->CORRECT
-\cite{lee2014unifying} learns from demonstration in both joint and task space within the "thin-plate spline" trajectory warping framework, but does not propose a dynamical system for generating motions. \cite{hersch2008reaching} proposed an approach with similar properties to this desiderata, where two concurrent DS, one in task-space and one in joint-space, are modulated by enforcing kinematic coherence constraints to avoid singularities. The resulting DS avoids singularities through generalization of the pseudo-inverse approximations. However, because the two DS have their own unique attractors, the non-linear interaction between them imposed by the kinematic constraints does not ensure that the combined DS has a unique attractor. This gives rise to spurious attractors or cycles, and thus must be carefully tuned in order to avoid them. 
+\cite{lee2014unifying} learns from demonstration in both joint and task space within the "thin-plate spline" trajectory warping framework. % but does not propose a dynamical system for generating motions. 
+\cite{hersch2008reaching} proposed an approach with similar properties to this desiderata, where two concurrent DS, one in task-space and one in joint-space, are modulated by enforcing kinematic coherence constraints to avoid singularities. The resulting DS avoids singularities through generalization of the pseudo-inverse approximations. However, because the two DS have their own unique attractors, the non-linear interaction between them imposed by the kinematic constraints does not ensure that the combined DS has a unique attractor. This gives rise to spurious attractors or cycles, and thus must be carefully tuned in order to avoid them. 
 %Most recently, \cite{huang2016jointly} proposed an approach that learns a controller for playing table tennis by combining joint-space Dynamic Movement Primitives (DMP) \cite{schaal2006dynamic} to mimic a desired task-space racket swing.. \textcolor{red}{ must re-read this... I think they are doing something very similar... can remove if problematic}
 % Do DMPs count as learning joint space behaviors? If yes, I'm having a hard time differentiating huang2016 from us -> Yes they do
 
 %\subsection{Our Proposed Approach}
-In this work, we seek to devise an augmented \textbf{J}oint-space \textbf{T}ask-oriented \textbf{D}ynamical \textbf{S}ystem (JT-DS) that not only incorporates task-space attractors, but also avoids the problems generated by pseudo-inverse approximations. We specifically chose to focus on linear parameter-varying dynamical systems because they are fast to compute and thus allow a controller to quickly react in a changing environment, a capability that is further improved by our not needing to compute pseudo-inverses. Our dynamical system:
+In this work, we seek to devise an augmented \textbf{J}oint-space \textbf{T}ask-oriented \textbf{D}ynamical \textbf{S}ystem (JT-DS) that not only incorporates task-space attractors, but also avoids the problems generated by pseudo-inverse approximations. To approximate this DS, we further propose an algorithm to learn a set of \emph{behavior synergies}, each of which corresponds to a different provably stable behaviors in joint space, and modulates the use of these synergies throughout joint-space using a learned LPV system. We determine the scheduling parameters for the LPV by finding a \emph{lower-dimensional embedding} of the joint space, which accounts for the variation in the demonstrated motions, and then learning a policy in embedding space for combining our behavior synergies to accurately reconstruct the demonstrated trajectories. %We specifically chose to focus on linear parameter-varying dynamical systems because they are fast to compute and thus allow a controller to quickly react in a changing environment, a capability that is further improved by our not needing to compute pseudo-inverses. 
+Hence, our dynamical system:
 \begin{enumerate}[leftmargin=*]
 \item computes a \begin{bf}complex motion in joint-space\end{bf} that provably and asymptotically converges to a \begin{bf}task-space \end{bf} target.
-\item \textbf{avoids} the need for computing \textbf{pseudo-inverses}, and cleanly moves through kinematic ``singularities".
+%\item \textbf{avoids} the need for computing \textbf{pseudo-inverses}, and cleanly moves through kinematic ``singularities".
 \item is formulated such that complex \textbf{joint-space behaviors} can be \textbf{learned} from demonstrations in \textbf{synergy space}.
 \end{enumerate}
-In brief, our algorithm learns a set of \emph{behavior synergies}, each of which corresponds to a different provably stable behaviors in joint space, and modulates the use of these synergies throughout joint-space using a learned LPV system. We determine the scheduling parameters for the LPV by finding a \emph{lower-dimensional embedding} of the joint space, which accounts for the variation in the demonstrated motions, and then learning a policy in embedding space for combining our behavior synergies to accurately reconstruct the demonstrated trajectories.
 
-The most similar approach to our proposed DS is the Jacobian transpose (JT) control \cite{wolovich1984computational} method. JT control is an inverse kinematics method that yields a dynamical system in joint space $\dot{q} = f(q)$ which converges stably over time to a desired end-effector position $x^*$, without the need for pseudo-inverse computations. It shares some of our approach's advantages: fast computation and provable task-space stability. However, despite some previous work designing velocity adjustments by hand \cite{Shi2016}, this is, to the best of our knowledge the first work to employ a JT system to learn behaviors from demonstrations. 
+
+The most similar approach to our proposed DS is the Jacobian transpose (JT) control method \cite{wolovich1984computational} . The JT control is an IK method that yields a dynamical system in joint space %$\dot{q} = f(q)$ 
+which converges stably over time to a desired end-effector position, %$x^*$
+ without the need for pseudo-inverse computations. It shares some of our approach's advantages: fast computation and provable task-space stability. However, despite some previous work designing velocity adjustments by hand \cite{Shi2016}, this is, to the best of our knowledge the first work to employ a JT system to learn behaviors from demonstrations. 
 %while obeying the robots kinematic constraints.
 
 This paper is organized as follows. Section \ref{Sec:Prob} formalizes the problem. The proposed dynamical system is introduced in Section \ref{Sec:DS}. In Section \ref{Sec:Learning}, a probabilistic model is introduced to approximate the parameters of the dynamical system. In addition, a convex optimization problem is  formalized to estimate these parameters. In Section \ref{Sec:Exp} we provide a thorough validation of our proposed DS and learning approach. We finalize with a discussion in Section \ref{Sec:Dis}.
@@ -128,10 +140,10 @@ We wish to formulate a dynamical system $\dot{q} = f(q)$ which satisfies the fol
 \begin{enumerate}
 \item The dynamical system must be asymptotically stable\footnote{Unless otherwise specified, "stability" in this paper always refers to asymptotic stability within the workspace of the robot, and assumes no joint limits. We make no claim to proving global asymptotic stability, which is in fact impossible to achieve in a joint-constrained kinematic system.} with respect to a fixed task-space target $x^*$. This can be expressed by ensuring that the following Lyapunov function
 \begin{equation}
-V(q) = (H(q) - x^*)^TP(H(q) - x^*) 
+V(q) = (H(q) - x^*)^T(H(q) - x^*) 
 \label{eq:Lyp}
 \end{equation}
-is stable; i.e. $\dot{V}(q)<0 ~\forall q\in Q$ and $V(q)=0~ \forall q\in Q^*$. Where  $Q=\{q|q^i_{min} < q^i < q^i_{max},~\forall i\in \{1,\dots,d\}\}$ and $Q^*=\{q|H(q)=x^*\wedge q\in Q\}$. $P\in \mathbb{R}^{d\times d} $ is a symmetric and positive definite matrix. $V(.)$ can be thought of as a metric for the task-space distance-to-go.
+is stable; i.e. $\dot{V}(q)\leq 0 ~\forall q\in Q$ and $V(q)=0~ \forall q\in Q^*$. Where  $Q=\{q|q^i_{min} < q^i < q^i_{max},~\forall i\in \{1,\dots,d\}\}$ and $Q^*=\{q|H(q)=x^*\wedge q\in Q\}$. $P\in \mathbb{R}^{d\times d} $ is a symmetric and positive definite matrix. $V(.)$ can be thought of as a metric for the task-space distance-to-go.
 \item The dynamical system should encapsulate the desired joint-space behaviors such that the following metric is minimized
 \begin{equation}
 \vspace{-5pt}
@@ -142,23 +154,33 @@ e_{total} = \frac{1}{NT_n}\sum_{n=1}^N\sum_{t=0}^{T_n} \left \| \dot{q}_{d; t,n}
 \end{enumerate}
 
 %Lastly, we wish to capture joint-space behaviors in our dynamical system.
-We make two decisions by the choice of behavior error metric \eqref{eq:optim_error}. First, the metric implicitly suggests that behaviors are defined by expert motions of the behavior, and that fulfilling a behavior means moving similarly to the experts' motion. Second, the type of feature of the trajectory that is being minimized is important. If instead the error feature were joint position distance $\sum_i\left \| q_{d,i} - q_i \right \|$ where $q_d$ is a vector of demonstrated positions, then executing a "behavior" would imply mimicking position, but not velocity. Alternatively, if the error feature were joint velocity direction $\sum_i \left | \frac{\dot{q}_{d,i}}{\left \| \dot{q}_{d,i} \right \|} - \frac{\dot{q}_i}{\left \| \dot{q}_i \right \|} \right |$ mimicking a "behavior" would involve following the motion profile, but not the motion's speed (so for example a slap and a push would exhibit the same behavior). By choosing the combined direction and magnitude of the joint velocity as the error, we are choosing to mimic the magnitude and direction of the motion, which \cite{gielniak2010stylized} suggests is visually most similar to the human definition of "joint motion style".
+
+%If instead of \eqref{eq:optim_error}, the error feature was the joint position distance $\sum_i\left \| q_{d,i} - q_i \right \|$ where $q_d$ is a vector of demonstrated positions, then executing a "behavior" would imply mimicking position, but not velocity. Alternatively, if the error feature was the joint velocity direction $\sum_i \left | \frac{\dot{q}_{d,i}}{\left \| \dot{q}_{d,i} \right \|} - \frac{\dot{q}_i}{\left \| \dot{q}_i \right \|} \right |$ mimicking a "behavior" would involve following the motion profile, but not the motion's speed (so for example a slap and a push would exhibit the same behavior). By choosing the combined direction and magnitude of the joint velocity as the error, we are choosing to mimic the magnitude and direction of the motion, which \cite{gielniak2010stylized} suggests is visually most similar to the human definition of "joint motion style".
+
+The error metric \eqref{eq:optim_error} is advantageous in a way that it mimics the magnitude and direction of the demonstrated motions. Hence, as suggested by \cite{gielniak2010stylized}, it is visually most similar to the human definition of "joint motion style".
+
+% ways. First, it implicitly suggests that behaviors are defined by expert motions of the behavior
+
+
+%We make two decisions by the choice of behavior error metric \eqref{eq:optim_error}. First, the metric implicitly suggests that behaviors are defined by expert motions of the behavior, and that fulfilling a behavior means moving similarly to the experts' motion. Second, the type of feature of the trajectory that is being minimized is important. If instead the error feature were joint position distance $\sum_i\left \| q_{d,i} - q_i \right \|$ where $q_d$ is a vector of demonstrated positions, then executing a "behavior" would imply mimicking position, but not velocity. Alternatively, if the error feature were joint velocity direction $\sum_i \left | \frac{\dot{q}_{d,i}}{\left \| \dot{q}_{d,i} \right \|} - \frac{\dot{q}_i}{\left \| \dot{q}_i \right \|} \right |$ mimicking a "behavior" would involve following the motion profile, but not the motion's speed (so for example a slap and a push would exhibit the same behavior). By choosing the combined direction and magnitude of the joint velocity as the error, we are choosing to mimic the magnitude and direction of the motion, which \cite{gielniak2010stylized} suggests is visually most similar to the human definition of "joint motion style".
 \section{Augmented \textbf{J}oint-Space \textbf{T}ask-oriented \textbf{D}ynamical \textbf{S}ystem} \label{Sec:DS}
 \label{sec:proposed_system}
 We propose the following augmented Joint-space Task-oriented Dynamical System (JTDS) to achieve the two criteria presented in \eqref{eq:Lyp} and \eqref{eq:optim_error}.
 \begin{equation}
 \label{eq:ds}
-\dot{q} = f(q) = -\mathcal{A}(q)J^T(q)P(H(q) - x^*)
+\dot{q} = f(q) = -\mathcal{A}(q)J^T(q)(H(q) - x^*)
 \end{equation}
-where $P\in \mathbb{R}^{d\times d}$, and $\mathcal{A}(q)\in \mathbb{R}^{m\times m}$ is constructed using the Linear Parameter Varying system paradigm \cite{emedi2016fixed,7439839}, where the overall $\mathcal{A}(q)$ is a changing linear combination of constant  matrices, each of which encodes a local joint-space synergy. 
+where  $\mathcal{A}(q)\in \mathbb{R}^{m\times m}$ is constructed using the LPV system paradigm \cite{emedi2016fixed,7439839}, where the overall $\mathcal{A}(q)$ is a changing linear combination of constant  matrices, each of which encodes a local joint-space synergy. 
 \begin{equation}
 \label{eq:A_def}
 \mathcal{A}(q) = \sum_{k=1}^{K}\theta_k(q)A_k 
 \end{equation}
-where $A_k\in \mathbb{R}^{m\times m} $ are the different synergies and $\theta_k(q)\in \mathbb{R}^{1}~\forall k\in\{1,\dots,K\} $ are the scheduling parameters\footnote{The scheduling parameters can be a function of time $t$, the states of the
-system $q $ or external signals $d(t)$, i.e. $\theta_k (t, q(t), d(t))$. In this paper, we only consider it as a function of the states of the system. It is noteworthy that the presented stability proof can easily be extended for $\theta_k (t, q(t), d(t))$.} modulating each local synergy through time as well as space. Based on \eqref{eq:ds}, one can utilize different synergies in different regions, and compose them to create a more complex multi-behavior motion.
+where $A_k\in \mathbb{R}^{m\times m} $ are the different synergies and $\theta_k(q)\in \mathbb{R}^{1}~\forall k\in\{1,\dots,K\} $ are the scheduling parameters\footnote{%The scheduling parameters can be a function of time $t$, the states of the
+%system $q $ or external signals $d(t)$, i.e. $\theta_k (t, q(t), d(t))$. In this paper, we only consider it as a function of the states of the system. 
+It is noteworthy that the presented stability proof can easily be extended for $\theta_k (t, q(t), d(t))$, where $d(t)$ is an external signal.} modulating each local synergy through time as well as space. Based on \eqref{eq:ds}, one can utilize different synergies in different regions, and compose them to create a more complex multi-behavior motion.
 
-Before proving that the proposed dynamical system satisfies all of the criteria, let us establish an intuitive understanding of the components of the system. While it may seem daunting at first, each of the elements has a straightforward explanation. One can intuitively understand the control law as follows: $(H(q) - x^*)$ denotes the position error w.r.t. the task target (warped according to P), and by multiplying that error by the transposed Jacobian $J^T(q)$, the error is projected into joint space (similar to Jacobian transpose control \cite{wolovich1984computational,sciavicco1988solution}). The positive definite matrix $\mathcal{A}(q)$ warps the resulting joint-space velocity; Fig. \ref{fig:A_example} illustrates the effects of  $\mathcal{A}(q)$ on the generated motion. Thus the controller can be thought of as a proportional controller in joint space. Lastly, we refer to the $P$ matrix as the \begin{bf} task augmentation matrix \end{bf}(as it augments the task error, and thus the direction of motion) and $\mathcal{A}(q)$ as the \begin{bf} joint augmentation matrix \end{bf} (as it augments the outputted joint velocities).
+Before proving that the proposed dynamical system satisfies all of the criteria, let us establish an intuitive understanding of the components of the system. While it may seem daunting at first, each of the elements has a straightforward explanation. One can intuitively understand the control law as follows: $(H(q) - x^*)$ denotes the position error w.r.t. the task target and by multiplying that error by the transposed Jacobian $J^T(q)$, the error is projected into joint space (similar to Jacobian transpose control \cite{wolovich1984computational,sciavicco1988solution}). The positive definite matrix $\mathcal{A}(q)$ warps the resulting joint-space velocity; Fig. \ref{fig:A_example} illustrates the effects of  $\mathcal{A}(q)$ on the generated motion. Thus the controller can be thought of as a proportional controller in joint space. Lastly, we refer to %the $P$ matrix as the \begin{bf} task augmentation matrix \end{bf}(as it augments the task error, and thus the direction of motion) and 
+$\mathcal{A}(q)$ as the \begin{bf} joint augmentation matrix \end{bf} as it augments the outputted joint velocities.
 %When using each of these matrices, the controller will augment the joint velocities to favor using one joint more than the others (in $A_1$ the hip, in $A_2$ the knee, and in $A_3$ the ankle). This ''augmentation" is simply a matrix multiplication ($A\dot{q}_{raw}$). The components of the outputted velocity are linear combinations of the ''raw" un-augmented joint velocities, where the entries in $A$ define the precise ratios. We can see the joint positions resulting from our experiment over time on the right side of Fig. \ref{fig:A_example}. Each motion tends to use its ``primary" joint most (the joint where the velocity is heavily scaled up) and uses the other available joints to compensate for what the primary joint cannot do. For example, Motion 1 starts out using mostly the hip, but once moving the hip no longer brings the system closer to the goal, the system uses the other joints to fold inwards and reach the goal. Ultimately, all three controllers converge on their target, but each has a different path through joint space depending on which joints we choose to emphasize in the behavior matrix $A$. The off-diagonal terms of $A$ have a more nuanced contribution; e.g. $A_{1,2}$ defines the amount that elbow velocity should be converted into hip velocity.
 
 \begin{figure}[t]
@@ -167,34 +189,27 @@ Before proving that the proposed dynamical system satisfies all of the criteria,
 \caption{Three example 3-DOF motions (A, B, C), each with a different constant joint augmentation matrix $\mathcal{A}(q)$ (emphasizing the hip, knee, and ankle respectively), A: $\mathcal{A}(q)=diag(5,1,1) $, B: $\mathcal{A}(q)=diag(1,5,1)$, and C: $\mathcal{A}(q)=diag(1,1,5)$. On the left, the task-space traces of each motion. On the right, the time-scaled joint positions of each joint. Each motion tends to use its ``primary" joint most and uses the other available joints to compensate for what the primary joint cannot do.}
 \label{fig:A_example}
 \vspace{-15pt}
-\end{figure}s
+\end{figure}
 
 
 \newtheorem{prop1}{Proposition}
 \begin{prop1}
 \label{prop:stability}
-The flow of motion generated by the dynamical system \eqref{eq:ds} accomplishes criteria (I) if \eqref{eq:ds} meets the following constraints. 
+The flow of motion generated by the dynamical system \eqref{eq:ds} accomplishes criteria (I) if $ \forall k \in \{1,\dots,K\}  $ \eqref{eq:ds} meets the following constraints. 
 
-\begin{subequations}
-\vspace{-5pt}
 \begin{equation}
 \label{eq:first_criteria_stability}
 \begin{cases}
 \begin{split}
-&0 \prec P &\\
-&0 \prec A_k & &~\\
-& 0 \leq \theta_k(\cdot) & &\\
-%    & 0 \preceq and &\forall q \in Q\\
+ & 0 \prec A_k, & ~~~~ 0 \leq \theta_k(\cdot) \\
 \end{split}
-\forall k \in \{1,\dots,K\} 
 \end{cases}
 \end{equation}    
-\end{subequations}\\
 \end{prop1}
-\vspace{-10pt}
-\textbf{Proof}: See Appendix \ref{appendix:stability}. $\blacksquare$\\ 
 
-It is worth mentioning that the constraints in \eqref{eq:first_criteria_stability}  only ensure that JT-DS \eqref{eq:ds} asymptotically converges to the desired target position $x^*$ if the robot does not have kinematic joint limits. If we introduce kinematic joint limits, then it's possible we may find $\exists q\in Q-Q^* $ such that both $\dot{V}(q)=0$ and $H(q) \neq x^*$. This happens if the target position is kinematically unreachable; i.e. for each task-space axis $i$,  $\big ( J^T(q)P(H(q)-x^*) \big)_i = 0 $ (meaning that moving joints increases the value of \eqref{eq:Lyp}), or the joint has reached a kinematic limit. In this case, the proof in Appendix \ref{appendix:stability} shows instead that the system converges in the sense of Lyapunov, meaning that its distance to the attractor is always monotonically decreasing.
+\textbf{Proof}: See Appendix \ref{appendix:stability}. $\blacksquare$
+
+%It is worth mentioning that the constraints in \eqref{eq:first_criteria_stability}  only ensure that JT-DS \eqref{eq:ds} asymptotically converges to the desired target position $x^*$ if the robot does not have kinematic joint limits. If we introduce kinematic joint limits, then it's possible we may find $\exists q\in Q-Q^* $ such that both $\dot{V}(q)=0$ and $H(q) \neq x^*$. This happens if the target position is kinematically unreachable; i.e. for each task-space axis $i$,  $\big ( J^T(q)P(H(q)-x^*) \big)_i = 0 $ (meaning that moving joints increases the value of \eqref{eq:Lyp}), or the joint has reached a kinematic limit. In this case, the proof in Appendix \ref{appendix:stability} shows instead that the system converges in the sense of Lyapunov, meaning that its distance to the attractor is always monotonically decreasing.
 
 Criterion (II) (i.e. encoding specific joint-space behaviors) is achieved by embedding the desired dynamics in the matrices $A_k(q)~ \forall k \in\{1,\dots,K\}$. We describe in the next section an approach to automatically learn these matrices from demonstrated data. 
 
@@ -206,7 +221,7 @@ Criterion (II) (i.e. encoding specific joint-space behaviors) is achieved by emb
 \section{Learning \textbf{J}oint-Space \textbf{T}ask-oriented \textbf{D}ynamical \textbf{S}ystem in Synergy Space} 
 \label{Sec:Learning}
 
-The behavior of the JT-DS algorithm can be best understood through the lens of synergy control \cite{petrivc2013muscle}. In robotic synergy control, a robot's movements can be decomposed into a small number of synergies: principal components of the joint-space that are sufficient to accurately recreate the desired robotic behaviors. In our case, the synergies are represented by $A_1, A_2, \dots, A_k$, and $\mathcal{A}(q)$ represents the resulting motion constructed from a superposition of different synergies (through \eqref{eq:ds}). 
+The behavior of the JT-DS algorithm can be best understood through the lens of synergy control \cite{7954741}. In robotic synergy control, a robot's movements can be decomposed into a small number of synergies: principal components of the joint-space that are sufficient to accurately recreate the desired robotic behaviors. In our case, the synergies are represented by $A_1, A_2, \dots, A_k$, and $\mathcal{A}(q)$ represents the resulting motion constructed from a superposition of different synergies (through \eqref{eq:ds}). 
 
 A central question becomes, how to modulate the synergies in different regions to yield our desired behavior? First, we assume that our desired behavior can be efficiently described\footnote{Given some original space $A$ and some behavior policy $\pi_A(a)$ in $A$, we say that an embedding $\phi(\cdot)$ and embedding space $B: \{b = \phi(a) | a \in A\}$ "efficiently describe" $\pi_A$ if there exists some policy $\pi_B(b)$ in $B$ such that we can deterministically reconstruct $\pi_A(a)$ given $\pi_B(\phi(a))$} using a sub-manifold of the joint-space, called the \emph{embedding space}. We would like to define the robot's policy in embedding space such that in different regions of the space, we will prioritize different synergies. We are thus left with three problems: finding an underlying synergy-space $Z$ in which the behavior can be accurately controlled (defined by a mapping $\phi: Q \rightarrow Z$), finding a policy for modulating the synergies in different regions of the synergy space (defined by $\theta_k(q)~\forall k\in\{1,\dots,K\}$), and finding parameters for the synergies themselves (defined by $A_k~\forall k\in\{1,\dots,K\}$). Our choice of parameters must also obey the constraints laid out in \eqref{eq:first_criteria_stability}. We propose the following procedure:
 
@@ -252,11 +267,12 @@ Intuitively, each ``synergy region" in synergy space is defined by a Gaussian di
 &\underset{A_1, \dots, A_K}{\text{min}} 
 \sum_{n=1}^N\sum_{t=0}^{T_n} \left \| \dot{q}_{t,n} - f(q_{t,n}) \right \| \\
 & \text{subject to}&\\
-&  0 \preceq A_k, \; \forall k \in \{1, \dots, K\}. &
+&  0 \prec A_k, \; \forall k \in \{1, \dots, K\}. &
 \end{aligned}
 \label{eq:opt}
 \end{equation}
-where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \eqref{eq:ds} with \eqref{eq:A}, and $x^*_{n}$ is defined as the endpoint of the $ n^{\text{th}} $ demonstrated trajectory.
+where $f(q_{t,n})$ is calculated by %combining our dynamical system formulation
+ \eqref{eq:ds} with \eqref{eq:A}, and $x^*_{n}$ is defined as the endpoint of the $ n^{\text{th}} $ demonstrated trajectory.
 
 
 
@@ -325,7 +341,7 @@ where $f(q_{t,n})$ is calculated by combining our dynamical system formulation \
     \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1467$)}} & PCA & \textbf{2} & 6 $\pm$ (2.357) & \textbf{ 0.053 $\pm$ (0.010) } & \cellcolor{blue!10} 0.105 $\pm$ (0.046) \\	
 	& K-PCA ($\sigma_{opt} = 1.769$) & 3.6 $\pm$ (0.516) & \textbf{5.3 $\pm$ (2.452)} & 0.055 $\pm$ (0.018) & \cellcolor{blue!15} 0.071 $\pm$ (0.010)   \\ \hline\hline
 \end{tabular}}
-      \captionof{table}{\scriptsize Performance Comparison of Learning Approach with different Dim. Red. Schemes. We present the \texttt{mean(std)} for the optimal $\delta$, $K$ and joint-velocity RMSE on training and testing set, found for every learning scheme over 10 runs.\label{tab:learning}}
+      \captionof{table}{\scriptsize Performance Comparison of Learning Approach with different Dim. Red. Schemes. We present the \texttt{mean(std)} for the optimal $\delta$, $K$ and joint-velocity RMSE on training and testing set, found for every learning scheme over 10 runs. $M = \sum_{n=1}^{N}T_n$.\label{tab:learning}}
     \end{minipage}
     \vspace{-20pt}
 \end{figure*}
@@ -338,10 +354,13 @@ To evaluate the proposed JT-DS learning algorithm we collected kinesthetic demon
 \item \textit{(1-2) Tennis strokes:} For these particular behaviors, we guide the robot to perform a forehand and backhand stroke.  
 \item \textit{(3-5) Pouring motions:} We guide the robot to pour chips in a bowl with three different joint-space behaviors. The first is without an obstacle in the workspace. The second is with an obstacle in the upper hemisphere of the workspace, where the human is seen folding the elbow and lowering the shoulder of the robot arm to avoid the obstacle. The third instance is with an obstacle in the lower hemisphere, and now the human raises the shoulder to avoid it.
 \item \textit{(6) Footstep-like motion:} We demonstrate a footstep motion which begins with a straight leg, moving through a singularity, and finally bringing the knee up.
-\item \textit{(7) Singularity motions:} Movement was constrained to the boundary of the workspace by fixing $ q^i=0~\forall i\in\{3,\dots,7\}$, the second joint was fixed to $q^2\in\{10^\circ,20^\circ,\dots,100^\circ\}$, and only the first joint was moved by a human. This restricted the motion to a series of arcs of different radii along the robot's motion boundary. 
+\item \textit{(7) Singularity motions:} Movement was constrained to the boundary of the workspace by fixing $ q^i=0~\forall i\in\{3,\dots,7\}$, the second joint was fixed to $q^2\in\{10^\circ,20^\circ,\dots,100^\circ\}$, and only the first joint was moved by a human. This restricted the motion to a series of arcs of different radii along the robot's motion boundary.  
 \end{itemize}
 
-\noindent For each behavior, we collected $N$ demonstrations consisting of ($14$-D) time-series $D=\{\{ q_{t,n},\dot{q}_{t,n} \}_{t=1,\dots, T_n}\}_{n=1,\dots,N}$ where each demonstration has different durations $T_n$. We also record the final task-space configurations ${x^*}^{(n)}$, which we assume is the attractor in task-space. The recordings are collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $N$ and samples per \textit{dataset} $M = \sum_{n=1}^{N}T_n$ are provided in Table \ref{tab:learning}. By performing our evaluation on all these datasets, we seek to: 
+%\noindent For each behavior, we collected $N$ demonstrations consisting of ($14$-D) time-series $D=\{\{ q_{t,n},\dot{q}_{t,n} \}_{t=1,\dots, T_n}\}_{n=1,\dots,N}$ where each demonstration has different durations $T_n$. We also record the final task-space configurations ${x^*}^{(n)}$, which we assume is the attractor in task-space. The recordings are collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. The total number of demonstrations $N$ and samples per \textit{dataset} $M = \sum_{n=1}^{N}T_n$ are provided in Table \ref{tab:learning}. By performing our evaluation on all these datasets, we seek to: 
+
+\noindent   The recordings are collected at a rate of 500 Hz. However, our learning approach does not require such a dense representation of the trajectories, hence we down-sample them to 25 Hz. By performing our evaluation on all these datasets, we seek to: 
+
 \begin{enumerate}[leftmargin=*]
 \item Verify that the learned \textit{behavior synergies} are mimicking the demonstrated joint-space behaviors and generalize them to new initial joint configurations.
 \item Analyze the role of dimensionality reduction in our proposed approach and further find the method which yields the best trade-off between accuracy and model complexity; i.e. the least number of dimensions $\delta$ to represent our activation function $\theta(q)$ and the least number of local behavior synergies $K$.
@@ -357,7 +376,7 @@ $\sigma_{min} = \frac{1}{\kappa\sqrt{2}} \underset{i \in M,j\in M}{\max}\{||q_i 
 \item \textit{$K$ for GMM:} We choose the optimal number of components $K$, by evaluating and selecting the best resulting model using the Bayesian Information Criterion (BIC) \cite{Bishop:PRM:2006}. Typically, one chooses the optimal $K$ manually, by visually identifying the point at which the BIC curve produced from $K_{range}$ stops changing or plateaus. To automate this process, we devised an approach which selects the optimal $K$ as the one which yields the highest inflection point on the second order derivative of the BIC curve.
 \end{enumerate}
 
-Once these optimal hyper-parameters are estimated for each fold, we solve for the definite convex optimization problem in order to find our synergy matrices $A$'s which best minimize the objective function \eqref{eq:opt}. We then select the initial joint configuration $q_0$ and target in task-space $x^*$ from each training/testing dataset, simulate the joint-space trajectories $\{\dot{q_1},\dots,\dot{q_T}\}$, with our learned $\mathcal{A}(q)$, and compute the joint-velocity RMSE between these simulations and the training/testing trajectories, as reported in Table \ref{tab:learning} 
+Once these optimal hyper-parameters are estimated for each fold, we solve for the convex optimization problem in order to find our synergy matrices $A$'s which best minimize the objective function \eqref{eq:opt}. We then select the initial joint configuration $q_0$ and target in task-space $x^*$ from each training/testing dataset, simulate the joint-space trajectories $\{\dot{q_1},\dots,\dot{q_T}\}$, with our learned $\mathcal{A}(q)$, and compute the joint-velocity RMSE between these simulations and the training/testing trajectories, as reported in Table \ref{tab:learning} 
 
 As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to represent our activation functions $\theta(q)$ yields better generalization capabilities than the contrary. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learnt without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the number of $K$ needed to represent the motion. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations. 
 
@@ -397,7 +416,7 @@ The robot is controlled on the joint position level (linearly interpolating from
 We now seek to elucidate the distinctive properties of our JT-DS model by comparing its performance to a DS-based Cartesian motion generator + IK solver approach for behaviors \textit{(5-7)}. For the Cartesian motion generator we use the SEDS approach \cite{khansari2011learning} which learns an asymptotically stable DS in Cartesian space from demonstrations. We then generate joint trajectories through a damped least square IK solver. From herein we refer to this approach as SEDS+IK.
 
 \subsubsection{Following Desired Joint and Task-Based Behaviors}
-We compare tracking capabilities of our JT-DS method with those of SEDS+IK for behaviors \textit{(5)} and \textit{(6)}. In Fig. \ref{fig:snapshot:a} and \ref{fig:snapshot:b} we can qualitatively see the difference between these two approaches for behavior \textit{(5)}. The JT-DS algorithm mimicked the joint-space behavior of the demonstration (e.g. folding the elbow, raising the shoulder), successfully avoiding the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS+IK only learned the demonstrated behavior in task-space, it does not have the capabilities of constraining motion in joint-space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as we would expect), but did ultimately converge to its target position. For the foot-step behavior \textit{(6)} JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:snapshot:c} and \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
+We compare tracking capabilities of our JT-DS method with those of SEDS+IK for behaviors \textit{(5)} and \textit{(6)}. In Fig. \ref{fig:snapshot:a} and \ref{fig:snapshot:b} we can qualitatively see the difference between these two approaches for behavior \textit{(5)}. The JT-DS algorithm mimicked the joint-space behavior of the demonstration (e.g. folding the elbow, raising the shoulder), successfully avoiding the obstacle while still converging to the desired Cartesian position. Meanwhile, SEDS+IK only learned the demonstrated behavior in task-space, it does not have the capabilities of constraining motion in joint-space. This ultimately led to one of its joints colliding with the obstacle. It should be noted that the JT-DS motion did not follow the demonstrations in task-space very closely (as expected), but did ultimately converge to its target position. For the foot-step behavior \textit{(6)} JT-DS followed the demonstrations closely, while SEDS became unstable in the singularity (Fig. \ref{fig:snapshot:c} and \ref{fig:foot}). This demonstrates the JT-DS algorithm's ability to move cleanly in and out of singularities. %, overcoming the Achilles heel of equivalent Cartesian-based motion generators.
 
 
 \begin{figure}[t]
@@ -413,7 +432,7 @@ We compare tracking capabilities of our JT-DS method with those of SEDS+IK for b
 	\caption{End-effector trajectories for the footstep motion in Cartesian space. The JT-DS motion moves smoothly closely resembles the demonstrated trajectories. On the other hand, the SEDS-based Cartesian motion generator (whose values here are simulated because they can not physically executable) quickly becomes unstable, as evidenced by the dotted paths starting on the left side and abruptly disappearing. \label{fig:foot}}
 	\vspace{-10pt}
 	\end{minipage}
-	\vspace{-10pt}
+	\vspace{-20pt}
 \end{figure}
 
 
@@ -442,64 +461,58 @@ One of the main advantages of the proposed DS is its ability to generate accurat
 \label{Sec:Dis}
 In this paper, we have presented a dynamical system in joint space that is provably Lyapunov-stable in task space and which replicates demonstrated joint-space behaviors. The desired motions are fast to compute, and smoothly handle singularities by avoiding the pseudo-inverse Jacobian. We showed the system's ability to learn different joint-space behaviors on a redundant robotic platform.
 
-One of the most important points when validating a learning from demonstration method is to evaluate the system's behavior away from demonstrations. When the current joint configuration is far from any of the local synergy regions, computing the scheduling parameters $\theta_k(\cdot)$ becomes numerically infeasible (all the Gaussians in \eqref{eq:A} $\rightarrow 0$), and so $\sum\limits_{k=1}^{K}\frac{A_k}{K}$ is used to move the robot, which is still guaranteed to move towards the target. Moreover, in overlapping local regions where multiple $A_k$'s might be in conflict, the presented system compromises between them while still stably converging to the target. The reason for this is that rather than ``determining" the velocity of the system, our $\mathcal{A}$ matrix only warps it. This means that adding multiple ``conflicting" synergies together amounts to nothing more than repeatedly warping the velocity, and still maintains the original stability property. 
+One of the most important points when validating a learning from demonstration method is to evaluate the system's behavior away from demonstrations. When the current joint configuration is far from any of the local synergy regions, computing the scheduling parameters $\theta_k(\cdot)$ becomes numerically infeasible (all the Gaussians in \eqref{eq:A} $\rightarrow 0$), and so $\frac{1}{K}\sum\limits_{k=1}^{K}A_k$ is used to move the robot, which is still guaranteed to move towards the target. Moreover, in overlapping local regions where multiple $A_k$'s might be in conflict, the presented system compromises between them while still stably converging to the target. The reason for this is that rather than ``determining" the velocity of the system, our $\mathcal{A}$ matrix only warps it. This means that adding multiple ``conflicting" synergies together amounts to nothing more than repeatedly warping the velocity, and still maintains the original stability property. 
 
-One of the major advantages of the proposed dynamical system is that it avoids the undesirable effects of traditional Inverse Kinematic (IK) solvers. Fast dynamical motions require not only fast and accurate motion planning, but also precise IK mapping, which is not practically feasible. By utilizing the JT-DS method, even a fast system could reactively generate stable motions to its target.
+%One of the major advantages of the proposed dynamical system is that it avoids the undesirable effects of traditional Inverse Kinematic (IK) solvers. Fast dynamical motions require not only fast and accurate motion planning, but also precise IK mapping, which is not practically feasible. By utilizing the JT-DS method, even a fast system could reactively generate stable motions to its target.
 
 Since we learn a lower-dimensional embedding space $Z := \{\phi(q) ~|~q \in Q\}$, which we suggest provides a better representation for the learned joint behaviors, a careful reader might wonder: why not define a motion policy $\pi_Z$ directly in $Z$-space and then map the learned policy back out into joint space using the inverse embedding\footnote{Such an inverse is trivial to extract in the case where $\phi$ is obtained through PCA.} $\phi^{-1}(z)$? The answer is that we would lose any guarantee of stability with respect to a target attractor $x_t^*$. By construction, $\phi$ maps from a joint-position vector of size $d$ to a low-dimensional vector of size $u<d$. Thus the inverse $\phi^{-1}$ must be of less than full rank, so the resulting $\mathcal{A}$ matrix (derived as in \eqref{eq:ds}) will also be of less than full rank, and thus no longer positive definite. This means that our controller no longer provably converges to the attractor (since our convergence proof no longer holds). Intuitively, this is because any policy defined in a lower-dimensional space than the actuation space will forfeit certain degrees of freedom, and thus may not be able to span the configuration space. Instead, we use the embedding space to modulate synergies defined in joint space, and which we can thus guarantee will be positive definite and lead us to convergence to the target.
 
 \begin{figure}[t]
-	\begin{subfigure}[t]{\linewidth}
+%	\begin{subfigure}[t]{\linewidth}
 		\includegraphics[width=\linewidth]{Pic/cropped_Sing_1.pdf}
-		\caption{ }
-		\label{fig:Sin}
-	\end{subfigure}\\
-	\begin{subfigure}[t]{\linewidth}
-		\includegraphics[width=\linewidth]{Pic/cropped_Sing_2.pdf}
-		\caption{ }
-		\label{fig:Det}
-	\end{subfigure}\\
-	\caption{The experiment generated $K=3$ Gaussian components. As the first joint is the only joint which was not fixed during the demonstration, the learned augmentation matrices had only one nonzero entry $A_k(1,1)\neq0~\forall k\in \{1, 2, 3\} $.  In (a), the end-effector positions for the demonstrations and executed motions are plotted in Cartesian space. The JT-DS trajectory was generated closed-loop, while the SEDS trajectory was generated open-loop (otherwise it would be unstable). In (b), the determinants of the Jacobian $(|J(q)J^T(q)|)$ for all $10$ JT-DS motions are superimposed. Due to sensory noise, the determinants are not exactly zero, but are very close.  }
-	\vspace{-10pt}
+%		\caption{ }
+%	\end{subfigure}\\
+%	\begin{subfigure}[t]{\linewidth} %
+%		\includegraphics[width=\linewidth]{Pic/cropped_Sing_2.pdf}
+%		\caption{ }
+%		\label{fig:Det}
+%	\end{subfigure}\\
+	\caption{The experiment generated $K=3$ Gaussian components. As the first joint is the only joint which was not fixed during the demonstration, the learned augmentation matrices had only one nonzero entry $A_k(1,1)\neq0~\forall k\in \{1, 2, 3\} $.  In (a), the end-effector positions for the demonstrations and executed motions are plotted in Cartesian space. The JT-DS trajectory was generated closed-loop, while the SEDS trajectory was generated open-loop (otherwise it would be unstable).} %In (b), the determinants of the Jacobian $(|J(q)J^T(q)|)$ for all $10$ JT-DS motions are superimposed. Due to sensory noise, the determinants are not exactly zero, but are very close.  }
+			\label{fig:Sin}
+	\vspace{-20pt}
 \end{figure}
 
 
-A drawback of the approach is that the controller is not guaranteed to converge to the task-space target $x^*$ even if a path to a valid configuration $q^*$ exists. As mentioned in Sec. \ref{Sec:DS}, the controller will always minimize (or keep even) the warped distance to goal $(H(q) - x^*)^TP(H(q) - x^*)$, and in the process may get stuck at its kinematic joint limits. If the only valid trajectory to reach the goal requires that we temporarily move away from the target (and increase the warped distance-to-goal), this controller will not find that trajectory. There is a simple fix, however: rather than providing a single task-space objective $x^*$, provide a series of sequential task-space objectives $\begin{bf}x^*\end{bf} = \{ x^*_0, x^*_1, \dots, x^*_n\}$ and have the controller move to each in succession. The smaller subtrajectories give the robot less of an opportunity to deviate from the learned (valid) joint behavior and thus help it avoid being caught by the robot's joint limits. Further, specifying a sequence of task-space targets provides greater control over the robot's task-space trajectory while still exhibiting the learned joint-space behaviors.
+%A drawback of the approach is that the controller is not guaranteed to converge to the task-space target $x^*$ even if a path to a valid configuration $q^*$ exists. As mentioned in Sec. \ref{Sec:DS}, the controller will always minimize (or keep even) the warped distance to goal $(H(q) - x^*)^T(H(q) - x^*)$, and in the process may get stuck at its kinematic joint limits. If the only valid trajectory to reach the goal requires that we temporarily move away from the target (and increase the warped distance-to-goal), this controller will not find that trajectory. There is a simple fix, however: rather than providing a single task-space objective $x^*$, provide a series of sequential task-space objectives $\begin{bf}x^*\end{bf} = \{ x^*_0, x^*_1, \dots, x^*_n\}$ and have the controller move to each in succession. The smaller subtrajectories give the robot less of an opportunity to deviate from the learned (valid) joint behavior and thus help it avoid being caught by the robot's joint limits. Further, specifying a sequence of task-space targets provides greater control over the robot's task-space trajectory while still exhibiting the learned joint-space behaviors.
 
-One application that we have discussed for this algorithm is obstacle avoidance. In an environment with static obstacles, the system would, through demonstration, learn joint-space behaviors that avoid those obstacles. One can compare this form of joint-space obstacle avoidance with other methods from the literature \cite{sciavicco1988solution,petrivc2013smooth}. The main difference is that these previous methods require explicit knowledge of the obstacles' position, whereas our algorithm learns the obstacle positions only implicitly by learning motions that avoid those positions. This lack of explicit obstacle location can be an advantage: encoding obstacles' geometry can be expensive and cumbersome. However, it is also a drawback: without knowing the exact location of obstacles, the algorithm cannot be guaranteed to avoid collisions, especially away from demonstrations.
+Finally, as the proposed DS might get stuck at its kinematic joint limits, we are currently working on improving the performance of the proposed DS, by learning its parameters wrt. the kinematic constraints. In this way, we can ensure that the performance of the DS is kinematically feasible for the robot to  follow.
 
-\footnotesize
+%One application that we have discussed for this algorithm is obstacle avoidance. In an environment with static obstacles, the system would, through demonstration, learn joint-space behaviors that avoid those obstacles. One can compare this form of joint-space obstacle avoidance with other methods from the literature \cite{sciavicco1988solution,petrivc2013smooth}. The main difference is that these previous methods require explicit knowledge of the obstacles' position, whereas our algorithm learns the obstacle positions only implicitly by learning motions that avoid those positions. This lack of explicit obstacle location can be an advantage: encoding obstacles' geometry can be expensive and cumbersome. However, it is also a drawback: without knowing the exact location of obstacles, the algorithm cannot be guaranteed to avoid collisions, especially away from demonstrations.
+
+{\footnotesize
 \appendices
 \section{Proving Stability of the Dynamical System}
 \label{appendix:stability}
-We wish to prove Proposition \ref{prop:stability}, that is, that JT-DS \eqref{eq:ds} (reproduced below)
-\begin{equation*}
-\dot{q} = f(q) = -\mathcal{A}(q)J^T(q)P(H(q) - x^*)
-\end{equation*}
-accomplishes criterion (I), where $\mathcal{A}(q)$ is positive definite, and $P$ is positive definite.
-\newtheorem{theorem}{Theorem}[section]
-\begin{theorem}[Proof of Lyapunov Stability]
+%We wish to prove Proposition \ref{prop:stability}, that is, that JT-DS \eqref{eq:ds} (reproduced below)
+%\begin{equation*}
+%\dot{q} = f(q) = -\mathcal{A}(q)J^T(q)P(H(q) - x^*)
+%\end{equation*}
+%accomplishes criterion (I), where $\mathcal{A}(q)$ is positive definite, and $P$ is positive definite.
+%\newtheorem{theorem}{Theorem}[section]
+%\begin{theorem}[Proof of Lyapunov Stability]
 JT-DS \eqref{eq:ds} is asymptotically stable with respect to the Lyapunov candidate
-\[ V(q) = \frac{1}{2}(H(q) - x^*)^TP(H(q) - x^*) \]
-That is, 
+\[ V(q) = \frac{1}{2}(H(q) - x^*)^T(H(q) - x^*) \]
+That is, $ 0 \prec V(q),~ \forall q \neq q^*$ and $ V(q^*) = 0 $. Where $q^*$ is any joint configuration such that $H(q^*) = x^*$.  The derivative of $ V $ wrt. time is as follows:
+
 \begin{equation}
 \begin{aligned}
-& 0 \prec V(q)    &
-V(q^*) = 0 & \quad \forall q \neq q^*\\
-%    \[\dot{V}(q) = \frac{dV}{dq}\frac{dq}{dt}(q) \preceq 0 \quad \forall q \in Q\]
+\frac{dV(q)}{dt} &= (H(q) - x^*)^TJ(q)\dot{q}\\
+&= -(H(q) - x^*)^TJ(q)\mathcal{A}(q)J^T(q)(H(q) - x^*)\\
+&= -(H(q) - x^*)^TJ(q)\sum_{k=1}^{K}\underbrace{\theta_k(q)}_{0\prec}\underbrace{A_k}_{0\prec}J^T(q)(H(q) - x^*)\leq 0
 \end{aligned}
 \end{equation}
-where $q^*$ is any joint configuration such that $H(q^*) = x^*$.
-\end{theorem}
-The first two statements are trivially true because $P$ is positive definite and the rest of $V$ is a square that is only $0$ when $H(q) = x^*$. To prove the last statement, we find $\frac{dV}{dt}$:
-\begin{equation}
-\begin{aligned}
-\frac{dV(q)}{dt} &= (H(q) - x^*)^TPJ(q)\dot{q}\\
-&= -(H(q) - x^*)^TPJ(q)\mathcal{A}(q)J^T(q)P(H(q) - x^*)\\
-&= -(H(q) - x^*)^TPJ(q)\sum_{k=1}^{K}\underbrace{\theta_k(q)}_{0\prec}\underbrace{A_k}_{0\prec}\\&~~~~~~ \cdot J^T(q)P(H(q) - x^*) < 0
-\end{aligned}
-\end{equation}
-By observation, each and every term in the final expression is multiplied by its transpose (creating a square) except for $\mathcal{A}(q)$, which is positive definite. This means that the expression is guaranteed to be negative definite. Therefore, JT-DS \eqref{eq:ds} is globally asymptotically stable with respect to a task-space attractor; i.e. $ \| H(q)-x^*\| $ and $ \dot{q} $ are bounded.
+
+ Therefore, JT-DS \eqref{eq:ds} is stable and as $ q=q^* $ is the largest invariance in $ \mathbb{R}^m $, it is  globally asymptotically stable with respect to a task-space attractor; i.e. $\lim\limits_{t\rightarrow \infty} \| H(q)-x^*\|=0 $.}
 
 \section*{Acknowledgment}
 \footnotesize

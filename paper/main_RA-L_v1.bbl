@@ -44,11 +44,6 @@ S.~Calinon and A.~Billard, ``Incremental learning of gestures by imitation in a
 J.~Garrido, W.~Yu, and A.~Soria, ``Human behavior learning for robot in joint
   space,'' \emph{Neurocomputing}, vol. 155, pp. 22 -- 31, 2015.
 
-\bibitem{Shon:HUM:2005}
-A.~P. Shon, K.~Grochow, and R.~P.~N. Rao, ``Robotic imitation from human motion
-  capture using gaussian processes.'' in \emph{Humanoids}.\hskip 1em plus 0.5em
-  minus 0.4em\relax IEEE, 2005, pp. 129--134.
-
 \bibitem{Schaal:IROS:2003}
 S.~Schaal, J.~Peters, J.~Nakanishi, and A.~Ijspeert, ``Control, planning,
   learning, and imitation with dynamic movement primitives,'' in \emph{IROS},
@@ -58,17 +53,6 @@ S.~Schaal, J.~Peters, J.~Nakanishi, and A.~Ijspeert, ``Control, planning,
 S.~Schaal, C.~G. Atkeson, and S.~Vijayakumar, ``Scalable techniques from
   nonparametric statistics for real time robot learning,'' \emph{Applied
   Intelligence}, vol.~17, no.~1, pp. 49--60, Jun. 2002.
-
-\bibitem{gielniak2010stylized}
-M.~J. Gielniak, C.~K. Liu, and A.~L. Thomaz, ``Stylized motion generalization
-  through adaptation of velocity profiles,'' in \emph{19th International
-  Symposium in Robot and Human Interactive Communication}.\hskip 1em plus 0.5em
-  minus 0.4em\relax IEEE, 2010, pp. 304--309.
-
-\bibitem{grochow2004style}
-K.~Grochow, S.~L. Martin, A.~Hertzmann, and Z.~Popovi{\'c}, ``Style-based
-  inverse kinematics,'' in \emph{ACM transactions on graphics (TOG)}, vol.~23,
-  no.~3.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2004, pp. 522--531.
 
 \bibitem{Pastor:ICRA:2009}
 P.~Pastor, H.~Hoffmann, T.~Asfour, and S.~Schaal, ``Learning and generalization
@@ -100,6 +84,23 @@ K.~Neumann and J.~J. Steil, ``Learning robot motions with stable dynamical
 K.~Kronander, M.~Khansari, and A.~Billard, ``Incremental motion learning with
   locally modulated dynamical systems,'' \emph{Robot. Auton. Syst.}, vol.~70,
   no.~C, pp. 52--62, Aug. 2015.
+
+\bibitem{huang2016jointly}
+Y.~Huang, D.~B{\"u}chler, O.~Ko{\c{c}}, B.~Sch{\"o}lkopf, and J.~Peters,
+  ``Jointly learning trajectory generation and hitting point prediction in
+  robot table tennis,'' in \emph{Humanoid Robots (Humanoids), 2016 IEEE-RAS
+  16th International Conference on}.\hskip 1em plus 0.5em minus 0.4em\relax
+  IEEE, 2016, pp. 650--655.
+
+\bibitem{calinon2010learning}
+S.~Calinon, F.~D'halluin, E.~L. Sauser, D.~G. Caldwell, and A.~G. Billard,
+  ``Learning and reproduction of gestures by imitation,'' \emph{IEEE Robotics
+  \& Automation Magazine}, vol.~17, no.~2, pp. 44--54, 2010.
+
+\bibitem{silverio2017learning}
+J.~Silv{\'e}rio, S.~Calinon, L.~Rozo, and D.~G. Caldwell, ``Learning competing
+  constraints and task priorities from demonstrations of bimanual skills,''
+  \emph{arXiv preprint arXiv:1707.06791}, 2017.
 
 \bibitem{figueroa2016HRIrolling}
 N.~Figueroa, A.~L.~P. Ureche, and A.~Billard, ``Learning complex sequential
@@ -134,6 +135,14 @@ S.~Calinon and A.~Billard, ``A probabilistic programming by demonstration
   framework handling constraints in joint space and task space,'' in \emph{IROS
   2008}, 2008, pp. 367--372.
 
+\bibitem{lee2014unifying}
+A.~X. Lee, S.~H. Huang, D.~Hadfield-Menell, E.~Tzeng, and P.~Abbeel, ``Unifying
+  scene registration and trajectory optimization for learning from
+  demonstrations with application to manipulation of deformable objects,'' in
+  \emph{Intelligent Robots and Systems (IROS 2014), 2014 IEEE/RSJ International
+  Conference on}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2014, pp.
+  4402--4407.
+
 \bibitem{hersch2008reaching}
 M.~Hersch and A.~Billard, ``Reaching with concurrent dynamical systems,''
   \emph{Autonomous robots}, 2008.
@@ -149,6 +158,12 @@ Z.~Shi, X.~Huang, T.~Hu, Q.~Tan, and Y.~Hou, ``Weighted augmented jacobian
   teleoperation based on human–robot motion similarity,'' \emph{Advances in
   Space Research}, pp.~--, 2016.
 
+\bibitem{gielniak2010stylized}
+M.~J. Gielniak, C.~K. Liu, and A.~L. Thomaz, ``Stylized motion generalization
+  through adaptation of velocity profiles,'' in \emph{19th International
+  Symposium in Robot and Human Interactive Communication}.\hskip 1em plus 0.5em
+  minus 0.4em\relax IEEE, 2010, pp. 304--309.
+
 \bibitem{emedi2016fixed}
 Z.~Emedi and A.~Karimi, ``Fixed-structure lpv discrete-time controller design
   with induced l 2-norm and h 2 performance,'' \emph{International Journal of
@@ -162,6 +177,12 @@ L.~Sciavicco and B.~Siciliano, ``A solution algorithm to the inverse kinematic
 \bibitem{jolliffe1986pca}
 I.~Jolliffe, \emph{Principal Component Analysis}.\hskip 1em plus 0.5em minus
   0.4em\relax Springer Verlag, 1986.
+
+\bibitem{scholkopf1997kernel}
+B.~Sch{\"o}lkopf, A.~Smola, and K.-R. M{\"u}ller, ``Kernel principal component
+  analysis,'' in \emph{International Conference on Artificial Neural
+  Networks}.\hskip 1em plus 0.5em minus 0.4em\relax Springer, 1997, pp.
+  583--588.
 
 \bibitem{Cruse1987humanarm}
 H.~Cruse and M.~Br{\"u}wer, ``The human arm as a redundant manipulator: The
@@ -183,6 +204,11 @@ K.~Guglielmo and N.~Sadegh, ``Theory and implementation of a repetitive robot
   controller with cartesian trajectory description,'' \emph{Journal of Dynamic
   Systems, Measurement, and Control}, vol. 118, no.~1, pp. 15--21, 1996.
 
+\bibitem{grochow2004style}
+K.~Grochow, S.~L. Martin, A.~Hertzmann, and Z.~Popovi{\'c}, ``Style-based
+  inverse kinematics,'' in \emph{ACM transactions on graphics (TOG)}, vol.~23,
+  no.~3.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2004, pp. 522--531.
+
 \bibitem{brand2000style}
 M.~Brand and A.~Hertzmann, ``Style machines,'' in \emph{Proceedings of the 27th
   annual conference on Computer graphics and interactive techniques}.\hskip 1em
@@ -198,6 +224,16 @@ C.~K. Liu, A.~Hertzmann, and Z.~Popovi{\'c}, ``Learning physics-based motion
 A.~Colom{\'e}, ``Smooth inverse kinematics algorithms for serial redundant
   robots,'' Ph.D. dissertation, 2011.
 
+\bibitem{Mirrazavi:IJRR:2017}
+S.~S.~M. Salehian, N.~Figueroa, and A.~Billard, ``A unified framework for
+  coordinated multi-arm motion planning,'' \emph{Int. J. Rob. Res.
+  [Conditionally Accepted]}, 2017.
+
+\bibitem{Shon:HUM:2005}
+A.~P. Shon, K.~Grochow, and R.~P.~N. Rao, ``Robotic imitation from human motion
+  capture using gaussian processes.'' in \emph{Humanoids}.\hskip 1em plus 0.5em
+  minus 0.4em\relax IEEE, 2005, pp. 129--134.
+
 \bibitem{Corke11a}
 P.~I. Corke, \emph{Robotics, Vision \& Control: Fundamental Algorithms in
   Matlab}.\hskip 1em plus 0.5em minus 0.4em\relax Springer, 2011.
@@ -206,6 +242,10 @@ P.~I. Corke, \emph{Robotics, Vision \& Control: Fundamental Algorithms in
 J.~Lofberg, ``Yalmip: A toolbox for modeling and optimization in matlab,'' in
   \emph{Computer Aided Control Systems Design, 2004 IEEE International
   Symposium on}, 2004, pp. 284--289.
+
+\bibitem{Maaten08dimensionalityreduction}
+L.~van~der Maaten, E.~O. Postma, and H.~J. van~den Herik, ``Dimensionality
+  reduction: A comparative review,'' 2008.
 
 \bibitem{Bishop:PRM:2006}
 C.~M. Bishop, \emph{Pattern Recognition and Machine Learning (Information
@@ -248,5 +288,10 @@ T.~Petri{\v{c}} and L.~{\v{Z}}lajpah, ``Smooth continuous transition between
   tasks on a kinematic control level: Obstacle avoidance as a control
   problem,'' \emph{Robotics and Autonomous Systems}, vol.~61, no.~9, pp.
   948--959, 2013.
+
+\bibitem{alessandro2013muscle}
+C.~Alessandro, I.~Delis, F.~Nori, S.~Panzeri, and B.~Berret, ``Muscle synergies
+  in neuroscience and robotics: from input-space to task-space perspectives,''
+  \emph{Frontiers in computational neuroscience}, vol.~7, 2013.
 
 \end{thebibliography}
