@@ -7,13 +7,17 @@ startup_rvc
 l1=1.5;
 l2=1.5;
 
-q1_limit=[-3.14:0.01:3.14];
-q2_limit=[-3.14:0.01:3.14];
+q1_limit=[-3.14:0.005:3.14];
+q2_limit=[-3.14:0.005:3.14];
 x_limit=[0:0.01:4];
 y_limit=[0:0.01:4];
 X_d=[2;2];
 
-
+% Plot the SVM Contours
+level = 100; n = ceil(level/2);
+cmap1 = [linspace(1, 1, n); linspace(0, 1, n); linspace(0, 1, n)]';
+cmap2 = [linspace(1, 0, n); linspace(1, 0, n); linspace(1, 1, n)]';
+cmap = [cmap1; cmap2(2:end, :)];
 
 
 for i=1:size(y_limit,2)
@@ -34,8 +38,12 @@ r = SerialLink(L,'name','two link')
 r.plotopt = {'noshadow','nojaxes', 'nowrist','noname','linkcolor',0.7*[1,1,1], 'ortho','noshading','notiles','jointcolor',0.4*[1,1,1]};
 r.plot([pi/3,-pi/4,0])
 hold on
-contourf(Xlim,Ylim,V)
-colormap(cool)
+contourf(Xlim,Ylim,V,15,'LineWidth', 0.001)
+% contourf(Xlim,Ylim,V,10,'LineStyle', 'none'); 
+colormap(vivid(cmap, [.5, .5]));
+% colormap(vivid('n',256,[.5, 1]));
+% colormap(cool);
+colorbar
 axis equal
 xlabel('$X~ [m]$','Interpreter','latex');
 
@@ -43,7 +51,7 @@ xlabel('$X~ [m]$','Interpreter','latex');
 ylabel('$Y~ [m]$','Interpreter','latex');
 box(subplot1,'on');
 axis(subplot1,'tight');
-set(subplot1,'BoxStyle','full','FontSize',24,'Layer','top',...
+set(subplot1,'BoxStyle','full','FontSize',18,'Layer','top',...
     'TickLabelInterpreter','latex');
 xlim(subplot1,[x_limit(1) x_limit(end)]);
 ylim(subplot1,[y_limit(1) y_limit(end)]);
@@ -62,14 +70,17 @@ for i=1:size(q1_limit,2)
 end
 subplot1 = subplot(1,2,2);
 hold(subplot1,'on');
-contourf(q1lim,q2lim,V_q)
+contourf(q1lim,q2lim,V_q,15,'LineWidth', 0.001)
+% contourf(q1lim,q2lim,V_q,10,'LineStyle', 'none'); 
 xlabel('$q_1~ [rad]$','Interpreter','latex');
 
 % Create ylabel
 ylabel('$q_2~ [rad]$','Interpreter','latex');
 box(subplot1,'on');
-colormap(cool)
+% colormap(vivid(cmap, [.5, .5]));
+% colormap(cool);
+colorbar
 axis(subplot1,'tight');
-set(subplot1,'BoxStyle','full','FontSize',24,'Layer','top',...
+set(subplot1,'BoxStyle','full','FontSize',18,'Layer','top',...
     'TickLabelInterpreter','latex');
 axis equal
