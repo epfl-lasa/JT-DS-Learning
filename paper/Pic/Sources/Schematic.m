@@ -13,7 +13,7 @@ x_limit=[0:0.01:4];
 y_limit=[0:0.01:4];
 X_d=[2;2];
 
-% Plot the SVM Contours
+% Plot the Lyapunov Function Contours
 level = 100; n = ceil(level/2);
 cmap1 = [linspace(1, 1, n); linspace(0, 1, n); linspace(0, 1, n)]';
 cmap2 = [linspace(1, 0, n); linspace(1, 0, n); linspace(1, 1, n)]';
@@ -32,8 +32,8 @@ subplot1 = subplot(1,2,1);
 hold(subplot1,'on');
 
 L(1) = Link([0 0 l1 0],'standard')
-L(2)= Link([0 0 l2 0],'standard')
-L(3)= Link([0 0 0 0],'standard')
+L(2) = Link([0 0 l2 0],'standard')
+L(3) = Link([0 0 0 0],'standard')
 r = SerialLink(L,'name','two link')
 r.plotopt = {'noshadow','nojaxes', 'nowrist','noname','linkcolor',0.7*[1,1,1], 'ortho','noshading','notiles','jointcolor',0.4*[1,1,1]};
 r.plot([pi/3,-pi/4,0])
