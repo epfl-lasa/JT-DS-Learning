@@ -47,7 +47,7 @@ When training a JT-DS, the most important subtask is that the GMM is learned cor
 When using [computeFullTrajectory.m](https://github.com/epfl-lasa/JTDS-Learning/blob/master/src/JTDS_mat_lib/simulate/computeFullTrajectory.m), the system may end up being poorly behaved and integrate in an unstable manner. You may want to switch the ODE solver used by MATLAB (between ode45, ode15s, or [others](https://www.mathworks.com/help/matlab/math/choose-an-ode-solver.html)) if you find yourself getting NaN values as the output of the integration.
 
 ## 7. References
-The library is based on the paper "The Joint-space Task-directed Dynamical System", by Yonadav Shavit, Seyed Sina Mirrazavi Salehian, Nadia Figueroa, and Aude Billard.
-For further assistance with the learning, contact yonadav at mit dot edu.
+The library is based on the paper "Learning Augmented Joint-Space Task-Oriented Dynamical Systems: A Linear Parameter Varying and Synergetic Control Approach", by Yonadav Shavit,  Nadia Figueroa, Seyed Sina Mirrazavi Salehian and Aude Billard.
+For further assistance with the learning, contact yonadav at mit dot edu. or {Nadia dot Figueroa, Sina dot Mirrazavi} at epfl dot ch 
 We hope you and your robot enjoy learning together!
 
