@@ -1,0 +1,340 @@
+\documentclass[10pt,stdletter,dateno]{newlfm}
+\usepackage{charter}
+
+\makeatletter
+\g@addto@macro{\ps@ltrhead}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\g@addto@macro{\ps@othhead}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\makeatother
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{soul}
+\widowpenalty=1000
+\clubpenalty=1000
+
+\newsavebox{\Luiuc}
+\sbox{\Luiuc}{%
+	\parbox[b]{1.6in}{%
+		\vspace{0.5in}
+		\includegraphics[scale=0.25]
+		{./EPFL-Logo-bitmap/JPG/EPFL-Logo-RVB-55.jpg}%
+	}%
+}%
+%\makeletterhead{Uiuc}{\Rheader{\usebox{\Luiuc}}}
+\makeletterhead{Uiuc}{\Rheader{}}
+\newlfmP{headermarginskip=-100pt}
+\newlfmP{sigsize=0pt}
+\newlfmP{sigskipbefore=50pt}
+\headermarginskip{.5in}
+%\newlfmP{dateskipafter=30pt}
+%\newlfmP{addrfromphone}
+%\newlfmP{addrfromemail}
+%\PhrPhone{Phone}
+%\PhrEmail{Email}
+
+\lthUiuc
+
+%\namefrom{Seyed Sina Mirrazavi Salehian}
+%\addrfrom{\small
+%		Learning Algorithms and Systems Laboratory (LASA)\\
+%       	\small \'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL)\\
+%       	\small Lausanne, Switzerland - 1015.
+%}
+%\phonefrom{\small +41 21 69 31060 }
+%\emailfrom{\small nadia.figueroafernandez@epfl.ch}
+
+%\addrto{%
+%Faculty Search Committee\\
+%Department of Something\\
+%Some University\\
+%University Address}
+\vspace{-300pt}
+%\greetto{Dear Editor,}
+%\closeline{With best regards,}
+\begin{document}
+\begin{newlfm}
+\vspace{-2in}
+Dear Ms. Nadia Figueroa,
+
+Your paper
+
+17-1142
+"Learning Augmented Joint-Space Task-Oriented Dynamical Systems: A
+Linear Parameter Varying and Synergetic Control Approach"
+by Yonadav Shavit, Nadia Figueroa, Seyed Sina Mirrazavi Salehian, Aude
+Billard Submission for RA-L only Special Issue on Learning and Control for
+Autonomous Manipulation Systems: the Role of Dimensionality Reduction submitted to the IEEE Robotics and Automation Letters (RA-L) has been reviewed by the Associate Editor and selected Reviewers. The reviews of the paper are attached.
+
+On the basis of the reviewers' ratings and comments, we decided that
+your paper cannot be published in the Letters in the present form.
+However, you are encouraged to rewrite and resubmit a revised version
+of your work addressing all editorial concerns.
+
+Please notice that there is a STRICT deadline of one month (30 DAYS)
+from today \hl{[i.e. March 18th, 2018]} for you to resubmit a revised version, along with a
+Statement of Changes as a single pdf file indicating how comments by
+the Editor and by reviewers have been addressed and a list of changes
+made in the paper.
+
+Please be aware that failure to meet the 30 days deadline implies that
+the paper will be automatically moved to the Reject category. Also
+notice that the next decision on this manuscript will be final, i.e.
+either Accept for Publication or Reject. Unfortunately, the tight
+timeline of the Letters will allow no extensions or exceptions to these
+rules.
+
+If you have any related concern, do not hesitate to contact me.
+
+Sincerely,\\
+Han Ding\\
+Editor (Learning and Control for Autonomous Manipulation Systems: the
+Role of Dimensionality Reduction)\\
+IEEE Robotics and Automation Letters\\
+
+\underline{Associate Editor Report:}
+
+The paper presents a dynamical system in joint space that combines
+different motor synergies to encode joint-space behaviors while
+asymptotically converges to a desired position in the task space. The
+paper is well written and organized. All the reviewers think the paper
+is of good quality. \textcolor{red}{:) OF COURSE it is!} The reviewers’ comments are attached. Please
+address the comments and improve the paper accordingly.
+
+
+%\clearpage
+
+\textbf{Reviewer(s)' Comments to Author:}\\
+
+\underline{Reviewer: 4 (Review30069)}\\
+This paper proposes a dynamical system (DS) that operates in joint
+space and converges to a desired position in task space. In doing so,
+the authors use a linear parameter varying system and use
+dimensionality reduction to learn these parameters efficiently. I think
+the paper is well written, experiments are well conducted and
+explained, and the results are promising. 
+
+\textit{Detailed comments and
+suggestions are as listed below:}
+\begin{enumerate}
+\item As mentioned by the authors, there are many reasons to plan in joint
+space rather than task space. One of the important reasons to me seems
+to be able to plan end-effector orientation, not just position.
+Traditional movement primitives, for example DMPs, do not explicitly
+encode planning in the SO(3) space of orientations. There is research
+that addresses this question, for example [1], but they lose the
+simplistic appeal of movement primitives. \hl{I think it would be a great
+addition to this paper if the authors illustrate if their joint space
+DS can be used to accomplish orientation sensitive tasks, and
+generalize to end-effector orientations different that what was
+demonstrated.}\textcolor{red}{[*]} \\
+
+[1] Ude, Ale, et al. "Orientation in cartesian space dynamic movement
+primitives." Robotics and Automation (ICRA), 2014 IEEE International
+Conference on. IEEE, 2014.\\
+
+\textcolor{red}{[*] We never explored this, did we? Nevertheless, I think we can address it. We have data for the orientation of the demonstrations so we can try it. If we do this and it works, we should not only mention [1] but also the work from Seungsu [2] and Sylvain [3] both of which learn motions in SE(3) but cannot prove stability.}\\
+\textcolor{red}{[2] Gaussian mixture model for 3-dof orientations. S Kim, R Haschke, H Ritter. Robotics and Autonomous Systems 87, 28-37}\\
+\textcolor{red}{[3] An approach for imitation learning on Riemannian manifolds
+MJA Zeestraten, I Havoutis, J Silvério, S Calinon, DG Caldwell
+IEEE Robotics and Automation Letters 2 (3), 1240-1247}\\
+
+\item In the introduction, the authors stress that jacobian psuedo inverse
+can be computationally expensive. Is this really true for a 7-dof robot
+arm? Can the authors provide some numbers where this would really be an
+issue for a robot controlled at 1000Hz? I find the argument that
+jacobian inverse does not work for singularities and needs a set of
+heuristics to be more compelling. Maybe the authors should rewrite the
+introduction to stress more on this issue? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item In Section II, criterion I, the authors talk about a positive
+symmetric matrix P. I do not see it in the equations above. Is this a
+weighing matrix? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item In criterion II, the error is defined with respect to the velocity
+error, rather than a position or a combination of both. This means that
+the motion can be different from the demonstrated motion. I understand
+that this is important to keep the later optimization convex, but is
+there any disadvantage to using velocity error rather than position
+error? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item I do not completely understand the significance of A(q). From Figure
+3, it seems like A(q) helps resolve redundancy, while achieving the
+task space goal. Do the authors have a mathematical (in constrast to
+intuitive) explanation for this? Does A(q) somehow relate to the
+null-space of the jacobian? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item In Section III, "One can intuitively understand the control law as
+follows:$ (H(q)-x^*)$ denotes the position error w.r.t. the task target
+and by multiplying that error by the transposed Jacobian $J^T(q)$, the
+error is projected into joint space (similar to Jacobian transpose
+control)". I find this explanation misleading as jacobian multiplied to
+position error does not project the error into joint space. Jacobian
+transforms velocities, not positions. Maybe the law can be seen more as
+a first order approximation of the error in task space. In any case, I
+would either clarify this statement more or take it out of the
+manuscript all together. It seems like the DS is just a PD law that
+provably converges to a fixed attractor in task space. \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item About figure 2 again, the position error in task and joint space are
+not simply multiplied by a Jacobian. Although, task space error can be
+first-order approximated using a Jacobian multiplication with joint
+space error. What does the right figure in Fig 2 exactly represent? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item In Section IV, the authors say that they use EM to determine the
+parameters of the GMM in Eq 6. Can they elaborate a little on this?
+What is the expectation taken over and what likelihood is maximized? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item The learned dimensionality reduction and parameters seem task
+dependant. I wonder if the authors have any idea on how to generalize
+this across tasks. \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+
+\item \hl{The experiments have the same task-space goal as the
+demonstrations. Can the authors include experiments that have goals
+different from demonstrated, especially in orientation?} \textcolor{red}{[We already know that it won't generalize well if the target is in a completely different hemisphere of the workspace of the robot, however, we can try adding some tests and show how well it can generalize within the same region that it was demonstrated]}
+
+\item \hl{In similar light, maybe authors could present online adaptation of
+A(q) to generalize to situations different than demonstrated, for
+example a slightly moved obstacle?} \textcolor{red}{[This is a really nice suggestion. But how I see it, it's basically a new paper; i.e. an extension of this one, but we can discuss about this if we have space. A quick idea that comes to mind would be to apply a modulation/activation to the LPV system in a local region. Now this is not as straight forward as in our task space approaches because our LPV system is learned in joint-space while the activation function is in the embedded space. So it still would be an open question, but an approach to tackle this problem could be along these lines.]}
+
+\item In table II, instead of the tracking error, maybe the more useful
+error to see would be the error with respect to the plan or
+demonstation. One would assume that the proposed approach would be
+worse at it than SEDS+IK because the minimized error is with respect to
+the velocity and goal, not the position of the movement. \textcolor{red}{[This will only make sense for the tasks that are actually feasible for the IK-solver (i.e. not for foot-step or singularity). We can easily compute this and add it. However, we know already that the error will be worse than SEDS+IK, so would this make sense? ]}
+
+\end{enumerate}
+
+Overall, I think this is an interesting, well written paper. I think
+adding experiments with different goal - position and orientation will
+help the paper, as well as an analysis of tracking error with respect
+to a plan or demonstration.\\
+
+
+\underline{Reviewer: 5 (Review30371)}
+
+This paper deals with the problem of controlling a manipulator towards
+a desired attractor in the task space by exploiting local synergies
+defined in the joint space and combined in time and space in order to
+obtain desired behaviours. This method does not require the computation
+of the pseudo-inverse Jacobian and hence is able to pass through
+singular configurations. The most similar approach is the Jacobian
+transpose control method that shares the same advantages but that does
+not include the learning of behaviours from demonstrations that seems
+to bring some benefits. 
+
+The paper is well written and quite easy to follow. The cited
+literature is also appropriated and complete. 
+
+\textit{However, some criticisms follows:}
+\begin{enumerate}
+\item \hl{My first concern regards you choice of representing the demonstrated
+movement as a sequence of postures and hence looking for synergies by
+using PCA of K-PCA analysis. Why not using functional PCA (f-PCA)
+analysis and determine the few moving synergies that make possible the
+execution of the demonstrated behaviours? It would be that, when you
+combine the local synergies in space and time by using functions
+$\theta_k(q)$, you get what you might obtain by using directly f-PCA.
+However, the last one are valid for the whole movement and can be
+combined by constant coefficients.} \textcolor{red}{[Honestly, I hadn't heard of functional-PCA until now. I searched a bit and I see why the reviewer would suggest this approach (which is interesting btw). F-PCA is the application of PCA on a functional space (mainly targeted at applications where each of the datapoints is a time-series). The goal is then to find the minimal set of eigen-time-series that best describes the shape of the observed time-series.
+To do this, each time-series is approximated with k basis functions and PCA is applied on these functions. The resulting eigen-functions are parametrized by a linear combination of these k basis-functions (looks very similar to k-pca/svc). First of all, I see a couple of complications: i) the basis functions are time dependent; i.e. they will only work for time-series of the same length as the datasets that they were learned from ii) the number of k basis functions is an open parameter, as well as the number of eigenfunctions to keep iii) I can understand how the reviewer would think that it is almost the same as finding the lower dimensional space via PCA/k-PCA and then fitting a GMM, as this would be equivalent to the 'k' basis functions. However, I'm not sure if the 'k' basis functions in joint space are equivalent to the 'K' clusters discovered by the GMM in the embedded space. Which is extremely important because this dictates how many A's we need. I might be wrong about these issues, I need to dig deeper into this.]}
+
+\item I also found the paper lacking of physical intuitions, especially in
+the experimental part, about the entities introduced in previous
+sections. In particular, what is the lesson we learn after your
+analysis of synergies and the obtained lower dimensional space for the
+few movements shown in section V? Is it possible to extract some global
+synergic behavior?
+Moreover, in section IV.A authors introduce the function phi(q) named
+the embedding that maps the joint configuration into a lower
+dimensional space. Is it associated to a whole behaviour or, as
+matrices $A_k$, has a local validity? I lost this point. Can you
+show/report or describe what it represents in the joint space for one
+or more cases in Section V? What is this lower dimensional space for
+the cases in Section V? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item A similar question for the matrices $A_k$ that represent local, I
+would say postural (see previous comment), synergies whose dimension is
+m x m, i.e. in joint space: I would expect they were defined in the
+lower dimensional space. \textcolor{red}{[We actually address this in the discussion, it is related to the stability proof; i.e. we would loose rank when projecting the A matrix back to joint space]} Moreover, are they local representation of the
+distribution of postures and hence covariance matrices? What do their
+eigenvectors and eigenvalues locally represent? Maybe, a comparison
+with the classical and more known postural synergies for the human
+hand, analyzed by PCA, could be useful. Finally, what does it mean that
+they should be positive definite (apart from stability issue)? \textcolor{red}{[All of these questions can be addressed through clarification and re-write]}
+
+\item What is the dimension of function $\theta_k(q)$ that, to some extent,
+can be seen as the new control variables. Is it $K<m$? \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item For the test, why not comparing also with the JT control method? In
+other terms, is it possible to use a SEDS + JT, especially for the
+third case "Transiting through singular configurations"?
+
+\item Minors:
+- SEDS + IK: what does SEDS mean? \textcolor{red}{[We clearly say what it means on page 6: ``For the Cartesian motion generator we
+use the SEDS approach [8] which learns an asymptotically
+stable DS in Cartesian space from demonstrations. We then
+generate joint trajectories through a damped least square IK
+solver. From herein we refer to this approach as SEDS+IK."]}
+
+\end{enumerate}
+
+
+\underline{Reviewer: 7 (Review30521)}
+
+The paper presents a kinematic controller for a robot, that drives it
+towards a fixed target in task space. The controller works in joint
+space and consists in a dynamical system formulated as a LPV system
+which combines different motor synergies. Such synergies are learnt
+from demonstrations. Theoretical proof of stability is given and
+experimental results are offered for validation.
+
+The paper is very well written and nicely organized. Results are
+interesting and the technical accuracy of the paper is good. The
+coverage of the state of the art is quite good.
+
+\textit{I have the following comments:}
+\begin{enumerate}
+\item a considerable part of the introduction is spent in comparing joint
+space trajectory generation to task space trajectory generation. Since
+these are elementary concepts in robotics, the authors might consider
+reducing this part; \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item one of the main claims of the paper is the stability proof, which in
+fact is cited in the first line of the abstract. However the stability
+analysis is a quite simple extension of the stability of the transpose
+Jacobian scheme, where the constant gain on the task space error is
+replaced by the matrix A(q). As such the emphasis on this result might
+be to some extent reduced. By the way, the proof works only if the
+Jacobian is full rank, which is not properly discussed in Appendix I; \textcolor{red}{[Can (should) be addressed through clarification and re-write]}
+
+\item the meaning of variables $\dot{q}_d$ in (2) is not very clear to me, a
+well as whether it takes the same meaning as $\dot{q}_{t,n}$ in (8); \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item Section III uses the concept of synergy without actually defining it.
+An introduction to this concept is given later, in Section IV; \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item the expression "flow of motion" in Proposition 1 is not very clear to
+me; \textcolor{red}{[Can be addressed through clarification and re-write]}
+
+\item some details about the optimization problem in (8) might be given
+(nature of the problem, complexity, feasibility). \textcolor{red}{[Can be addressed through clarification and re-write]}
+\end{enumerate}
+
+
+
+
+\end{newlfm}
+\end{document}

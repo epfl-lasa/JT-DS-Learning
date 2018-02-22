@@ -1,0 +1,57 @@
+This paper deals with the problem of controlling a manipulator towards
+a desired attractor in the task space by exploiting local synergies
+defined in the joint space and combined in time and space in order to
+obtain desired behaviours. This method does not require the computation
+of the pseudo-inverse Jacobian and hence is able to pass through
+singular configurations. The most similar approach is the Jacobian
+transpose control method that shares the same advantages but that does
+not include the learning of behaviours from demonstrations that seems
+to bring some benefits. 
+
+The paper is well written and quite easy to follow. The cited
+literature is also appropriated and complete. However, some criticisms
+follows:
+
+1) My first concern regards you choice of representing the demonstrated
+movement as a sequence of postures and hence looking for synergies by
+using PCA of K-PCA analysis. Why not using functional PCA (f-PCA)
+analysis and determine the few moving synergies that make possible the
+execution of the demonstrated behaviours? It would be that, when you
+combine the local synergies in space and time by using functions
+\theta_k(q), you get what you might obtain by using directly f-PCA.
+However, the last one are valid for the whole movement and can be
+combined by constant coefficients.
+
+2) I also found the paper lacking of physical intuitions, especially in
+the experimental part, about the entities introduced in previous
+sections. In particular, what is the lesson we learn after your
+analysis of synergies and the obtained lower dimensional space for the
+few movements shown in section V? Is it possible to extract some global
+synergic behavior?
+Moreover, in section IV.A authors introduce the function phi(q) named
+the embedding that maps the joint configuration into a lower
+dimensional space. Is it associated to a whole behaviour or, as
+matrices A_k, has a local validity? I lost this point. Can you
+show/report or describe what it represents in the joint space for one
+or more cases in Section V? What is this lower dimensional space for
+the cases in Section V? 
+
+3) A similar question for the matrices A_k that represent local, I
+would say postural (see previous comment), synergies whose dimension is
+m x m, i.e. in joint space: I would expect they were defined in the
+lower dimensional space. Moreover, are they local representation of the
+distribution of postures and hence covariance matrices? What do their
+eigenvectors and eigenvalues locally represent? Maybe, a comparison
+with the classical and more known postural synergies for the human
+hand, analyzed by PCA, could be useful. Finally, what does it mean that
+they should be positive definite (apart from stability issue)?
+
+4) What is the dimension of function \theta_k(q) that, to some extent,
+can be seen as the new control variables. Is it K<m?
+
+5) For the test, why not comparing also with the JT control method? In
+other terms, is it possible to use a SEDS + JT, especially for the
+third case "Transiting through singular configurations"?
+
+Minors:
+- SEDS + IK: what does SEDS mean?

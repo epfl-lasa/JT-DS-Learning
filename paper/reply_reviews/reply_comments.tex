@@ -1,0 +1,136 @@
+\documentclass[10pt,stdletter,dateno]{newlfm}
+\usepackage{charter}
+
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+
+
+\makeatletter
+\g@addto@macro{\ps@ltrhead}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\g@addto@macro{\ps@othhead}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\makeatother
+
+
+\widowpenalty=1000
+\clubpenalty=1000
+
+\newsavebox{\Luiuc}
+\sbox{\Luiuc}{%
+	\parbox[b]{1.6in}{%
+		\vspace{0.5in}
+		\includegraphics[scale=0.25]
+		{./EPFL-Logo-bitmap/JPG/EPFL-Logo-RVB-55.jpg}%
+	}%
+}%
+
+\makeletterhead{Uiuc}{\Rheader{\usebox{\Luiuc}}}
+
+\newlfmP{headermarginskip=-100pt}
+\newlfmP{sigsize=0pt}
+%\headermarginsize{0in}
+\headermarginskip{.5in}
+\unprbottom{1cm}
+
+
+%\newlfmP{dateskipafter=30pt}
+%\newlfmP{addrfromphone}
+%\newlfmP{addrfromemail}
+%\PhrPhone{Phone}
+%\PhrEmail{Email}
+
+\lthUiuc
+
+%\namefrom{Seyed Sina Mirrazavi Salehian}
+%\addrfrom{\small
+%		Learning Algorithms and Systems Laboratory (LASA)\\
+%       	\small \'Ecole Polytechnique F\'ed\'erale de Lausanne (EPFL)\\
+%       	\small Lausanne, Switzerland - 1015.
+%}
+%\phonefrom{\small +41 21 69 31060 }
+%\emailfrom{\small nadia.figueroafernandez@epfl.ch}
+
+%\addrto{%
+%Faculty Search Committee\\
+%Department of Something\\
+%Some University\\
+%University Address}
+%\greetto{Dear Editor,}
+%\closeline{With best regards,}
+\begin{document}
+\begin{newlfm}
+\vspace{-2in}
+\centerline{\textbf{Response to Reviewers: Manuscript ID 17-1142.1 entitled}} \centerline{\textbf{``Learning Augmented Joint-Space Task-Oriented Dynamical Systems:}}
+\centerline{\textbf{A Linear Parameter Varying and Synergetic Control Approach" }}
+First of all, we would like to thank all reviewers for the time they spent reviewing our paper. We greatly appreciate the comments, suggestions and opinions that we received. We have addressed all the necessary comments and suggestions in the attached manuscript accordingly. 
+
+\underline{Comments from Reviewer \#1:}
+\begin{enumerate}
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+
+\item \textit{Specific clarifications and typos:
+\begin{itemize}
+\item ..
+\item ..
+\end{itemize}}
+\end{enumerate}
+
+\underline{Comments from Reviewer \#2:}
+\begin{enumerate}
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+
+\item \textit{Specific clarifications and typos:
+\begin{itemize}
+\item ..
+\item ..
+\end{itemize}}
+
+\end{enumerate}
+
+
+\underline{Comments from Reviewer \#3:}
+\begin{enumerate}
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+
+\item \textit{Specific clarifications and typos:
+\begin{itemize}
+\item ..
+\item ..
+\end{itemize}}
+
+\end{enumerate}
+
+
+\end{newlfm}
+
+
+\end{document}

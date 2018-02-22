@@ -1,0 +1,6 @@
+The paper presents a dynamical system in joint space that combines
+different motor synergies to encode joint-space behaviors while
+asymptotically converges to a desired position in the task space. The
+paper is well written and organized. All the reviewers think the paper
+is of good quality. The reviewers’ comments are attached. Please
+address the comments and improve the paper accordingly.

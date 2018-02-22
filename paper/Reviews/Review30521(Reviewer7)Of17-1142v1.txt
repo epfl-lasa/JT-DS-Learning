@@ -1,0 +1,37 @@
+The paper presents a kinematic controller for a robot, that drives it
+towards a fixed target in task space. The controller works in joint
+space and consists in a dynamical system formulated as a LPV system
+which combines different motor synergies. Such synergies are learnt
+from demonstrations. Theoretical proof of stability is given and
+experimental results are offered for validation.
+
+The paper is very well written and nicely organized. Results are
+interesting and the technical accuracy of the paper is good. The
+coverage of the state of the art is quite good.
+
+I have the following comments:
+
+-a considerable part of the introduction is spent in comparing joint
+space trajectory generation to task space trajectory generation. Since
+these are elementary concepts in robotics, the authors might consider
+reducing this part;
+
+-one of the main claims of the paper is the stability proof, which in
+fact is cited in the first line of the abstract. However the stability
+analysis is a quite simple extension of the stability of the transpose
+Jacobian scheme, where the constant gain on the task space error is
+replaced by the matrix A(q). As such the emphasis on this result might
+be to some extent reduced. By the way, the proof works only if the
+Jacobian is full rank, which is not properly discussed in Appendix I;
+
+-the meaning of variables \dot{q}_d in (2) is not very clear to me, a
+well as whether it takes the same meaning as \dot{q}_{t,n} in (8);
+
+-Section III uses the concept of synergy without actually defining it.
+An introduction to this concept is given later, in Section IV;
+
+-the expression "flow of motion" in Proposition 1 is not very clear to
+me;
+
+-some details about the optimization problem in (8) might be given
+(nature of the problem, complexity, feasibility).

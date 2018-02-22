@@ -18,7 +18,7 @@ switch choosen_dataset
     case 'fore'
         demos_location = strcat(data_path,'fore_hand/data.mat');
         demo_ids = [1:11];
-    case 'pour'
+    case 'pour'synergy 
         demos_location = strcat(data_path,'pour_no_obst/data.mat');
         demo_ids = [1 2 3 5 6 7 8 9 10];
     case 'pour_obst'
