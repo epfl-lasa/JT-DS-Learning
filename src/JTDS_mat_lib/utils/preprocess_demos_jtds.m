@@ -1,9 +1,9 @@
-function [Data, index] = preprocess_demos_jtds(robotplant, demos, time, tol_cutting)
+function [Data, index] = preprocess_demos_jtds(robotplant, demos, time, tol_cutting,orientation_flag)
 % This function preprocesses raw joint demonstration data and molds it into
 % a suitable format.
 % The function computes the first time derivative of demonstrations and
 % trims the data. The function can be
-% called using: 
+% called using:
 %
 %          [Data, index] = preprocess_demos(demos,time,tol_cutting)
 %
@@ -47,7 +47,7 @@ function [Data, index] = preprocess_demos_jtds(robotplant, demos, time, tol_cutt
 %              2*qdim + 1:2*qdim + xdim = target position
 %
 %              Each column of Data stands
-%              for a datapoint. All demonstrations are put next to each other 
+%              for a datapoint. All demonstrations are put next to each other
 %              along the second dimension. For example, if we have 3 demos
 %              D1, D2, and D3, then the matrix Data is:
 %                               Data = [[D1] [D2] [D3]]
@@ -57,7 +57,7 @@ function [Data, index] = preprocess_demos_jtds(robotplant, demos, time, tol_cutt
 %              that columns 1:T1-1 belongs to the first demonstration,
 %              T1:T2-1 -> 2nd demonstration, and T2:T3-1 -> 3rd
 %              demonstration.
-    
+
 %checking if a fixed time step is provided or not.
 if length(time)==1
     dt = time;
@@ -72,7 +72,7 @@ for i=1:length(demos)
     clear tmp_full tmpq tmpq_d tmpx tmpxd
     
     % de-noising data (not necessary)
-    tmdiffepq = demos{i}; 
+    tmpq = demos{i};
     
     % computing the first time derivative
     if ~iscell(time)
@@ -83,7 +83,7 @@ for i=1:length(demos)
     
     % trimming demonstrations
     ind = find(sqrt(sum(tmpq_d.*tmpq_d,1))>tol_cutting);
-    tmpq = tmpq(:,min(ind):max(ind)+1);   
+    tmpq = tmpq(:,min(ind):max(ind)+1);
     
     if iscell(time)
         tmpt = time{i}(:,min(ind):max(ind)+1);
@@ -91,8 +91,12 @@ for i=1:length(demos)
     tmpq_d = tmpq_d(:,min(ind):max(ind));
     
     %saving the final point (target) of each demo
-    xT(:,i) = robotplant.forward_kinematics(demos{i}(:,end));
-    
+    if orientation_flag
+        trans_tmp=robotplant.robot.fkine(demos{i}(:,end));
+        xT(:,i) = [trans_tmp(1:3,1);trans_tmp(1:3,2);trans_tmp(1:3,end)];
+    else
+        xT(:,i) = robotplant.forward_kinematics(demos{i}(:,end));
+    end
     tmp_full = [tmpq;tmpq_d zeros(dimq,1)]; % all of the quantities to be placed in "Data"
     % note that the last qd is 0 because it's reached the goal
     

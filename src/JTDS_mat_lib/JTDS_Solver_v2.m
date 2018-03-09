@@ -342,7 +342,11 @@ function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotpla
     Ss = zeros(dimq, dimq, n);
     for i = 1:n
         q = Q(:, i); xt = Xt(:, i);
+        if options.orientation_flag==1
+         Qd_basis(:, i) =  robotplant.qd_basis_orientation(q, xt);
+        else
         Qd_basis(:, i) = robotplant.qd_basis(q, xt);
+        end
         if options.learn_with_bounds % if false, ignore joint limits
             Ss(:,:,i) = robotplant.compute_S(q);% the S value for each point, converted to a vector
         else

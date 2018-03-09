@@ -6,8 +6,8 @@
 
 clear all; close all; clc;
 do_plots  = 1;
-data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'pour_obst_2'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
+choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -15,25 +15,25 @@ choosen_dataset = 'pour_obst_2'; % Options: 'back','fore','pour','pour_obst','fo
 
 switch choosen_dataset
     case 'back'
-        demos_location = strcat(data_path, 'back_hand/data.mat');
+        demos_location = strcat(data_path, 'back_hand/raw_data.mat');
         demo_ids = [2:11];
     case 'fore'
-        demos_location = strcat(data_path,'fore_hand/data.mat');
+        demos_location = strcat(data_path,'fore_hand/raw_data.mat');
         demo_ids = [1:11];
     case 'pour' 
-        demos_location = strcat(data_path,'pour_no_obst/data.mat');
+        demos_location = strcat(data_path,'pour_no_obst/raw_data.mat');
         demo_ids = [1 2 3 5 6 7 8 9 10];
     case 'pour_obst'
-        demos_location = strcat(data_path,'pour_obst/data.mat');
+        demos_location = strcat(data_path,'pour_obst/raw_data.mat');
         demo_ids = [1:10];
     case 'pour_obst_2'
-        demos_location = strcat(data_path,'pour_obst_2/data.mat');
+        demos_location = strcat(data_path,'pour_obst_2/raw_data.mat');
         demo_ids = [1:7];                
     case 'foot'        % This dataset was recorded at 50 Hz! thinning_ratio = 1 or 2
-        demos_location = strcat(data_path,'foot/data.mat');
+        demos_location = strcat(data_path,'foot/raw_data.mat');
         demo_ids = [1:8];                
     case 'singularity'   
-        demos_location = strcat(data_path,'singularity/data.mat');
+        demos_location = strcat(data_path,'singularity/raw_data.mat');
         demo_ids = [1:10];  
         fprintf('Loading demonstrations from %s \n', demos_location);
         load(demos_location)
@@ -74,12 +74,16 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Train different JTDS models on current dataset %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
+%%% Orientation is included
+
+
 %%% Type of DR Methods %%%
 mappings_to_compare = {'None', 'PCA'};
 
 %%% Learning options %%%
 options = [];
+options.orientation_flag=1;
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -136,10 +140,10 @@ for j = 1:repetitions
             Qs_test{ii-train+1,1} = Qs{rand_ids(ii)}; Ts_test{ii-train+1,1} = Ts{rand_ids(ii)};
         end
     end
-    
+     
     %%% Pre-process Data %%%
-    [Data_train, ~] = preprocess_demos_jtds(robotplant, Qs_train, Ts_train, options.tol_cutting);
-    [Data_test, ~]  = preprocess_demos_jtds(robotplant, Qs_test, Ts_test, options.tol_cutting);
+    [Data_train, ~] = preprocess_demos_jtds(robotplant, Qs_train, Ts_train, options.tol_cutting,options.orientation_flag);
+    [Data_test, ~]  = preprocess_demos_jtds(robotplant, Qs_test, Ts_test, options.tol_cutting,options.orientation_flag);
     
     fprintf('********************* %d Fold *****************************\n', j);
     
@@ -163,11 +167,11 @@ for j = 1:repetitions
         motion_generator = MotionGenerator(robotplant, Mu, Sigma, Priors, As, latent_mapping);
         
         % Compute RMSE on training data
-        rmse_train(i,j) = mean(trajectory_error(motion_generator, Data_train(1:dimq, :), Data_train(dimq+1:2*dimq, :), Data_train(2*dimq+1:end, :)));
+        rmse_train(i,j) = mean(trajectory_error(motion_generator, Data_train(1:dimq, :), Data_train(dimq+1:2*dimq, :), Data_train(2*dimq+1:end, :),options.orientation_flag));
         fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name, rmse_train(i,j));
         
         % Compute RMSE on testing data
-        rmse_test(i,j) = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_test(dimq+1:2*dimq, :), Data_test(2*dimq+1:end, :)));
+        rmse_test(i,j) = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_test(dimq+1:2*dimq, :), Data_test(2*dimq+1:end, :),options.orientation_flag));
         fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test(i,j));
     end
     fprintf('*************************************************************\n');

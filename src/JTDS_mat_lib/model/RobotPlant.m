@@ -20,7 +20,7 @@ classdef RobotPlant
             % custom_qd_basis takes as input the object, q, and dt,
             % and outputs the basis for our velocity policy
             obj.robot = robot;
-                
+            
             if nargin<5 % If the number of arguments suggests standard non-custom kinematics
                 if strcmp(task_type, 'end_trans')
                     obj.forward_kinematics = @obj.end_trans_forward_kinematics;
@@ -45,6 +45,17 @@ classdef RobotPlant
             basis = -1*transpose(obj.jacobian(q))*(obj.forward_kinematics(q) - xt);
         end
         
+        function basis = qd_basis_orientation(obj, q, xt)
+            % Computes the base joint velocity to move at a joint position q
+            % toward a task position xt using the jacobian transpose
+            % method (i.e. qd = J^T(H(q) - xt) ).
+            % In general, this will be multiplied by an A matrix to get the
+            % augmented joint velocity.
+            temp_end=obj.robot.fkine(q);
+            temp_end=[temp_end(1:3,1);temp_end(1:3,2);temp_end(1:3,4)];
+            basis = -1*transpose([Jacobian_X(obj,q);Jacobian_Y(obj,q);obj.jacobian(q)])*(temp_end - xt);
+        end
+        
         function x = end_trans_forward_kinematics(obj,q)
             T = obj.robot.fkine(q);
             x = T(1:3, 4);
@@ -55,7 +66,7 @@ classdef RobotPlant
         end
         
         function output = compute_S(obj, q)
-            % Compute the joint limitation matrix S as described in the 
+            % Compute the joint limitation matrix S as described in the
             % appendix of the JT-DS paper. The diagonal values are always
             % between 0 and 1, and (when correctly integrated into the
             % DS) ensure that the system will not collide with its
@@ -68,6 +79,36 @@ classdef RobotPlant
             end
             s = 1- (2*(q - Qmin)./(Qmax - Qmin) - 1).^4;
             output = diag(s);
+        end
+        
+        function J=Jacobian_X(obj,q)
+            % Compute the jacobian matrix along a specific axis
+            J=zeros(3,obj.robot.n);
+            H0F=obj.robot.fkine(q);
+            v2 = H0F(1:3,1);
+            Hoi{1}=obj.robot.A(1,q);
+            for i=2:obj.robot.n
+                Hoi{i}=Hoi{i-1}*obj.robot.A(i,q);
+            end
+            for ai=1:obj.robot.n
+                J(:,ai) = cross(Hoi{ai}(1:3,3),v2);
+            end
+
+        end
+        
+        function J=Jacobian_Y(obj,q)
+            % Compute the jacobian matrix along a specific axis
+            J=zeros(3,obj.robot.n);
+            H0F=obj.robot.fkine(q);
+            v2 = H0F(1:3,2);
+            Hoi{1}=obj.robot.A(1,q);
+            for i=2:obj.robot.n
+                Hoi{i}=Hoi{i-1}*obj.robot.A(i,q);
+            end
+            for ai=1:obj.robot.n
+                J(:,ai) = cross(Hoi{ai}(1:3,3),v2);
+            end
+
         end
     end
     
