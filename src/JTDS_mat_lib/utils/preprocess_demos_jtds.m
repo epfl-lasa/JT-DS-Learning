@@ -72,7 +72,7 @@ for i=1:length(demos)
     clear tmp_full tmpq tmpq_d tmpx tmpxd
     
     % de-noising data (not necessary)
-    tmdiffepq = demos{i}; 
+    tmpq = demos{i}; 
     
     % computing the first time derivative
     if ~iscell(time)

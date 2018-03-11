@@ -1,4 +1,5 @@
 \documentclass[10pt,stdletter,dateno]{newlfm}
+\usepackage{etoolbox}
 \usepackage{charter}
 
 \makeatletter
@@ -137,7 +138,7 @@ demonstrated.}\textcolor{red}{[*]} \\
 primitives." Robotics and Automation (ICRA), 2014 IEEE International
 Conference on. IEEE, 2014.\\
 
-\textcolor{red}{[*] We never explored this, did we? Nevertheless, I think we can address it. We have data for the orientation of the demonstrations so we can try it. If we do this and it works, we should not only mention [1] but also the work from Seungsu [2] and Sylvain [3] both of which learn motions in SE(3) but cannot prove stability.}\\
+\textcolor{red}{[*] Honestly, we never explored this. I think we can address it, we would need to just use the Jacobian for the full end-effector pose, not just the position. Also, we have full joint and position+orientation of the end-effector for all the demonstrations, so we can definitely try it. If we do this and it works, we should not only mention [1] but also the work from Seungsu [2] and Sylvain [3] both of which learn motions in SE(3) but cannot prove stability. And I agree with the reviewer that it would be an even stronger contribution.}\\
 \textcolor{red}{[2] Gaussian mixture model for 3-dof orientations. S Kim, R Haschke, H Ritter. Robotics and Autonomous Systems 87, 28-37}\\
 \textcolor{red}{[3] An approach for imitation learning on Riemannian manifolds
 MJA Zeestraten, I Havoutis, J Silvério, S Calinon, DG Caldwell

@@ -77,9 +77,53 @@ First of all, we would like to thank all reviewers for the time they spent revie
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
+\item \textit{``In Section II, criterion I, the authors talk about a positive symmetric matrix P. I do not see it in the
+equations above. Is this a weighing matrix?"}\\
+\textcolor{blue}{\texttt{Response:} \small Removed, that was a carry-over from a previous formulation.}\\
+
+\item \textit{``In criterion II, the error is defined with respect to the velocity error, rather than a position or a combination
+of both. This means that the motion can be different from the demonstrated motion. I understand
+that this is important to keep the later optimization convex, but is there any disadvantage to using
+velocity error rather than position error?"}\\
+\textcolor{blue}{\texttt{Response:} \small Optimizing for position distance alone would have the effect of learning a motion that converged to the average of previous motions, thus not changing the motion in new situations or fitting the joint velocity profile that is often a desired component of the motion. Using velocity error does mean that, for motions strongly dependent on joint position rather than joint velocity, the generated motions may generalize from the demonstrations in unexpected ways. However, as you mentioned, minimizing position error would, depending on the formulation, be prohibitively difficult. As I see it, that would mean simulating the learned motion forward in time to recompute the robot's positions, making the optimization much more complicated; this way, we can treat each point in the motion independently.}\\
+
+\item \textit{`I do not completely understand the significance of A(q). From Figure 3, it seems like A(q) helps resolve
+redundancy, while achieving the task space goal. Do the authors have a mathematical (in constrast to
+intuitive) explanation for this? Does A(q) somehow relate to the null-space of the jacobian?"}\\
+\textcolor{blue}{\texttt{Response:} \small A(q) transforms a joint velocity vector approximately aligned with the task-space error into a different joint velocity vector that remains approximately aligned with the error, but which we want to choose to more-closely approximate our demonstrations. In this sense, it is resolving redundancy between all the possible joint velocity vectors that would move the controller closer to the origin. The paragraph in Section III has been modified to improve clarity. A(q) doesn't relate to the null-space of the Jacobian in any clear way, as its value can and does alter the task-space trajectory as well as the joint space trajectory. The only property that A(q) preserves is the joint velocity's moving the task space position closer to the goal, but the direction of motion is not necessarily the same as the direction of task-space error.}\\
+
+\item \textit{``In Section III, ?One can intuitively understand the control law as follows:(H(q) ?? x) denotes the
+position error w.r.t. the task target and by multiplying that error by the transposed Jacobian JT (q),
+the error is projected into joint space (similar to Jacobian transpose control)?. I find this explanation
+misleading as jacobian multiplied to position error does not project the error into joint space. Jacobian
+transforms velocities, not positions. Maybe the law can be seen more as a first order approximation
+of the error in task space. In any case, I would either clarify this statement more or take it out of the
+manuscript all together. It seems like the DS is just a PD law that provably converges to a fixed attractor
+in task space."}\\
+\textcolor{blue}{\texttt{Response:} \small The passage has been rewritten to remove the word "project", which you appropriately noted was incorrect, and further clarifies the nature of the DS as a PD controller. The new text is reproduced below: \\
+One can intuitively understand the control law as follows: $(H(q) - x^*)$ denotes the position error w.r.t. the task target, which we then reinterpret as the task-space velocity of a proportional controller. By multiplying that error by the transposed Jacobian $J^T(q)$, it is transformed into a joint-space velocity vector correlated with the error (similar to Jacobian transpose control [?]), see Fig. [?]. The positive definite matrix $\mathcal{A}(q)$ warps the resulting joint-space velocity; Fig. [?] illustrates the effects of  $\mathcal{A}(q)$ on the generated motion. Thus the controller can be thought of as a proportional controller in joint space.}\\
+
+\item \textit{``About figure 2 again, the position error in task and joint space are not simply multiplied by a Jacobian.
+Although, task space error can be first-order approximated using a Jacobian multiplication with
+joint space error. What does the right figure in Fig 2 exactly represent?"}\\
+\textcolor{blue}{\texttt{Response:} \small The figure on the left is simply the cartesian error in task space. The figure on the left is the Lyapunov potential function on which the jacobian transpose controller descends. In showing the attractive regions in joint-space corresponding to this Lyapunov function, we aim to offer insight into how the controller reformulates the task-space potential into a different yet related joint-space potential. The caption has been rewritten to add clarity.}\\
+
+\item \textit{``In Section IV, the authors say that they use EM to determine the parameters of the GMM in Eq 6. Can
+they elaborate a little on this? What is the expectation taken over and what likelihood is maximized?"}\\
+\textcolor{blue}{\texttt{Response:} \small The algorithm computes the expected probability of generating each of the joint positions given the current values of the GMM's means, variance matrices, and scaling values. The algorithm then chooses GMM parameters to maximize the posterior likelihood of the model, using previously-computed expected component membership as likelihood weights when computing the new mixture. Specifically, we used MATLAB's \textit{fitgmdist} implementation. Added a citation to clarify.}\\
+
+\item \textit{``The learned dimensionality reduction and parameters seem task dependant. I wonder if the authors
+have any idea on how to generalize this across tasks."}\\
+\textcolor{blue}{\texttt{Response:} \small The dimensionality reduction could be generalized across tasks that had the same motor synergies - that is, for example, all tasks in which the shoulder and elbow always move together. Similarly, one could imagine several similar motions that could be decomposed into shared submotions, thus allowing the parameters to be shared. However, in general, fixing some of the parameters while optimizing will simply lead to a less-flexible model, and considering that there is no intuitive scheme for a-priori identifying motions with strongly similar submotions, we did not explore this question further. To answer your question directly, if one wanted to, one could reuse the learned dimensionality reduction for a new task which you believed to be similar, or copy certain components of a previous motion's GMM into the new GMM and leave them fixed throughout the optimization.}\\
+
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``bla bla"}\\
+\textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
 \item \textit{Specific clarifications and typos:
 \begin{itemize}
@@ -92,6 +136,39 @@ First of all, we would like to thank all reviewers for the time they spent revie
 \begin{enumerate}
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``I also found the paper lacking of physical intuitions, especially in	the experimental part, about the entities introduced in previous
+	sections. In particular, what is the lesson we learn after your
+	analysis of synergies and the obtained lower dimensional space for the
+	few movements shown in section V? Is it possible to extract some global
+	synergic behavior?
+	Moreover, in section IV.A authors introduce the function phi(q) named
+	the embedding that maps the joint configuration into a lower
+	dimensional space. Is it associated to a whole behaviour or, as
+	matrices $A_k$, has a local validity? I lost this point. Can you
+	show/report or describe what it represents in the joint space for one
+	or more cases in Section V? What is this lower dimensional space for
+	the cases in Section V?"}\\
+\textcolor{blue}{\texttt{Response:} \small The result of the analysis in Section V suggests that the algorithm performs much better (lower velocity reconstruction error) and requires far fewer synergies, when the dimension of the motion hs been reduced. The paragraph explaining this has been clarified, and is reproduced below:\\
+"As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to encode our activation functions $\theta_k$ in a lower-dimensional space $\phi(q)$ yields better generalization capabilities than encoding the behaviors in using the original $q$. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learned without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the higher number of $K$ needed to represent the motion without DR. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations." \\
+Regarding the second half of the comment, $\phi(q)$ is a learned transformation, which is associated with a whole behavior, rather than a particular $A_k$ (as is now clarified in IV.A). However, the precise nature of the transformation depends on the DR technique: PCA applies a uniform matrix multiplication of joint position everywhere, whereas KPCA is a more complicated function of joint position. The result of the embedding is a lower-dimensional representation of the joint position. The following line has been added to IV.A for clarity:\\
+"For example, if the shoulder and arm joints are coupled throughout the motion, and $\phi(\cdot)$ were a matrix multiplication, it could map the "shoulder" and "arm" components of $q$ into a single "shoulder-arm" component in $\phi(q)$.}"\\
+
+\item \textit{``A similar question for the matrices $A_k$ that represent local, I
+	would say postural (see previous comment), synergies whose dimension is
+	m x m, i.e. in joint space: I would expect they were defined in the
+	lower dimensional space. Moreover, are they local representation of the
+	distribution of postures and hence covariance matrices? What do their
+	eigenvectors and eigenvalues locally represent? Maybe, a comparison
+	with the classical and more known postural synergies for the human
+	hand, analyzed by PCA, could be useful. Finally, what does it mean that
+	they should be positive definite (apart from stability issue)?"}\\
+\textcolor{blue}{\texttt{Response:} \small Regarding your first comment, we address why defining $A_k$ in lower-dimensional space is problematic. Specifically, we would lose rank when projecting the A matrix back to joint space, invalidating our stability proof. The $A_k$ matrices are }\\
+
+\item \textit{``What is the dimension of function $\theta_k(q)$ that, to some extent,
+	can be seen as the new control variables. Is it $K<m$?"}\\
+\textcolor{blue}{\texttt{Response:} \small As mentioned in Sec. V.A., we treat K as a hyperparameter and thus choose it differently for each learned motion. For motions that do not vary much throughout the course of the motion, smaller K might be sufficient, but K can just as easily be greater than $m$ (though as $K$ increases, so does the learning problem's computational cost).
+If your question was about each specific $\theta_k(q)$, they are scalars, as is mentioned in Sec. III.}\\
 
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
@@ -111,14 +188,32 @@ First of all, we would like to thank all reviewers for the time they spent revie
 
 \underline{Comments from Reviewer \#3:}
 \begin{enumerate}
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``a considerable part of the introduction is spent in comparing joint space trajectory generation to task
+space trajectory generation. Since these are elementary concepts in robotics, the authors might consider
+reducing this part"}\\
+\textcolor{blue}{\texttt{Response:} \small Several sentences have been removed/reduced.}\\
+
+\item \textit{``one of the main claims of the paper is the stability proof, which in fact is cited in the first line of the
+abstract. However the stability analysis is a quite simple extension of the stability of the transpose
+Jacobian scheme, where the constant gain on the task space error is replaced by the matrix A(q). As
+such the emphasis on this result might be to some extent reduced. By the way, the proof works only
+if the Jacobian is full rank, which is not properly discussed in Appendix I"}\\
+\textcolor{blue}{\texttt{Response:} \small Removed a couple mentions of the stability result, and added the dependence on the rank of the Jacobian to both the appendix and the main body of the text.}\\
+
+\item \textit{``the meaning of variables $q_d$ in (2) is not very clear to me, a well as whether it takes the same meaning
+as $q_{t;n}$ in (8)"}\\
+\textcolor{blue}{\texttt{Response:} \small $q_d$ are the velocities from the demonstrations, which we are aiming to recreate. Equation (8) has been updated to remove the typo (they are in fact the same).}\\
+
+\item \textit{``Section III uses the concept of synergy without actually defining it. An introduction to this concept is given later, in Section IV"}\\
+\textcolor{blue}{\texttt{Response:} \small Added the following to Section 3:\\
+Each ``synergy" is a joint-space transformation that biases the resulting motion to use particular joints; for more, see Sec. IV.}\\
+
+\item \textit{``the expression "flow of motion" in Proposition 1 is not very clear to me"}\\
+\textcolor{blue}{\texttt{Response:} \small Changed to "motion".}\\
 
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
 
 \item \textit{Specific clarifications and typos:
