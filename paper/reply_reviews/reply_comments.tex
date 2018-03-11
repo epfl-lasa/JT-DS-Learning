@@ -92,7 +92,7 @@ redundancy, while achieving the task space goal. Do the authors have a mathemati
 intuitive) explanation for this? Does A(q) somehow relate to the null-space of the jacobian?"}\\
 \textcolor{blue}{\texttt{Response:} \small A(q) transforms a joint velocity vector approximately aligned with the task-space error into a different joint velocity vector that remains approximately aligned with the error, but which we want to choose to more-closely approximate our demonstrations. In this sense, it is resolving redundancy between all the possible joint velocity vectors that would move the controller closer to the origin. The paragraph in Section III has been modified to improve clarity. A(q) doesn't relate to the null-space of the Jacobian in any clear way, as its value can and does alter the task-space trajectory as well as the joint space trajectory. The only property that A(q) preserves is the joint velocity's moving the task space position closer to the goal, but the direction of motion is not necessarily the same as the direction of task-space error.}\\
 
-\item \textit{``In Section III, ?One can intuitively understand the control law as follows:(H(q) ?? x) denotes the
+\item \textit{``In Section III, ?One can intuitively understand the control law as follows:$(H(q) - x^*)$ denotes the
 position error w.r.t. the task target and by multiplying that error by the transposed Jacobian JT (q),
 the error is projected into joint space (similar to Jacobian transpose control)?. I find this explanation
 misleading as jacobian multiplied to position error does not project the error into joint space. Jacobian
@@ -125,11 +125,6 @@ have any idea on how to generalize this across tasks."}\\
 \item \textit{``bla bla"}\\
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
-\item \textit{Specific clarifications and typos:
-\begin{itemize}
-\item ..
-\item ..
-\end{itemize}}
 \end{enumerate}
 
 \underline{Comments from Reviewer \#2:}
@@ -177,12 +172,6 @@ If your question was about each specific $\theta_k(q)$, they are scalars, as is 
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
 
-\item \textit{Specific clarifications and typos:
-\begin{itemize}
-\item ..
-\item ..
-\end{itemize}}
-
 \end{enumerate}
 
 
@@ -215,12 +204,6 @@ Each ``synergy" is a joint-space transformation that biases the resulting motion
 \textcolor{blue}{\texttt{Response:} \small bla bla}\\
 
 
-
-\item \textit{Specific clarifications and typos:
-\begin{itemize}
-\item ..
-\item ..
-\end{itemize}}
 
 \end{enumerate}
 

@@ -7,7 +7,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -77,7 +77,6 @@ end
 
 %%% Orientation is included
 
-
 %%% Type of DR Methods %%%
 mappings_to_compare = {'None', 'PCA'};
 
@@ -128,7 +127,7 @@ for j = 1:repetitions
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %       Split Dataset for Training/Testing        %%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    tt_ratio = 0.6;
+    tt_ratio = 0.8;
     train = round(length(Qs)*tt_ratio);
     Qs_train = []; Ts_train = [];
     Qs_test = [];   Ts_test = [];

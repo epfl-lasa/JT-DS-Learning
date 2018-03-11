@@ -1,0 +1,54 @@
+\documentclass{article}
+
+\usepackage{color}
+\title{A Small \LaTeX{} Article Template\thanks{To your mother}}
+\author{Your Name  \\
+	Your Company / University  \\
+	\and 
+	The Other Dude \\
+	His Company / University \\
+	}
+
+\date{\today}
+% Hint: \title{what ever}, \author{who care} and \date{when ever} could stand 
+% before or after the \begin{document} command 
+% BUT the \maketitle command MUST come AFTER the \begin{document} command! 
+\begin{document}
+\vspace{-10pt}
+Following we mathematically and graphically analyze the proposed motor synergy extraction scheme which is composed of dimensionality reduction of the joint trajectories (via. PCA or K-PCA) and grouping of local behavior regions with GMM on this lower dimensional space. The $K$ clusters found in this embedded space correspond to the number of $K$ synergy matrices that will parametrize $\mathcal{A}(q)$. \underline{Reviewer: 5 (Review30371)} is concerned with this choice and wonders why we didn't use functional-PCA to parametrize $\mathcal{A}(q)$. We analyze the feasibility of this. The main comment from the reviewer:\\
+
+\textit{``My first concern regards you choice of representing the demonstrated
+movement as a sequence of postures and hence looking for synergies by
+using PCA of K-PCA analysis. Why not using functional PCA (f-PCA)
+analysis and determine the few moving synergies that make possible the
+execution of the demonstrated behaviours? It would be that, when you
+combine the local synergies in space and time by using functions
+$\theta_k(q)$, you get what you might obtain by using directly f-PCA.
+However, the last one are valid for the whole movement and can be
+combined by constant coefficients."} \\
+
+Let's begin by analyzing the proposed DS-based control-law:
+\begin{equation}
+\dot{q} = -\mathcal{A}(q)J^{T}(q)(H(q)-x^*)
+\end{equation}
+The intuition behind this control-law is to
+$\mathcal{A}(q) = \sum\limits_{k=1}^{K}\theta'(\phi(q))A_k$
+
+
+\textcolor{red}{[Honestly, I hadn't heard of functional-PCA until now. I searched a bit and I see why the reviewer would suggest this approach (which is interesting btw). F-PCA is the application of PCA on a functional space (mainly targeted at applications where each of the datapoints is a time-series). The goal is then to find the minimal set of eigen-time-series that best describes the shape of the observed time-series.
+To do this, each time-series is approximated with k basis functions and PCA is applied on these functions. The resulting eigen-functions are parametrized by a linear combination of these k basis-functions (looks very similar to k-pca/svc). First of all, I see a couple of complications: i) the basis functions are time dependent; i.e. they will only work for time-series of the same length as the datasets that they were learned from ii) the number of k basis functions is an open parameter, as well as the number of eigenfunctions to keep iii) I can understand how the reviewer would think that it is almost the same as finding the lower dimensional space via PCA/k-PCA and then fitting a GMM, as this would be equivalent to the 'k' basis functions. However, I'm not sure if the 'k' basis functions in joint space are equivalent to the 'K' clusters discovered by the GMM in the embedded space. Which is extremely important because this dictates how many A's we need. I might be wrong about these issues, I need to dig deeper into this.]}
+
+
+\begin{thebibliography}{9}
+\bibitem[Doe]{doe} \emph{First and last \LaTeX{} example.},
+John Doe 50 B.C. 
+\end{thebibliography}
+
+\end{document}
+
+
+
+
+
+\end{newlfm}
+\end{document}

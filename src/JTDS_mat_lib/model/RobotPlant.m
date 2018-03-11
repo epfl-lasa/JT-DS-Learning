@@ -47,7 +47,7 @@ classdef RobotPlant
         
         function basis = qd_basis_orientation(obj, q, xt)
             % Computes the base joint velocity to move at a joint position q
-            % toward a task position xt using the jacobian transpose
+            % toward a task position+orientation xt using the jacobian transpose
             % method (i.e. qd = J^T(H(q) - xt) ).
             % In general, this will be multiplied by an A matrix to get the
             % augmented joint velocity.
