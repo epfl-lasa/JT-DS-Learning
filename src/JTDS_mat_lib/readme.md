@@ -1,7 +1,7 @@
 
 
 
-## How to Train a JT-DS Model
+## How to Train a JT-DS Model (Outdated -- need to update some of these insstructions!)
 
 This page will walk through an example of how to train a JT-DS model on a series of joint-space demonstrations.
 
