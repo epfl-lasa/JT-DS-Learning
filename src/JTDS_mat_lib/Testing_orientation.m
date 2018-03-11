@@ -15,25 +15,25 @@ choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','si
 
 switch choosen_dataset
     case 'back'
-        demos_location = strcat(data_path, 'back_hand/raw_data.mat');
+        demos_location = strcat(data_path, 'back_hand/data.mat');
         demo_ids = [2:11];
     case 'fore'
-        demos_location = strcat(data_path,'fore_hand/raw_data.mat');
+        demos_location = strcat(data_path,'fore_hand/data.mat');
         demo_ids = [1:11];
     case 'pour' 
-        demos_location = strcat(data_path,'pour_no_obst/raw_data.mat');
+        demos_location = strcat(data_path,'pour_no_obst/data.mat');
         demo_ids = [1 2 3 5 6 7 8 9 10];
     case 'pour_obst'
-        demos_location = strcat(data_path,'pour_obst/raw_data.mat');
+        demos_location = strcat(data_path,'pour_obst/data.mat');
         demo_ids = [1:10];
     case 'pour_obst_2'
-        demos_location = strcat(data_path,'pour_obst_2/raw_data.mat');
+        demos_location = strcat(data_path,'pour_obst_2/data.mat');
         demo_ids = [1:7];                
     case 'foot'        % This dataset was recorded at 50 Hz! thinning_ratio = 1 or 2
-        demos_location = strcat(data_path,'foot/raw_data.mat');
+        demos_location = strcat(data_path,'foot/data.mat');
         demo_ids = [1:8];                
     case 'singularity'   
-        demos_location = strcat(data_path,'singularity/raw_data.mat');
+        demos_location = strcat(data_path,'singularity/data.mat');
         demo_ids = [1:10];  
         fprintf('Loading demonstrations from %s \n', demos_location);
         load(demos_location)
