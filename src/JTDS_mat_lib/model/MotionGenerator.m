@@ -60,6 +60,14 @@ classdef MotionGenerator
             qd = obj.compute_A(q)*qd_basis;
         end
         
+        function  qd = get_next_motion_orientation(obj, q, xt, ~) % Generates the next joint velocity given the joint position,
+            % desired position, a GMM model, and an augmentation matrix for
+            % each Gaussian. Does not do bound-checking.
+            qd_basis = obj.plant.qd_basis_orientation(q, xt);
+            qd = obj.compute_A(q)*qd_basis;
+        end
+            
+        
         function qd_fun = ODE_fun(obj, xt, dt) % Yields a function handle
             % which computes the first order differential equation
             % associated with this system, i.e. f where qd = f(q, t)
