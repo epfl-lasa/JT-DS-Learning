@@ -5,18 +5,118 @@
 % demosntration trajectories. To get more detailed information about the
 % structure of the variable 'demo', type 'doc preprocess_demos' in the
 % MATLAB command window
+clear all; close all; clc;
+do_plots  = 1;
+data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
+choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Load and Process dataset %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+switch choosen_dataset
+    case 'back'
+        demos_location = strcat(data_path, 'back_hand/data.mat');
+        demo_ids = [2:11];
+    case 'fore'
+        demos_location = strcat(data_path,'fore_hand/data.mat');
+        demo_ids = [1:11];
+    case 'pour' 
+        demos_location = strcat(data_path,'pour_no_obst/data.mat');
+        demo_ids = [1 2 3 5 6 7 8 9 10];
+    case 'pour_obst'
+        demos_location = strcat(data_path,'pour_obst/data.mat');
+        demo_ids = [1:10];
+    case 'pour_obst_2'
+        demos_location = strcat(data_path,'pour_obst_2/data.mat');
+        demo_ids = [1:7];                
+    case 'foot'        % This dataset was recorded at 50 Hz! thinning_ratio = 1 or 2
+        demos_location = strcat(data_path,'foot/data.mat');
+        demo_ids = [1:8];                
+    case 'singularity'   
+        demos_location = strcat(data_path,'singularity/data.mat');
+        demo_ids = [1:10];  
+        fprintf('Loading demonstrations from %s \n', demos_location);
+        load(demos_location)
+end
+
+if ~strcmp(choosen_dataset,'singularity')
+    fprintf('Loading demonstrations from %s \n', demos_location);
+    [Qs_, Ts_] = ImportDemonstrations(demos_location);
+end
+% If the data is very dense, initializing the semidefinite program may take
+% a long time. In this case, it may help to thin down the number of
+% demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
+% satisfactorily reconstruct the shape of the trajectory.
+% In the KUKA case, we get 500 datapoints per second, so we recommend shrinking the data density considerably
+thinning_ratio = 20; % Same as demonstrations recorded at 10->50Hz, 20->25Hz
+Qs = []; Ts= [];
+for i = 1:length(demo_ids)
+    Qs{i,1} = Qs_{demo_ids(i)}(:, 1:thinning_ratio:end);
+    Ts{i,1} = Ts_{demo_ids(i)}(:, 1:thinning_ratio:end);
+end
+repetitions = 1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DH parameters for the KUKA LWR 4+ robot %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dimq = 7;
+A = [0 0 0 0 0 0 0.05];
+Alpha = pi/2*[1 -1 -1 1 1 -1 0];
+D = [.34 0 .4 0 .4 0 .279];
+Qmin = 2*pi/180*[-85, -90, -100, -110, -140, -90, -120];
+Qmax = 2*pi/180*[85, 90, 100, 110, 140, 90, 120];
+% Create a model of the robot
+robot = initialize_robot(A,D,Alpha,Qmin,Qmax);    
+% Create a model plant for the robot's motor controller
+robotplant = RobotPlant(robot, 'end_trans');
+
+%%% Learning options %%%
+options = [];
+options.orientation_flag=1;
+options.tol_cutting = 0.1;
+
+
+%%% GMM options %%%
+options.GMM_sigma_type = 'full'; % Can be either 'full' or 'diagonal'
+options.GMM_maximize_BIC = true;
+options.max_gaussians = 10;
+options.plot_BIC = 0; 
+
+% Optimization options 
+options.learn_with_bounds = false;
+options.verbose = true;
+for j = 1:repetitions        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %       Split Dataset for Training/Testing        %%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    tt_ratio = 0.6;
+    train = round(length(Qs)*tt_ratio);
+    Qs_train = []; Ts_train = [];
+    Qs_test = [];   Ts_test = [];
+    rand_ids = randsample(length(Qs),length(Qs))';
+    for ii=1:length(Qs)
+        if ii < train
+            Qs_train{ii,1} = Qs{rand_ids(ii)}; Ts_train{ii,1} = Ts{rand_ids(ii)};
+        else
+            Qs_test{ii-train+1,1} = Qs{rand_ids(ii)}; Ts_test{ii-train+1,1} = Ts{rand_ids(ii)};
+        end
+    end
+     
+    %%% Pre-process Data %%%
+    [demos_train] = preprocess_demos_seds(robotplant, Qs_train,options.orientation_flag);
+    [demos_test]  = preprocess_demos_seds(robotplant, Qs_test ,options.orientation_flag);
+end
 
 %% User Parameters and Setting
-load('models/recorded_motions/GShape','demos')
 % the variable 'demos' composed of 3 demosntrations. Each demonstrations is
 % recorded from Tablet-PC at 50Hz. Datas are in millimeters.
 
 % Pre-processing
-dt = 0.1; %The time step of the demonstrations
-tol_cutting = 1; % A threshold on velocity that will be used for trimming demos
+dt = 0.01; %The time step of the demonstrations
 
 % Training parameters
-K = 6; %Number of Gaussian funcitons
+K = 2; %Number of Gaussian funcitons
 
 % A set of options that will be passed to the solver. Please type 
 % 'doc preprocess_demos' in the MATLAB command window to get detailed
@@ -30,7 +130,7 @@ options.display = 1;          % An option to control whether the algorithm
 options.tol_stopping=10^-10;  % A small positive scalar defining the stoppping
                               % tolerance for the optimization solver [default: 10^-10]
 
-options.max_iter = 500;       % Maximum number of iteration for the solver [default: i_max=1000]
+options.max_iter = 5000;       % Maximum number of iteration for the solver [default: i_max=1000]
 
 options.objective = 'mse';    % 'likelihood': use likelihood as criterion to
                               % optimize parameters of GMM
@@ -50,7 +150,7 @@ if isempty(regexp(path,['GMR_lib' pathsep], 'once'))
 end
 
 %% SEDS learning algorithm
-[x0 , xT, Data, index] = preprocess_demos(demos,dt,tol_cutting); %preprocessing datas
+[x0 , xT, Data, index] = preprocess_demos(demos_train,dt,options.tol_cutting); %preprocessing datas
 [Priors_0, Mu_0, Sigma_0] = initialize_SEDS(Data,K); %finding an initial guess for GMM's parameter
 [Priors Mu Sigma]=SEDS_Solver(Priors_0,Mu_0,Sigma_0,Data,options); %running SEDS optimization solver
 
