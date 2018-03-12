@@ -116,7 +116,7 @@ end
 dt = 0.01; %The time step of the demonstrations
 
 % Training parameters
-K = 2; %Number of Gaussian funcitons
+K = 1; %Number of Gaussian funcitons
 
 % A set of options that will be passed to the solver. Please type 
 % 'doc preprocess_demos' in the MATLAB command window to get detailed
@@ -130,7 +130,7 @@ options.display = 1;          % An option to control whether the algorithm
 options.tol_stopping=10^-10;  % A small positive scalar defining the stoppping
                               % tolerance for the optimization solver [default: 10^-10]
 
-options.max_iter = 5000;       % Maximum number of iteration for the solver [default: i_max=1000]
+options.max_iter = 500;       % Maximum number of iteration for the solver [default: i_max=1000]
 
 options.objective = 'mse';    % 'likelihood': use likelihood as criterion to
                               % optimize parameters of GMM
@@ -222,3 +222,7 @@ xlabel('$\xi_1 (mm)$','interpreter','latex','fontsize',15);
 ylabel('$\xi_2 (mm)$','interpreter','latex','fontsize',15);
 title('Streamlines of the model')
 set(gca,'position',[0.1300    0.1444    0.7750    0.7619])
+for i=1:size(Mu,2)
+   Sigma(1:6,7:12,i)=Sigma(7:12,1:6,i)';
+end
+out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)
