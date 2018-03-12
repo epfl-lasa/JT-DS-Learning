@@ -231,3 +231,5 @@ model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
 out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)
+% save mat file of variables
+save('model.mat','Priors','Mu','Sigma')

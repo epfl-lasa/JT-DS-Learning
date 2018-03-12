@@ -5,7 +5,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 1; 
+options.orientation_flag = 0; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -169,12 +169,19 @@ fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name,
 %      If you are happy with the results, export the model       %%
 %        for execution with the rtk-DS cpp class                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% All parameters in 1 file
+% model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
+% mkdir(model_dir); 
+% filename = strcat(model_dir,'/JTDS_model.txt')
+% out = export2JSEDS_Cpp_lib(filename,Priors,Mu,Sigma,robot, As, latent_mapping.M);
+
+% 1 file per paramater
 model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
-filename = strcat(model_dir,'/JTDS_model.txt')
-out = export2JSEDS_Cpp_lib(filename,Priors,Mu,Sigma,robot, As, latent_mapping.M);
-
-model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
-mkdir(model_dir); 
 cd(model_dir)
-out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)
+out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M')
+
+% save mat file of variables
+M = latent_mapping.M';
+save('model.mat','Priors','Mu','Sigma', 'As', 'M')
+

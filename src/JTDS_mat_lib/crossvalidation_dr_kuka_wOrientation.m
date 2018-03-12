@@ -82,7 +82,7 @@ mappings_to_compare = {'None', 'PCA'};
 
 %%% Learning options %%%
 options = [];
-options.orientation_flag=0;
+options.orientation_flag=1;
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
