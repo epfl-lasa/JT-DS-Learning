@@ -5,7 +5,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -121,7 +121,7 @@ robotplant = RobotPlant(robot, 'end_trans');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       Split Dataset for Training/Testing        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tt_ratio = 0.8;
+tt_ratio = 0.6;
 train = round(length(Qs)*tt_ratio);
 Qs_train = []; Ts_train = [];
 Qs_test = [];   Ts_test = [];
@@ -173,3 +173,8 @@ model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
 filename = strcat(model_dir,'/JTDS_model.txt')
 out = export2JSEDS_Cpp_lib(filename,Priors,Mu,Sigma,robot, As, latent_mapping.M);
+
+model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
+mkdir(model_dir); 
+cd(model_dir)
+out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)

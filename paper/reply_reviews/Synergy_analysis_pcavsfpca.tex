@@ -15,34 +15,25 @@
 % BUT the \maketitle command MUST come AFTER the \begin{document} command! 
 \begin{document}
 \vspace{-10pt}
-Following we mathematically and graphically analyze the proposed motor synergy extraction scheme which is composed of dimensionality reduction of the joint trajectories (via. PCA or K-PCA) and grouping of local behavior regions with GMM on this lower dimensional space. The $K$ clusters found in this embedded space correspond to the number of $K$ synergy matrices that will parametrize $\mathcal{A}(q)$. \underline{Reviewer: 5 (Review30371)} is concerned with this choice and wonders why we didn't use functional-PCA to parametrize $\mathcal{A}(q)$. We analyze the feasibility of this. The main comment from the reviewer:\\
-
-\textit{``My first concern regards you choice of representing the demonstrated
-movement as a sequence of postures and hence looking for synergies by
-using PCA of K-PCA analysis. Why not using functional PCA (f-PCA)
-analysis and determine the few moving synergies that make possible the
-execution of the demonstrated behaviours? It would be that, when you
-combine the local synergies in space and time by using functions
-$\theta_k(q)$, you get what you might obtain by using directly f-PCA.
-However, the last one are valid for the whole movement and can be
-combined by constant coefficients."} \\
-
-Let's begin by analyzing the proposed DS-based control-law:
+In response to \underline{Reviewer: 5 (Review30371)} (Comments 1-3). Following we mathematically and graphically analyze the proposed local behavior synergy extraction scheme which is composed of dimensionality reduction of the joint trajectories (via. PCA or K-PCA) and grouping of local behavior regions with GMM on this lower dimensional space. The $K$ clusters found in this embedded space correspond to the number of $K$ synergy matrices that will parametrize $\mathcal{A}(q)$ and analyze the feasibility of applying F-PCA to this scheme. Let's begin by analyzing the proposed DS-based control-law:
 \begin{equation}
 \dot{q} = -\mathcal{A}(q)J^{T}(q)(H(q)-x^*)
 \end{equation}
-The intuition behind this control-law is to
-$\mathcal{A}(q) = \sum\limits_{k=1}^{K}\theta'(\phi(q))A_k$
+The intuition behind this control-law is that $\mathcal{A}(q) = \sum\limits_{k=1}^{K}\theta'(\phi(q))A_k$ is a linear combination of time-invariant linear matrices $A_k$, these matrices are the ``local behavior synergy matrices" that shape the motion in joint-space. Meaning that, given the joint-space velocity vector representing the task-space error $J^{T}(q)(H(q)-x^*)$, the resulting motion is biased to use a particular set of joints, defined in each $A_k$. Each $A_k$ is thus activated depending on the current ``joint-posture" $q$ (represented in the lower-dimensional space $\phi(q)$) via the scheduling/activation function $\theta'(\phi(q))$. This is our proposed definition of ``local behavior synergies", which is not equivalent to the notion of ``hand posture synergies" as suggested by the reviewer. The fact that we use PCA or K-PCA to represent to activation function is to alleviate the complexity of extracting the local synergy regions in joint-space. From the classical definition of joint synergies, when transforming the joint trajectories via PCA/K-PCA to a lower dimensional-space we are indeed working in the ``joint postural synergy" space as the reviewer suggests. But, solely the activation function $\theta'(\phi(q))$ is represented by these joint postural synergies. The $A_k$ matrices themselves are the ``local behavior synergies" and these live in joint-space $A_k\in \mathbb{R}^{m \times m}$ and are time-invariant. Note that, if we were to bypass the DR step our state-dependent system matrix would be the following $\mathcal{A}(q)= \sum\limits_{k=1}^{K}\theta(q)A_k$, which through our definition is still a combination of ``local behavior synergy matrices". As shown in TABLE I of the manuscript and discussed in Section V, by using a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations. Following we demonstrate this on the pouring behavior dataset.
+
+In Fig.
 
 
-\textcolor{red}{[Honestly, I hadn't heard of functional-PCA until now. I searched a bit and I see why the reviewer would suggest this approach (which is interesting btw). F-PCA is the application of PCA on a functional space (mainly targeted at applications where each of the datapoints is a time-series). The goal is then to find the minimal set of eigen-time-series that best describes the shape of the observed time-series.
-To do this, each time-series is approximated with k basis functions and PCA is applied on these functions. The resulting eigen-functions are parametrized by a linear combination of these k basis-functions (looks very similar to k-pca/svc). First of all, I see a couple of complications: i) the basis functions are time dependent; i.e. they will only work for time-series of the same length as the datasets that they were learned from ii) the number of k basis functions is an open parameter, as well as the number of eigenfunctions to keep iii) I can understand how the reviewer would think that it is almost the same as finding the lower dimensional space via PCA/k-PCA and then fitting a GMM, as this would be equivalent to the 'k' basis functions. However, I'm not sure if the 'k' basis functions in joint space are equivalent to the 'K' clusters discovered by the GMM in the embedded space. Which is extremely important because this dictates how many A's we need. I might be wrong about these issues, I need to dig deeper into this.]}
 
 
-\begin{thebibliography}{9}
-\bibitem[Doe]{doe} \emph{First and last \LaTeX{} example.},
-John Doe 50 B.C. 
-\end{thebibliography}
+This activation is defined by  which is the posterior probability of a GMM that models these local linear motions with. The idea of using a DR scheme to parametrize this activation function stems from the fact that
+
+
+
+%\begin{thebibliography}{9}
+%\bibitem[Doe]{doe} \emph{First and last \LaTeX{} example.},
+%John Doe 50 B.C. 
+%\end{thebibliography}
 
 \end{document}
 

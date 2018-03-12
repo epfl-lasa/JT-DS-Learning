@@ -43,6 +43,7 @@ if ~strcmp(choosen_dataset,'singularity')
     fprintf('Loading demonstrations from %s \n', demos_location);
     [Qs_, Ts_] = ImportDemonstrations(demos_location);
 end
+
 % If the data is very dense, initializing the semidefinite program may take
 % a long time. In this case, it may help to thin down the number of
 % demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
@@ -73,6 +74,7 @@ if do_plots
         ylabel('Angle (rad)','Interpreter', 'LaTex', 'Fontsize', 15)
     end
 end
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%    Train a JTDS model on the current dataset   %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,4 +140,72 @@ motion_generator = MotionGenerator(robotplant, Mu, Sigma, Priors, As, latent_map
 % Compute RMSE on training data
 rmse_train = mean(trajectory_error(motion_generator, Data_train(1:dimq, :), Data_train(dimq+1:2*dimq, :), Data_train(2*dimq+1:end, :),options.orientation_flag));
 fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name, rmse_train);
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    Plot Lower-Dimensional Embedding and Synergies   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Extract Lower Dimensional Embedding of Demonstrations
+figure('Color',[1 1 1])  
+for p=1:pca_dim
+    subplot(pca_dim,1,p)    
+    for i=1:length(Qs)
+        q_ref = Qs{i};
+        phi_q = out_of_sample(q_ref', latent_mapping)';
+        plot(phi_q(p,:),'-.'); hold on;
+    end      
+    grid on;
+    title(sprintf('Raw Trajectories in PCA-space $\\phi_%d(q)$',p), 'Interpreter', 'LaTex', 'Fontsize', 15)
+    xlabel('Time (samples)','Interpreter', 'LaTex', 'Fontsize', 15)   
+end
+
+% Plot in 3D-space
+K_colors = hsv(K);
+figure('Color',[1 1 1])  
+for i=1:length(Qs)
+    q_ref = Qs{i};
+    phi_q = out_of_sample(q_ref', latent_mapping)';
+    % Hard clustering for each local model
+    labels =  my_gmm_cluster(phi_q, Priors, Mu, Sigma, 'hard', []);
+    for k=1:K        
+        phi_q_k   = phi_q(:,labels==k);
+        scatter3(phi_q_k(1,:),phi_q_k(2,:),phi_q_k(3,:),20,K_colors(k,:),'*'); hold on;
+    end    
+    scatter3(phi_q(1,end),phi_q(2,end),phi_q(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+    axis tight
+end
+
+% Plot Gaussians for local behavior cluster --> might change this to
+% coloring the data-point with the posterior probability
+handles = my_plot3dGaussian(Priors, Mu, Sigma );
+grid on;
+title('Clustered (GMM) Trajectories in PCA-space $\phi(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\phi_1(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\phi_2(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    Reconstruct a Demonstration   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure('Color',[1 1 1])
+Data_ = [];
+qdim = size(Qs{1},1);
+for dof=1:7
+    q_ref = Qs{i};
+    phi_q = out_of_sample(q_ref', latent_mapping)';
+    q_rec = zeros(size(q_ref));
+    for j=1:length(phi_q)
+        q_rec(:,j) = pinv(latent_mapping.M')*phi_q(:,j) + latent_mapping.mean';
+    end    
+    subplot(qdim,1,dof)
+    for i=1:length(Qs)
+        plot(q_ref(dof,:),'-','Color', [0 0 0], 'LineWidth',2); hold on;
+        plot(q_rec(dof,:),'-.','Color',[1 0 0], 'LineWidth',2); hold on;
+    end
+    grid on;    
+    title(sprintf('Raw and Reconstructed Demonstrations for $q_%d$',dof), 'Interpreter', 'LaTex', 'Fontsize', 15)
+    xlabel('Time (samples)','Interpreter', 'LaTex', 'Fontsize', 15)
+    ylabel('Angle (rad)','Interpreter', 'LaTex', 'Fontsize', 15)
+end
+legend('Raw','Reconstructed')
 

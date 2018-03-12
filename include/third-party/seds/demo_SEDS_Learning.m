@@ -8,7 +8,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -141,7 +141,7 @@ options.objective = 'mse';    % 'likelihood': use likelihood as criterion to
                               % to optimize parameters of GMM                              
                               % [default: 'mse']
 
-%% Putting GMR and SEDS library in the MATLAB Path
+% Putting GMR and SEDS library in the MATLAB Path
 if isempty(regexp(path,['SEDS_lib' pathsep], 'once'))
     addpath([pwd, '/SEDS_lib']);    % add SEDS dir to path
 end
@@ -225,4 +225,9 @@ set(gca,'position',[0.1300    0.1444    0.7750    0.7619])
 for i=1:size(Mu,2)
    Sigma(1:6,7:12,i)=Sigma(7:12,1:6,i)';
 end
+
+%% Export SEDS model for CPP Library
+model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
+mkdir(model_dir); 
+cd(model_dir)
 out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)

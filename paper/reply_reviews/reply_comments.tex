@@ -2,6 +2,8 @@
 \usepackage{charter}
 
 \usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
 \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
 
 
@@ -71,11 +73,29 @@ First of all, we would like to thank all reviewers for the time they spent revie
 
 \underline{Comments from Reviewer \#1:}
 \begin{enumerate}
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``As mentioned by the authors, there are many reasons to plan in joint
+space rather than task space. One of the important reasons to me seems
+to be able to plan end-effector orientation, not just position.
+Traditional movement primitives, for example DMPs, do not explicitly
+encode planning in the SO(3) space of orientations. There is research
+that addresses this question, for example [1], but they lose the
+simplistic appeal of movement primitives. I think it would be a great
+addition to this paper if the authors illustrate if their joint space
+DS can be used to accomplish orientation sensitive tasks, and
+generalize to end-effector orientations different that what was
+demonstrated.[1] Ude, Ale, et al. "Orientation in cartesian space dynamic movement
+primitives." Robotics and Automation (ICRA), 2014 IEEE International
+Conference on. IEEE, 2014.}"\\
+\textcolor{red}{\texttt{Response:} \small Yes, it works, redoing Table I for now, need to highlight this throughout the paper..}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``In the introduction, the authors stress that jacobian psuedo inverse
+can be computationally expensive. Is this really true for a 7-dof robot
+arm? Can the authors provide some numbers where this would really be an
+issue for a robot controlled at 1000Hz? I find the argument that
+jacobian inverse does not work for singularities and needs a set of
+heuristics to be more compelling. Maybe the authors should rewrite the
+introduction to stress more on this issue?"}\\
+\textcolor{red}{\texttt{Response:} \small For a 7-DOF robot it is indeed negiblible. This only becomes an issue for higher degrees of freedom, like a multi-fingered hand or multi-arm robotic setting. We will remove this passage from the text as we don't have much space to discuss it.}\\
 
 \item \textit{``In Section II, criterion I, the authors talk about a positive symmetric matrix P. I do not see it in the
 equations above. Is this a weighing matrix?"}\\
@@ -101,7 +121,7 @@ of the error in task space. In any case, I would either clarify this statement m
 manuscript all together. It seems like the DS is just a PD law that provably converges to a fixed attractor
 in task space."}\\
 \textcolor{blue}{\texttt{Response:} \small The passage has been rewritten to remove the word "project", which you appropriately noted was incorrect, and further clarifies the nature of the DS as a PD controller. The new text is reproduced below: \\
-One can intuitively understand the control law as follows: $(H(q) - x^*)$ denotes the position error w.r.t. the task target, which we then reinterpret as the task-space velocity of a proportional controller. By multiplying that error by the transposed Jacobian $J^T(q)$, it is transformed into a joint-space velocity vector correlated with the error (similar to Jacobian transpose control [?]), see Fig. [?]. The positive definite matrix $\mathcal{A}(q)$ warps the resulting joint-space velocity; Fig. [?] illustrates the effects of  $\mathcal{A}(q)$ on the generated motion. Thus the controller can be thought of as a proportional controller in joint space.}\\
+\textit{``One can intuitively understand the control law as follows: $(H(q) - x^*)$ denotes the position error w.r.t. the task target, which we then reinterpret as the task-space velocity of a proportional controller. By multiplying that error by the transposed Jacobian $J^T(q)$, it is transformed into a joint-space velocity vector correlated with the error (similar to Jacobian transpose control [?]), see Fig. [?]. The positive definite matrix $\mathcal{A}(q)$ warps the resulting joint-space velocity; Fig. [?] illustrates the effects of  $\mathcal{A}(q)$ on the generated motion. Thus the controller can be thought of as a proportional controller in joint space.}}\\
 
 \item \textit{``About figure 2 again, the position error in task and joint space are not simply multiplied by a Jacobian.
 Although, task space error can be first-order approximated using a Jacobian multiplication with
@@ -116,21 +136,38 @@ they elaborate a little on this? What is the expectation taken over and what lik
 have any idea on how to generalize this across tasks."}\\
 \textcolor{blue}{\texttt{Response:} \small The dimensionality reduction could be generalized across tasks that had the same motor synergies - that is, for example, all tasks in which the shoulder and elbow always move together. Similarly, one could imagine several similar motions that could be decomposed into shared submotions, thus allowing the parameters to be shared. However, in general, fixing some of the parameters while optimizing will simply lead to a less-flexible model, and considering that there is no intuitive scheme for a-priori identifying motions with strongly similar submotions, we did not explore this question further. To answer your question directly, if one wanted to, one could reuse the learned dimensionality reduction for a new task which you believed to be similar, or copy certain components of a previous motion's GMM into the new GMM and leave them fixed throughout the optimization.}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``The experiments have the same task-space goal as the
+demonstrations. Can the authors include experiments that have goals
+different from demonstrated, especially in orientation?"}\\
+\textcolor{red}{\texttt{Response:} \small First of all, they don't.. show some figures... add clarification of this in the text and explain why we cannot systematically evaluate this if we had too..}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``In similar light, maybe authors could present online adaptation of
+A(q) to generalize to situations different than demonstrated, for
+example a slightly moved obstacle?"}\\
+\textcolor{red}{\texttt{Response:} \small This is a really nice suggestion. But how I see it, it's basically a new paper; i.e. an extension of this one, but we can discuss about this if we have space. A quick idea that comes to mind would be to apply a modulation/activation to the LPV system in a local region. Now this is not as straight forward as in our task space approaches because our LPV system is learned in joint-space while the activation function is in the embedded space. Another idea is to modify the activation function of the local behavior regions such that it is a function of an external variable, for example if force is applied/sensed, and it bias the model towards another $A_k$ matrix? So it still would be an open question, but an approach to tackle this problem could be along these lines.... Add a passage in the discussion answering this question}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``In table II, instead of the tracking error, maybe the more useful
+error to see would be the error with respect to the plan or
+demonstartion. One would assume that the proposed approach would be
+worse at it than SEDS+IK because the minimized error is with respect to
+the velocity and goal, not the position of the movement."}\\
+\textcolor{red}{\texttt{Response:} \small This is not necessarily the reason that it would be worse, as SEDS is also learned by minimizing the error with respect to
+the velocity and the goal. The reason that JT-DS is less accurate in reproducing the motion in task-space is because our optimization is focused on reproducing the motion solely in joint-space, while reaching the final target in task-space. Nowhere do we claim that JT-DS is capable of reproducing a motion in both joint and task space. Nevertheless, we add the mean swept-error-arrea (SEA) which evaluate the performance of reproduction in task-space from a reference trajectory... as shown in the tables....}\\
 
 \end{enumerate}
 
 \underline{Comments from Reviewer \#2:}
 \begin{enumerate}
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``My first concern regards you choice of representing the demonstrated
+movement as a sequence of postures and hence looking for synergies by
+using PCA of K-PCA analysis. Why not using functional PCA (f-PCA)
+analysis and determine the few moving synergies that make possible the
+execution of the demonstrated behaviours? It would be that, when you
+combine the local synergies in space and time by using functions
+$\theta_k(q)$, you get what you might obtain by using directly f-PCA.
+However, the last one are valid for the whole movement and can be
+combined by constant coefficients."}\\
+\textcolor{red}{\texttt{Response:} \small Working on the response to this in the other document: synergy\_analysis\_pcavsfpca.tex}\\
 
 \item \textit{``I also found the paper lacking of physical intuitions, especially in	the experimental part, about the entities introduced in previous
 	sections. In particular, what is the lesson we learn after your
@@ -145,9 +182,9 @@ have any idea on how to generalize this across tasks."}\\
 	or more cases in Section V? What is this lower dimensional space for
 	the cases in Section V?"}\\
 \textcolor{blue}{\texttt{Response:} \small The result of the analysis in Section V suggests that the algorithm performs much better (lower velocity reconstruction error) and requires far fewer synergies, when the dimension of the motion hs been reduced. The paragraph explaining this has been clarified, and is reproduced below:\\
-"As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to encode our activation functions $\theta_k$ in a lower-dimensional space $\phi(q)$ yields better generalization capabilities than encoding the behaviors in using the original $q$. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learned without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the higher number of $K$ needed to represent the motion without DR. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations." \\
+\textit{"As can be seen, for all datasets there is a significant increase in performance on the testing sets when using either dimensionality reduction (DR) approaches. This suggests that using DR to encode our activation functions $\theta_k$ in a lower-dimensional space $\phi(q)$ yields better generalization capabilities than encoding the behaviors in using the original $q$. This is most notable for the three pouring motions, where the joint-velocity RMSE testing error for a JT-DS model learned without DR is an order of magnitude higher than with DR. Such an error indicates that the demonstrated joint-behavior was over-fitted on the training set, which is also exhibited in the higher number of $K$ needed to represent the motion without DR. For all datasets, the DR methods provided $\delta < d/2$, either comparable or less number of local behaviors synergies $K$ and better RMSE errors on testing sets as opposed to no DR. By finding a lower-dimensional manifold to represent the joint trajectories, we are getting rid of outliers, noise and redundancies that might arise from the raw joint demonstrations. Hence, through DR we are capable of robustly extracting the local behavior synergies from raw demonstrations."} \\
 Regarding the second half of the comment, $\phi(q)$ is a learned transformation, which is associated with a whole behavior, rather than a particular $A_k$ (as is now clarified in IV.A). However, the precise nature of the transformation depends on the DR technique: PCA applies a uniform matrix multiplication of joint position everywhere, whereas KPCA is a more complicated function of joint position. The result of the embedding is a lower-dimensional representation of the joint position. The following line has been added to IV.A for clarity:\\
-"For example, if the shoulder and arm joints are coupled throughout the motion, and $\phi(\cdot)$ were a matrix multiplication, it could map the "shoulder" and "arm" components of $q$ into a single "shoulder-arm" component in $\phi(q)$.}"\\
+\textit{"For example, if the shoulder and arm joints are coupled throughout the motion, and $\phi(\cdot)$ were a matrix multiplication, it could map the "shoulder" and "arm" components of $q$ into a single "shoulder-arm" component in $\phi(q)$.}}"\\
 
 \item \textit{``A similar question for the matrices $A_k$ that represent local, I
 	would say postural (see previous comment), synergies whose dimension is
@@ -158,18 +195,45 @@ Regarding the second half of the comment, $\phi(q)$ is a learned transformation,
 	with the classical and more known postural synergies for the human
 	hand, analyzed by PCA, could be useful. Finally, what does it mean that
 	they should be positive definite (apart from stability issue)?"}\\
-\textcolor{blue}{\texttt{Response:} \small Regarding your first comment, we address why defining $A_k$ in lower-dimensional space is problematic. Specifically, we would lose rank when projecting the A matrix back to joint space, invalidating our stability proof. The $A_k$ matrices are }\\
+\textcolor{red}{\texttt{Response:} \small Regarding your first comment, we address why defining $A_k$ in lower-dimensional space is problematic. Specifically, we would lose rank when projecting the A matrix back to joint space, invalidating our stability proof. The $A_k$ matrices are... this will be answered in the response to question 1..}\\
 
 \item \textit{``What is the dimension of function $\theta_k(q)$ that, to some extent,
 	can be seen as the new control variables. Is it $K<m$?"}\\
 \textcolor{blue}{\texttt{Response:} \small As mentioned in Sec. V.A., we treat K as a hyperparameter and thus choose it differently for each learned motion. For motions that do not vary much throughout the course of the motion, smaller K might be sufficient, but K can just as easily be greater than $m$ (though as $K$ increases, so does the learning problem's computational cost).
 If your question was about each specific $\theta_k(q)$, they are scalars, as is mentioned in Sec. III.}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{``For the test, why not comparing also with the JT control method? In
+other terms, is it possible to use a SEDS + JT, especially for the
+third case "Transiting through singular configurations"?"}\\
+\textcolor{blue}{\texttt{Response:} \small This could be done, but it is mathematically incorrect. The original JT control method is a DS that converges to a unique equilibrium point, i.e. the task-space target $x^*\in \mathbb{R}^{N\times 1}$, with a gain matrix $K \in \mathbb{R}^{M\times M}$ as:\begin{equation}
+\dot{q} = K J(q)^T(H(q)- x^*) 
+\label{eq:JT}
+\end{equation}
+SEDS on the other hand, is a DS-based motion generator that converges also to a unique equilibrium point, as:
+\begin{equation}
+\hfill \begin{aligned}
+&  \dot{x}  = \mathbf{f}(x)
+\rightarrow  &
+\begin{cases}
+\lim_{t \rightarrow \infty}\|x - x^*\|=0
+\end{cases}
+\end{aligned}  \hfill
+\label{eq:simple-ds}
+\end{equation}
+where $\mathbf{f}(\cdot): \mathbb{R}^M \rightarrow \mathbb{R}^M$ is a continuous differentiable vector-valued function representing a non-linear DS that converges to a single stable equilibrium point $x^*$. SEDS is used in the following way: Given the current state of the robot $x$ the next desired velocity $\dot{x}_d$ is computed with \eqref{eq:simple-ds} this is then fed to a velocity-based IK solver as shown in Fig. \ref{}:}\\
+\textcolor{red}{TO SINA: Include typical SEDS-like control-loop here}\\
+\textcolor{blue}{ \small If we were to use SEDS with the JT-control method, we would have to integrate the desired velocity to generate a desired position $x_d$ at each time-step and define it as the target in \eqref{eq:JT}, which would yield the following controller:
+\begin{equation}
+\dot{q} = K J(q)^T(H(q)- x_d) 
+\end{equation} Note that, the JT control method assumes that the target is static, hence, in order for this controller to actually converge, the output of \eqref{eq:simple-ds} must seem constant for a period of time. This is contradicting as \eqref{eq:simple-ds} is always trying to converge to $x^*$. Thus, merging these two approaches is theoretically ill-fitting. To better highlight this, we show an illustration of the supposed SEDS+JT control loop in Fig. \ref{}:}\\
+\textcolor{red}{TO SINA: Include SEDS+JT control-loop here}\\
+\textcolor{red}{\small Describe this control-loop and state more reasons (if any) why it's wrong...}
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+
+\item \textit{``Minors:
+- SEDS + IK: what does SEDS mean?"}\\
+\textcolor{blue}{\texttt{Response:} \small As stated in the previous comment, SEDS, short for Stable Estimator of Dynamical Systems is an approach proposed in [8] that learns a stable estimate of a DS with the form of \eqref{eq:simple-ds} from demonstrations. The first paragraph of Secrtion V.B was written to describe its meaning and how we use it:\\
+\textit{``We now seek to elucidate the distinctive properties of our JT-DS model by comparing its performance to a DS-based Cartesian motion generator + IK solver approach for behaviors \textit{(5-7)}. For the Cartesian motion generator we use the SEDS (Stable Estimator of Dynamical Systems) approach [8] which learns an asymptotically stable DS in Cartesian space from demonstrations. We then generate joint trajectories through a damped least square IK solver. From herein we refer to this approach as SEDS+IK."}}\\
 
 
 \end{enumerate}
@@ -200,8 +264,9 @@ Each ``synergy" is a joint-space transformation that biases the resulting motion
 \item \textit{``the expression "flow of motion" in Proposition 1 is not very clear to me"}\\
 \textcolor{blue}{\texttt{Response:} \small Changed to "motion".}\\
 
-\item \textit{``bla bla"}\\
-\textcolor{blue}{\texttt{Response:} \small bla bla}\\
+\item \textit{`some details about the optimization problem in (8) might be given
+(nature of the problem, complexity, feasibility)."}\\
+\textcolor{red}{\texttt{Response:} \small TODO..}\\
 
 
 
