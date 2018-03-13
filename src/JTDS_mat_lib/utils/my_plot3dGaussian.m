@@ -21,9 +21,9 @@ for k = 1:K
         d = max(d,0);
     end
     
-    if eig(Sigmas(:,:,k)) < 1e-3
-        d = d*100;
-    end
+%     if eig(Sigmas(:,:,k)) < 1e-3
+%         d = d*100;
+%     end
     
     d =  sqrt(d); % convert variance to sdwidth*sd
     bp = (v*d*ap) + repmat(Mus(:,k), 1, size(ap,2));

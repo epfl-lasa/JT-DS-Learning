@@ -199,7 +199,9 @@ function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotpla
         otherwise
             error('Incorrectly specified a latent_mapping type. Was %s, but must be one of "PCA", "KPCA", "Autoencoder", or "None"', options.latent_mapping_type);
     end
-            
+    
+    latent_mapping.TransformedTrainingData = TransformedTrainingData;
+    
     if options.verbose
         disp(sprintf('Converted demonstrations into %d-D latent space using %s.', dimz, options.latent_mapping_type));
     end

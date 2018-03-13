@@ -74,7 +74,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Choose Lower-Dimensional Mapping Technique
-mapping = {'None'}; % 'None', 'PCA', 'KPCA'
+mapping = {'PCA'}; % 'None', 'PCA', 'KPCA'
 
 %%% Learning options %%%
 options = [];
@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 1; 
+options.orientation_flag = 0; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -163,7 +163,113 @@ fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name
 rmse_test = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_test(dimq+1:2*dimq, :), Data_test(2*dimq+1:end, :),options.orientation_flag));
 fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test);
 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    Plot Lower-Dimensional Embedding and Synergies   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extract Lower Dimensional Embedding of Demonstrations
+figure('Color',[1 1 1])  
+for p=1:pca_dim
+    subplot(pca_dim,1,p)    
+    for i=1:length(Qs)
+        q_ref = Qs{i};
+        phi_q = out_of_sample(q_ref', latent_mapping)';
+        plot(phi_q(p,:),'-.'); hold on;
+    end      
+    grid on;
+    title(sprintf('Raw Trajectories in PCA-space $\\phi_%d(q)$',p), 'Interpreter', 'LaTex', 'Fontsize', 15)
+    xlabel('Time (samples)','Interpreter', 'LaTex', 'Fontsize', 15)   
+end
 
+% Plot in 3D-space
+K_colors = hsv(K);
+figure('Color',[1 1 1])  
+for i=1:length(Qs)
+    q_ref = Qs{i};
+    phi_q = out_of_sample(q_ref', latent_mapping)';
+    % Hard clustering for each local model
+    labels =  my_gmm_cluster(phi_q, Priors, Mu, Sigma, 'hard', []);
+    for k=1:K        
+        phi_q_k   = phi_q(:,labels==k);
+        scatter3(phi_q_k(1,:),phi_q_k(2,:),phi_q_k(3,:),20,K_colors(k,:),'*'); hold on;
+    end    
+    scatter3(phi_q(1,end),phi_q(2,end),phi_q(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+    axis tight
+end
+
+% Plot Gaussians for local behavior cluster --> might change this to
+% coloring the data-point with the posterior probability
+handles = my_plot3dGaussian(Priors, Mu, Sigma );
+grid on;
+title('Clustered (GMM) Trajectories in PCA-space $\phi(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\phi_1(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\phi_2(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Reproduce learned motion and compute tasks-space metrics %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Pre-process Data %%%
+selected_demo = 1;
+[demos_train_task] = preprocess_demos_seds(robotplant, Qs_train,options.orientation_flag)';
+task_space_traj = demos_train_task{selected_demo}; 
+x_target = task_space_traj(end-2:end,end);
+figure('Color',[1 1 1])
+scatter3(task_space_traj(end-2,:),task_space_traj(end-1,:),task_space_traj(end,:),20,'*'); hold on;
+scatter3(x_target(1),x_target(2),x_target(3),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+axis tight
+grid on;
+title('Task-Space trajectory', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$x_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$x_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$x_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+
+% Simulate task-space trajectory with JT-DS
+q_init = Data_train(1:dimq,1);
+dt = 0.01;
+while(1)
+    
+    % compute state of end-effector
+    x = robot.fkine(q);
+    x = x(1:2,4); 
+    xd = robot.jacob0(q)*qd';    
+    xd = xd(1:2) ;  
+    
+    %reference_vel(t);
+    xd_ref = reshaped_ds(x-target);
+    
+    % put lower bound on speed, just to speed up simulation
+    th = 1.0;
+    if(norm(xd_ref)<th)
+        xd_ref = xd_ref/norm(xd_ref)*th;
+    end
+    xdd_ref = -(xd - xd_ref)/dt*0.5;
+    
+    % Compute Damping Matrix
+    Q = findDampingBasis(xd_ref);
+    L = [2 0;0 8];     % inverse
+    L = [4 0;0 4];   % icra-lfd-tutorial
+    D = Q*L*Q';
+    
+    % Compute Cartesian Control    
+    u_cart = - D*(xd-xd_ref);
+    
+    % feedforward term
+    u_cart = u_cart + simple_robot_cart_inertia(robot,q)*xdd_ref;           
+    
+    % compute joint space control
+    u_joint = robot.jacob0(q)'*[u_cart;zeros(4,1)];
+    
+    % apply control to the robot
+    qdd = robot.accel(q,qd,u_joint')';
+    
+    % integrate one time step
+    qd = qd+dt*qdd;
+    q = q+qd*dt+qdd/2*dt^2;
+    t = t+dt;
+    if (norm(x - target)<0.01)
+        break
+    end
+end
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      If you are happy with the results, export the model       %%
@@ -184,13 +290,8 @@ if strcmp(mapping_name, 'None')
 else
     M_p = latent_mapping.M';
 end
-out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', Data_train)
+out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', latent_mapping.mean, Data_train);
 
 % save mat file of variables
 M = latent_mapping.M';
-save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'robotplant')
-
-
-%% Plot Training Data
-figure('Color',[1 1 1])
-scatter3(Data_train(end-2,:),Data_train(end-1,:), Data_train(end,:))
+save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'robotplant','latent_mapping')

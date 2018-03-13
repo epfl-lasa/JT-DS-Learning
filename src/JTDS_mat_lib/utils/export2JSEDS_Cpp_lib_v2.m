@@ -1,4 +1,4 @@
-function out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, M, Data_train)
+function out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, M, PCA_mean, Data_train)
 % Export the parameters of a JT-DS model to a given file.
 % 
 % Arguments:
@@ -30,8 +30,8 @@ end
 for i=1:size(Mu,2)
     dlmwrite('A_matrix.txt',As(:,:,i),'newline','pc','-append','Delimiter',' ','precision','%.6f');
 end
-dlmwrite('M_matrix.txt', M,'newline','pc','-append','Delimiter','\t','precision','%.6f');
-
+dlmwrite('M_matrix.txt', M, 'newline','pc','-append','Delimiter','\t','precision','%.6f');
+dlmwrite('PCA_mean.txt', PCA_mean,'newline','pc','-append','Delimiter','\t','precision','%.6f');
 q_init   = Data_train(1:7,1);
 if size(Data_train,1) == 23
     x_target = Data_train(end-8:end,1);    
