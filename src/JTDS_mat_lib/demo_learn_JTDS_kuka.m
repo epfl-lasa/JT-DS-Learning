@@ -164,6 +164,7 @@ rmse_test = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_t
 fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test);
 
 
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      If you are happy with the results, export the model       %%
 %        for execution with the rtk-DS cpp class                 %%

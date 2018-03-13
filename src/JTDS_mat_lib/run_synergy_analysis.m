@@ -209,3 +209,26 @@ for dof=1:7
 end
 legend('Raw','Reconstructed')
 
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Compare executed motion with JT-DS vs Demonstrated one %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dt = 0.1; % the timestep
+q_initial = [-0.728371429443359;-1.3605418920517;2.69252680319093;0.620675325393677;0.955035626888275;0.141930669546127;-0.17979271709919];
+x_targets = [[-.5; -.5; 0.3]];
+max_trajectory_duration = 60; % How long to interpolate the trajectory
+goal_tolerance = 0.05; % How far away from the goal we need to get to accept
+
+
+[Q_traj_learned, T_traj_learned] = computeFullTrajectory(q_initial, x_targets, motion_generator_learned, goal_tolerance, max_trajectory_duration);
+[Q_traj_unlearned, T_traj_unlearned] = computeFullTrajectory(q_initial, x_targets, motion_generator_unlearned, goal_tolerance, max_trajectory_duration);
+
+% Finally, display the learned motion
+if ~ishandle(fig)
+    fig = initialize_robot_figure(robot);
+else
+    figure(fig);
+end
+plot3(x_targets(1,:),x_targets(2,:),x_targets(3,:), 'ro', 'markersize', 20);
+PlaybackTrajectory(robotplant, Q_traj_learned, T_traj_learned, fig);
+

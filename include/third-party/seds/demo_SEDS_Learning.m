@@ -8,7 +8,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'fore'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -94,7 +94,7 @@ for j = 1:repetitions
     train = round(length(Qs)*tt_ratio);
     Qs_train = []; Ts_train = [];
     Qs_test = [];   Ts_test = [];
-    rand_ids = randsample(length(Qs),length(Qs))';
+    rand_ids = [1:length(Qs)];
     for ii=1:length(Qs)
         if ii < train
             Qs_train{ii,1} = Qs{rand_ids(ii)}; Ts_train{ii,1} = Ts{rand_ids(ii)};
@@ -230,6 +230,6 @@ end
 model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-out = exportSEDS_Cpp_lib(Priors,Mu,Sigma)
+out = exportSEDS_Cpp_lib(Priors,Mu,Sigma, demos_train{1})
 % save mat file of variables
-save('model.mat','Priors','Mu','Sigma')
+save('model.mat','Priors','Mu','Sigma','demos_train')
