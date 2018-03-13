@@ -33,9 +33,9 @@ classdef MotionGenerator
         end
         
         function A = compute_A(obj, q)
-        % This function computes the weighted A matrix based on the current
-        % robot configuration. This combines the contributions of each of
-        % the local augmentation matrices (As).
+            % This function computes the weighted A matrix based on the current
+            % robot configuration. This combines the contributions of each of
+            % the local augmentation matrices (As).
             k = length(obj.Priors);
             for i = 1:k
                 h_raw(i) = obj.Priors(i)*mvnpdf(out_of_sample(q', obj.latent_mapping)', obj.Mu(:, i), obj.Sigma(:, :, i));
@@ -66,7 +66,7 @@ classdef MotionGenerator
             qd_basis = obj.plant.qd_basis_orientation(q, xt);
             qd = obj.compute_A(q)*qd_basis;
         end
-            
+        
         
         function qd_fun = ODE_fun(obj, xt, dt,orientation_flag) % Yields a function handle
             % which computes the first order differential equation
@@ -74,21 +74,25 @@ classdef MotionGenerator
             % (dt is a placeholder for a child class, and can be ignored in
             % this case)
             % Used when solving the system using an ODE solver.
-           
-           if orientation_flag==1
+            
+            if orientation_flag==1
                 qd_fun = @(t, q) obj.compute_A(q)*obj.plant.qd_basis_orientation(q, xt);
             else
                 qd_fun = @(t, q) obj.compute_A(q)*obj.plant.qd_basis(q, xt);
             end
         end
         
-        function options = ODE_options(obj, xt, goal_tolerance) % provides an options struct
+        function options = ODE_options(obj, xt, goal_tolerance,orientation_flag) % provides an options struct
             % for the ODE solver to optionally use, to add useful
             % functionality to the ODE
             function [value, is_terminal, direction] = event_fun(t, y)
                 value = zeros(size(t));
                 for i = 1:length(t)
-                    value(i) = norm(obj.plant.end_pos_orien(y(:, i)') - xt) - goal_tolerance;
+                    if orientation_flag==1
+                        value(i) = norm(obj.plant.end_pos_orien(y(:, i)') - xt) - goal_tolerance;
+                    else
+                        value(i) = norm(obj.plant.forward_kinematics(y(:, i)') - xt) - goal_tolerance;
+                    end
                 end
                 is_terminal = ones(size(t));
                 direction = -1*ones(size(t));
