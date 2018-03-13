@@ -68,13 +68,18 @@ classdef MotionGenerator
         end
             
         
-        function qd_fun = ODE_fun(obj, xt, dt) % Yields a function handle
+        function qd_fun = ODE_fun(obj, xt, dt,orientation_flag) % Yields a function handle
             % which computes the first order differential equation
             % associated with this system, i.e. f where qd = f(q, t)
             % (dt is a placeholder for a child class, and can be ignored in
             % this case)
             % Used when solving the system using an ODE solver.
-            qd_fun = @(t, q) obj.compute_A(q)*obj.plant.qd_basis(q, xt);
+           
+           if orientation_flag==1
+                qd_fun = @(t, q) obj.compute_A(q)*obj.plant.qd_basis_orientation(q, xt);
+            else
+                qd_fun = @(t, q) obj.compute_A(q)*obj.plant.qd_basis(q, xt);
+            end
         end
         
         function options = ODE_options(obj, xt, goal_tolerance) % provides an options struct
