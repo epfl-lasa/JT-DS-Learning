@@ -83,7 +83,7 @@ classdef MotionGenerator
             function [value, is_terminal, direction] = event_fun(t, y)
                 value = zeros(size(t));
                 for i = 1:length(t)
-                    value(i) = norm(obj.plant.end_pos_orien(y(:, i)') - xt) - goal_tolerance;
+                    value(i) = norm(obj.plant.end_trans_forward_kinematics(y(:, i)') - xt) - goal_tolerance;
                 end
                 is_terminal = ones(size(t));
                 direction = -1*ones(size(t));
