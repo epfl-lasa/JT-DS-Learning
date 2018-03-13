@@ -5,7 +5,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'fore'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 1; 
+options.orientation_flag = 0; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -326,7 +326,7 @@ err_pos = norm(JTDS_position(:,end) - task_space_traj(end-2:end,end))
 %% Compare position and orientation from CPP simulation (SEDS) vs Training Data == THIS WORKS! %%
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure('Color',[1 1 1])
-TheRobotTrajectory1 = TheRobotTrajectory2;
+% TheRobotTrajectory1 = TheRobotTrajectory2;
 JTDS_orientation = zeros(6,ceil(length(TheRobotTrajectory1)/10));
 for i=1:10:length(TheRobotTrajectory1)
     axangle = [TheRobotTrajectory1(i,1:3)/norm(TheRobotTrajectory1(i,1:3))' norm(TheRobotTrajectory1(i,1:3))]';
