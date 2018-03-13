@@ -5,7 +5,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'pour'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'fore'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 0; 
+options.orientation_flag = 1; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -181,53 +181,55 @@ for p=1:pca_dim
 end
 
 % Plot in 3D-space
-K_colors = hsv(K);
-figure('Color',[1 1 1])  
-for i=1:length(Qs)
-    q_ref = Qs{i};
-    phi_q = out_of_sample(q_ref', latent_mapping)';
-    % Hard clustering for each local model
-    labels =  my_gmm_cluster(phi_q, Priors, Mu, Sigma, 'hard', []);
-    for k=1:K        
-        phi_q_k   = phi_q(:,labels==k);
-        scatter3(phi_q_k(1,:),phi_q_k(2,:),phi_q_k(3,:),20,K_colors(k,:),'*'); hold on;
-    end    
-    scatter3(phi_q(1,end),phi_q(2,end),phi_q(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
-    axis tight
+if pca_dim == 3
+    K_colors = hsv(K);
+    figure('Color',[1 1 1])
+    for i=1:length(Qs)
+        q_ref = Qs{i};
+        phi_q = out_of_sample(q_ref', latent_mapping)';
+        % Hard clustering for each local model
+        labels =  my_gmm_cluster(phi_q, Priors, Mu, Sigma, 'hard', []);
+        for k=1:K
+            phi_q_k   = phi_q(:,labels==k);
+            scatter3(phi_q_k(1,:),phi_q_k(2,:),phi_q_k(3,:),20,K_colors(k,:),'*'); hold on;
+        end
+        scatter3(phi_q(1,end),phi_q(2,end),phi_q(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+        axis tight
+    end
+    
+    % Plot Gaussians for local behavior cluster --> might change this to
+    % coloring the data-point with the posterior probability
+    handles = my_plot3dGaussian(Priors, Mu, Sigma );
+    grid on;
+    title('Clustered (GMM) Trajectories in PCA-space $\phi(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    xlabel('$\phi_1(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    ylabel('$\phi_2(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 end
-
-% Plot Gaussians for local behavior cluster --> might change this to
-% coloring the data-point with the posterior probability
-handles = my_plot3dGaussian(Priors, Mu, Sigma );
-grid on;
-title('Clustered (GMM) Trajectories in PCA-space $\phi(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-xlabel('$\phi_1(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-ylabel('$\phi_2(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Reproduce learned motion and compute tasks-space metrics %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Demonstration to test
-selected_demo = 1;
-
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Reproduce learned motion and compute tasks-space metrics == Works with JTDS on position only! %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Extract task-space demonstrations %%%
-[demos_train_task] = preprocess_demos_seds(robotplant, Qs_train,options.orientation_flag)';
-task_space_traj = demos_train_task{selected_demo}; 
-if options.orientation_flag
-    x_target = Data_train(end-8:end,1);    
-else
-    x_target = task_space_traj(:,end);
+% Hacks to know which demos to use
+selected_demo = 1;
+num = 59;
+task_space_traj = zeros(9,num);
+
+% Generate Task-Space Trajectories
+for i=1:num
+    trans_tmp=robotplant.robot.fkine(Data_train(1:7,i));
+    task_space_traj(:,i) = [trans_tmp(1:3,1); trans_tmp(1:3,2); trans_tmp(1:3,end)];
 end
+x_target = task_space_traj(:,end);
 
 % Plot reproduced trajectory vs. demonstration in joint space
 figure('Color',[1 1 1])
 q_init         = Data_train(1:dimq,1);
-goal_tolerance = 0.001;
-max_trajectory_duration = 100;
+goal_tolerance = 0.01;
+max_trajectory_duration = 60;
 [Q_traj_JTDS, T_traj_JTDS] = computeFullTrajectory(q_init, x_target, motion_generator, ...
                              goal_tolerance, max_trajectory_duration,options.orientation_flag);
+% Use data-train here...
 q_ref = Qs{selected_demo};
 for dof = 1:7
     subplot(7,1,dof)  
@@ -239,26 +241,128 @@ for dof = 1:7
 end
 title(sprintf('Raw and Reconstructed Demonstrations for $q_%d$',dof), 'Interpreter', 'LaTex', 'Fontsize', 15)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Simulate task-space trajectory with JT-DS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extract task-space positions and orientations
+JTDS_task_space_traj_orient = zeros(6,length(Q_traj_learned));
+JTDS_task_space_traj_pos    = zeros(3,length(Q_traj_learned));
+for q=1:length(Q_traj_learned)
+    trans_tmp = robotplant.robot.fkine(Q_traj_JTDS(:,q));
+    JTDS_task_space_traj_pos(:,q) = trans_tmp(1:3,end);
+    JTDS_task_space_traj_orient(:,q) = [trans_tmp(1:3,1); trans_tmp(1:3,2)];
+end
 
-%% Simulate task-space trajectory with JT-DS
+% Plot Orientation trajectories
+if options.orientation_flag    
+    figure('Color',[1 1 1])
+    scatter3(task_space_traj(1,:),task_space_traj(2,:),task_space_traj(3,:),20,'*'); hold on;
+    scatter3(JTDS_task_space_traj_orient(1,:),JTDS_task_space_traj_orient(2,:),JTDS_task_space_traj_orient(3,:),20,'o','filled'); hold on;
+    scatter3(task_space_traj(1,end),task_space_traj(2,end),task_space_traj(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+    scatter3(JTDS_task_space_traj_orient(1,end),JTDS_task_space_traj_orient(2,end),JTDS_task_space_traj_orient(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
+    axis tight
+    grid on;
+    title('Task-Space trajectory (Orientation)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+    err_orient = norm(JTDS_task_space_traj_orient(:,end) - task_space_traj(1:6,end))
+end
+
+% Plot Position trajectories
 figure('Color',[1 1 1])
 scatter3(task_space_traj(end-2,:),task_space_traj(end-1,:),task_space_traj(end,:),20,'*'); hold on;
-scatter3(x_target(1),x_target(2),x_target(3),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_task_space_traj_pos(1,:),JTDS_task_space_traj_pos(2,:),JTDS_task_space_traj_pos(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(end-2,end),task_space_traj(end-1,end),task_space_traj(end,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_task_space_traj_pos(1,end),JTDS_task_space_traj_pos(2,end),JTDS_task_space_traj_pos(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
 axis tight
 grid on;
-title('Task-Space trajectory', 'Interpreter', 'LaTex', 'Fontsize', 15)
-xlabel('$x_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-ylabel('$x_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
-zlabel('$x_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+title('Task-Space trajectory (Position)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+err_pos = norm(JTDS_task_space_traj_pos(:,end) - task_space_traj(end-2:end,end))
 
-
-% Extract task-space positions
-JTDS_task_space_traj =zeros(3,length(Q_traj_learned));
-for q=1:length(Q_traj_learned)
-    trans_tmp=robotplant.robot.fkine(Q_traj_JTDS(:,q));
-    JTDS_task_space_traj(:,q) = trans_tmp(1:3,end);
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Compare position and orientation from CPP simulation (JTDS) vs Training Data == THIS WORKS! %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure('Color',[1 1 1])
+JTDS_orientation = zeros(6,ceil(length(TheRobotTrajectory1)/10));
+for i=1:10:length(TheRobotTrajectory1)
+    JTDS_orientation(:,i) = TheRobotTrajectory1(i,1:6);
 end
-scatter3(JTDS_task_space_traj(1,:),JTDS_task_space_traj(2,:),JTDS_task_space_traj(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(1,:),task_space_traj(2,:),task_space_traj(3,:),20,'*'); hold on;
+scatter3(JTDS_orientation(1,:),JTDS_orientation(2,:),JTDS_orientation(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(1,end),task_space_traj(2,end),task_space_traj(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_orientation(1,end),JTDS_orientation(2,end),JTDS_orientation(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
+axis tight
+grid on;
+title('Task-Space trajectory (Orientation)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+err_orient = norm(JTDS_orientation(:,end) - task_space_traj(1:6,end))
+
+% Plot the simulated position and orientation
+figure('Color',[1 1 1])
+JTDS_position = zeros(3,ceil(length(TheRobotTrajectory1)/10));
+for i=1:10:length(TheRobotTrajectory1)
+    JTDS_position(:,i) = TheRobotTrajectory1(i,7:9)';
+end
+scatter3(task_space_traj(end-2,:),task_space_traj(end-1,:),task_space_traj(end,:),20,'*'); hold on;
+scatter3(JTDS_position(1,:),JTDS_position(2,:),JTDS_position(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(end-2,end),task_space_traj(end-1,end),task_space_traj(end,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_position(1,end),JTDS_position(2,end),JTDS_position(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
+axis tight
+grid on;
+title('Task-Space trajectory (Position)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+err_pos = norm(JTDS_position(:,end) - task_space_traj(end-2:end,end))
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Compare position and orientation from CPP simulation (SEDS) vs Training Data == THIS WORKS! %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure('Color',[1 1 1])
+TheRobotTrajectory1 = TheRobotTrajectory2;
+JTDS_orientation = zeros(6,ceil(length(TheRobotTrajectory1)/10));
+for i=1:10:length(TheRobotTrajectory1)
+    axangle = [TheRobotTrajectory1(i,1:3)/norm(TheRobotTrajectory1(i,1:3))' norm(TheRobotTrajectory1(i,1:3))]';
+    R =  axang2rotm(axangle')
+    JTDS_orientation(:,i) = [R(1:3,1);R(1:3,2)];
+end
+scatter3(task_space_traj(1,:),task_space_traj(2,:),task_space_traj(3,:),20,'*'); hold on;
+scatter3(JTDS_orientation(1,:),JTDS_orientation(2,:),JTDS_orientation(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(1,end),task_space_traj(2,end),task_space_traj(3,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_orientation(1,end),JTDS_orientation(2,end),JTDS_orientation(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
+axis tight
+grid on;
+title('Task-Space trajectory (Orientation)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+err_orient = norm(JTDS_orientation(:,end) - task_space_traj(1:6,end))
+
+% Plot the simulated position and orientation
+figure('Color',[1 1 1])
+JTDS_position = zeros(3,ceil(length(TheRobotTrajectory1)/10));
+for i=1:10:length(TheRobotTrajectory1)
+    JTDS_position(:,i) = TheRobotTrajectory1(i,4:6)';
+end
+scatter3(task_space_traj(end-2,:),task_space_traj(end-1,:),task_space_traj(end,:),20,'*'); hold on;
+scatter3(JTDS_position(1,:),JTDS_position(2,:),JTDS_position(3,:),20,'o','filled'); hold on;
+scatter3(task_space_traj(end-2,end),task_space_traj(end-1,end),task_space_traj(end,end),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
+scatter3(JTDS_position(1,end),JTDS_position(2,end),JTDS_position(3,end),100,'o','filled','MarkerEdgeColor','r','MarkerFaceColor',[1 0 0]); hold on;
+axis tight
+grid on;
+title('Task-Space trajectory (Position)', 'Interpreter', 'LaTex', 'Fontsize', 15)
+xlabel('$\theta_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
+err_pos = norm(JTDS_position(:,end) - task_space_traj(end-2:end,end))
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      If you are happy with the results, export the model       %%
 %        for execution with the rtk-DS cpp class                 %%

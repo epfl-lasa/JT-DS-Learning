@@ -8,7 +8,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'fore'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'pour'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
