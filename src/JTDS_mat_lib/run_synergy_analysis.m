@@ -56,7 +56,7 @@ for i = 1:length(demo_ids)
     Ts{i,1} = Ts_{demo_ids(i)}(:, 1:thinning_ratio:end);
 end
 
-% Plot Full Set of Demonstrations per DOF
+%% Plot Full Set of Demonstrations per DOF
 if do_plots
     figure('Color',[1 1 1])    
     Data_ = [];

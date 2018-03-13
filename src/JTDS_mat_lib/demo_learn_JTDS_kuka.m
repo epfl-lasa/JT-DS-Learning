@@ -74,7 +74,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Choose Lower-Dimensional Mapping Technique
-mapping = {'PCA'}; % 'None', 'PCA', 'KPCA'
+mapping = {'None'}; % 'None', 'PCA', 'KPCA'
 
 %%% Learning options %%%
 options = [];
@@ -137,9 +137,9 @@ end
 [Data_train, ~] = preprocess_demos_jtds(robotplant, Qs_train, Ts_train, options.tol_cutting,options.orientation_flag);
 [Data_test, ~]  = preprocess_demos_jtds(robotplant, Qs_test, Ts_test, options.tol_cutting,options.orientation_flag);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%       Learn JTDS variants for current fold      %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       Learn JTDS model for the Current Dataset      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 mapping_name = mapping{1};
 fprintf('Training JTDS generator using %s mapping...\n', mapping_name);
 options.latent_mapping_type = mapping_name;
@@ -178,6 +178,11 @@ fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name,
 model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
+if strcmp(mapping_name, 'None')
+    M_p = eye(7);
+else
+    M_p = latent_mapping.M';
+end
 out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', Data_train)
 
 % save mat file of variables
