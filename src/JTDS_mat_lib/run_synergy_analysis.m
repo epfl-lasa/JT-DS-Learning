@@ -56,7 +56,7 @@ for i = 1:length(demo_ids)
     Ts{i,1} = Ts_{demo_ids(i)}(:, 1:thinning_ratio:end);
 end
 
-%% Plot Full Set of Demonstrations per DOF
+% Plot Full Set of Demonstrations per DOF
 if do_plots
     figure('Color',[1 1 1])    
     Data_ = [];
@@ -220,15 +220,6 @@ max_trajectory_duration = 60; % How long to interpolate the trajectory
 goal_tolerance = 0.05; % How far away from the goal we need to get to accept
 
 
-[Q_traj_learned, T_traj_learned] = computeFullTrajectory(q_initial, x_targets, motion_generator_learned, goal_tolerance, max_trajectory_duration);
-[Q_traj_unlearned, T_traj_unlearned] = computeFullTrajectory(q_initial, x_targets, motion_generator_unlearned, goal_tolerance, max_trajectory_duration);
 
-% Finally, display the learned motion
-if ~ishandle(fig)
-    fig = initialize_robot_figure(robot);
-else
-    figure(fig);
-end
-plot3(x_targets(1,:),x_targets(2,:),x_targets(3,:), 'ro', 'markersize', 20);
-PlaybackTrajectory(robotplant, Q_traj_learned, T_traj_learned, fig);
+
 
