@@ -42,10 +42,7 @@ classdef RobotPlant
             % method (i.e. qd = J^T(H(q) - xt) ).
             % In general, this will be multiplied by an A matrix to get the
             % augmented joint velocity.
-            temp_end=obj.robot.fkine(q);
-            temp_end=[temp_end(1:3,1);temp_end(1:3,2);temp_end(1:3,4)];
-            %             basis = -1*transpose(obj.jacobian(q))*(obj.forward_kinematics(q) - xt);
-            basis = -1*transpose([Jacobian_X(obj,q);Jacobian_Y(obj,q);obj.jacobian(q)])*(temp_end - xt);
+                        basis = -1*transpose(obj.jacobian(q))*(obj.forward_kinematics(q) - xt);
         end
         
         function basis = qd_basis_orientation(obj, q, xt)
@@ -54,8 +51,13 @@ classdef RobotPlant
             % method (i.e. qd = J^T(H(q) - xt) ).
             % In general, this will be multiplied by an A matrix to get the
             % augmented joint velocity.
+            %             temp_end=obj.robot.fkine(q);
+            %             temp_end=[temp_end(1:3,1);temp_end(1:3,2);temp_end(1:3,4)];
+            %             basis = -1*transpose([Jacobian_X(obj,q);Jacobian_Y(obj,q);obj.jacobian(q)])*(temp_end - xt);
+
             temp_end=obj.robot.fkine(q);
             temp_end=[temp_end(1:3,1);temp_end(1:3,2);temp_end(1:3,4)];
+            %             basis = -1*transpose(obj.jacobian(q))*(obj.forward_kinematics(q) - xt);
             basis = -1*transpose([Jacobian_X(obj,q);Jacobian_Y(obj,q);obj.jacobian(q)])*(temp_end - xt);
         end
         

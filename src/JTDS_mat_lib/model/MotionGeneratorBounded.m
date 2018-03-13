@@ -23,23 +23,31 @@ classdef MotionGeneratorBounded < MotionGenerator
             end
         end
         
-        function qd = get_next_motion(obj, q_old, xt, dt) % Generates the next joint velocity given the joint position,
+        function qd = get_next_motion(obj, q_old, xt, dt,orientation_flag) % Generates the next joint velocity given the joint position,
             % desired position, a GMM model, and an augmentation matrix for
             % each Gaussian. dt is the timestep for our next movement
             % We compute the velocity by integrating our joint limitation
             % matrix "S" into our classic MotionGenerator controller, all
             % the while ensuring positive-semidefiniteness.
             S = obj.plant.compute_S(q_old);
-            qd = S*obj.compute_A(q_old)*S'*obj.plant.qd_basis(q_old, xt);
+            if orientation_flag==1
+                qd = S*obj.compute_A(q_old)*S'*obj.plant.qd_basis_orientation(q_old, xt);
+            else
+                qd = S*obj.compute_A(q_old)*S'*obj.plant.qd_basis(q_old, xt);
+            end
         end
         
-        function qd_fun = ODE_fun(obj, xt, dt)  % Yields a function handle
+        function qd_fun = ODE_fun(obj, xt, dt,orientation_flag)  % Yields a function handle
             % which computes the first order differential equation
             % associated with this system, i.e. f where qd = f(t, q)
             % Used as input to an ODE solver.
             function qd = qd_fun_tmp(t, q)
                 S = obj.plant.compute_S(q);
-                qd = S*obj.compute_A(q)*S*obj.plant.qd_basis(q,xt);
+                if orientation_flag==1
+                    qd = S*obj.compute_A(q)*S'*obj.plant.qd_basis_orientation(q, xt);
+                else
+                    qd = S*obj.compute_A(q)*S'*obj.plant.qd_basis(q, xt);
+                end
             end
             qd_fun = @qd_fun_tmp;
         end

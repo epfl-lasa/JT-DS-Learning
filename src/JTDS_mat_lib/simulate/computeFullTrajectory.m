@@ -1,4 +1,4 @@
-function [Q, T] = computeFullTrajectory(q_initial, x_targets, motion_generator, goal_tolerance, max_duration)
+function [Q, T] = computeFullTrajectory(q_initial, x_targets, motion_generator, goal_tolerance, max_duration,orientation_flag)
 %COMPUTEFULLTRAJECTORY Interpolates a JT-DS trajectory
 %   This function integrates a JT-DS problem and computes the evolution of
 %   the system over a given timespan, using an ODE solver. Each target is
@@ -29,7 +29,7 @@ function [Q, T] = computeFullTrajectory(q_initial, x_targets, motion_generator, 
     q_start = q_initial;
     for i = 1:size(x_targets, 2)
         x_target = x_targets(:, i);
-        [T_subtraj, Q_subtraj] = ode15s(motion_generator.ODE_fun(x_target, 1), ...
+        [T_subtraj, Q_subtraj] = ode15s(motion_generator.ODE_fun(x_target, 1,orientation_flag), ...
             [0, max_duration], q_start, ...
             motion_generator.ODE_options(x_target, goal_tolerance));
         if isempty(T)
