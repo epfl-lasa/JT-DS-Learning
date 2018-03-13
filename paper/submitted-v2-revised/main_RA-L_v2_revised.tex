@@ -272,7 +272,7 @@ Given the parameters of $\theta_k'(\phi(q))$ $\forall k \in \{k=1,\dots,K\}$, fr
 \end{equation} 
 Notice the resemblance of \eqref{eq:A} to the Nadaraya-Watson kernel estimator \cite{nadaraya1964regress,watson1964regress}\footnote{The Nadaraya-Watson kernel estimator is used to estimate an unknown regressive function $m(x) = \mathbb{E}\{Y|X\}$, which takes the general form of $\widehat{m}(x) = \frac{\sum_{i=1}^n y_i \mathcal{K}(x,x_i)}{\sum_{i=1}^n \mathcal{K}(x,x_i)}$ where $\mathcal{K}(x,x_i)$ is a kernel function denoting the distance or similarity of $x_i$ to the given location $x$. \cite{nadaraya1964regress,watson1964regress}} with a Gaussian pdf as its kernel function. Hence \eqref{eq:A} can be considered a type of kernel estimator, with the key distinction that the weighting functions $\theta_k'(\phi(q))$ are not determined by individual points (as in the original Nadaraya-Watson kernel estimator) but by the components of a GMM, similar to the weighting functions derived in Gaussian Mixture Regression (GMR). 
 
-Intuitively, each ``synergy region" in synergy space is defined by a Gaussian distribution, and the closer the robot is to a region, the more that region's synergy ($A_k$) influences the robot's current joint-space motions. Finding the appropriate synergy matrices $A_k$ to accurately reproduce the observed behaviors can be reduced to a convex semidefinite optimization, with the goal of minimizing \eqref{eq:optim_error}. To achieve this, the following optimization is proposed which uses mean square error as a means to minimize the joint velocity error from \eqref{eq:optim_error} as follows:
+Intuitively, each ``synergy region" in synergy space is defined by a Gaussian distribution, and the closer the robot is to a region, the more that region's synergy ($A_k$) influences the robot's current joint-space motions. Finding the appropriate synergy matrices $A_k$ to accurately reproduce the observed behaviors can be reduced to a semidefinite program with the goal of minimizing \eqref{eq:optim_error}. The resulting optimization minimizes the mean squared joint velocity error from \eqref{eq:optim_error}, resulting in a convex semidefinite optimization with a quadratic objective, as follows:
 \begin{equation}
 \vspace{-10pt}
 \begin{aligned}
@@ -284,7 +284,7 @@ Intuitively, each ``synergy region" in synergy space is defined by a Gaussian di
 \label{eq:opt}
 \end{equation}
 where $f(q_{t,n})$ is calculated by %combining our dynamical system formulation
- \eqref{eq:ds} with \eqref{eq:A}, and $x^*_{n}$ is defined as the endpoint of the $ n^{\text{th}} $ demonstrated trajectory.
+ \eqref{eq:ds} with \eqref{eq:A}, and $x^*_{n}$ is defined as the endpoint of the $ n^{\text{th}} $ demonstrated trajectory. This optimization is always feasible (the only constraint is that the $A_k$s be independently PSD), and the number of terms in the objective is roughly $O\left(k^2d^3\left( \sum_{n=1}^N T_n\right)\right)$.
 
 
 

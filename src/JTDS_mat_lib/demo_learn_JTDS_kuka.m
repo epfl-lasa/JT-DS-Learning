@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 0; 
+options.orientation_flag = 1; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -117,7 +117,6 @@ robot = initialize_robot(A,D,Alpha,Qmin,Qmax);
 % Create a model plant for the robot's motor controller
 robotplant = RobotPlant(robot, 'end_trans');
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       Split Dataset for Training/Testing        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +124,7 @@ tt_ratio = 0.6;
 train = round(length(Qs)*tt_ratio);
 Qs_train = []; Ts_train = [];
 Qs_test = [];   Ts_test = [];
-rand_ids = randsample(length(Qs),length(Qs))';
+rand_ids = [1:length(Qs)];
 for ii=1:length(Qs)
     if ii < train
         Qs_train{ii,1} = Qs{rand_ids(ii)}; Ts_train{ii,1} = Ts{rand_ids(ii)};
@@ -179,9 +178,13 @@ fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name,
 model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M')
+out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', Data_train)
 
 % save mat file of variables
 M = latent_mapping.M';
-save('model.mat','Priors','Mu','Sigma', 'As', 'M')
+save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'robotplant')
 
+
+%% Plot Training Data
+figure('Color',[1 1 1])
+scatter3(Data_train(end-2,:),Data_train(end-1,:), Data_train(end,:))
