@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 1; 
+options.orientation_flag = 0; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -208,11 +208,39 @@ zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Reproduce learned motion and compute tasks-space metrics %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Pre-process Data %%%
+
+% Demonstration to test
 selected_demo = 1;
+
+%%% Extract task-space demonstrations %%%
 [demos_train_task] = preprocess_demos_seds(robotplant, Qs_train,options.orientation_flag)';
 task_space_traj = demos_train_task{selected_demo}; 
-x_target = task_space_traj(end-2:end,end);
+if options.orientation_flag
+    x_target = Data_train(end-8:end,1);    
+else
+    x_target = task_space_traj(:,end);
+end
+
+% Plot reproduced trajectory vs. demonstration in joint space
+figure('Color',[1 1 1])
+q_init         = Data_train(1:dimq,1);
+goal_tolerance = 0.001;
+max_trajectory_duration = 100;
+[Q_traj_JTDS, T_traj_JTDS] = computeFullTrajectory(q_init, x_target, motion_generator, ...
+                             goal_tolerance, max_trajectory_duration,options.orientation_flag);
+q_ref = Qs{selected_demo};
+for dof = 1:7
+    subplot(7,1,dof)  
+    plot(Q_traj_JTDS(dof,:),'-.','Color',[1 0 0], 'LineWidth',2);hold on;
+    plot(q_ref(dof,:),'-','Color', [0 0 0], 'LineWidth',2); hold on;
+    xlabel('Time (samples)','Interpreter', 'LaTex', 'Fontsize', 15)
+    ylabel('Angle (rad)','Interpreter', 'LaTex', 'Fontsize', 15)
+    grid on;
+end
+title(sprintf('Raw and Reconstructed Demonstrations for $q_%d$',dof), 'Interpreter', 'LaTex', 'Fontsize', 15)
+
+
+%% Simulate task-space trajectory with JT-DS
 figure('Color',[1 1 1])
 scatter3(task_space_traj(end-2,:),task_space_traj(end-1,:),task_space_traj(end,:),20,'*'); hold on;
 scatter3(x_target(1),x_target(2),x_target(3),100,'o','filled','MarkerEdgeColor','k','MarkerFaceColor',[0 0 0]); hold on;
@@ -223,12 +251,14 @@ xlabel('$x_1$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 ylabel('$x_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 zlabel('$x_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 
-% Simulate task-space trajectory with JT-DS
-q_init = Data_train(1:dimq,1);
-[Q_traj_learned, T_traj_learned] = computeFullTrajectory(q_initial, x_targets, motion_generator_learned, ...
-                                                         goal_tolerance, max_trajectory_duration);
 
-
+% Extract task-space positions
+JTDS_task_space_traj =zeros(3,length(Q_traj_learned));
+for q=1:length(Q_traj_learned)
+    trans_tmp=robotplant.robot.fkine(Q_traj_JTDS(:,q));
+    JTDS_task_space_traj(:,q) = trans_tmp(1:3,end);
+end
+scatter3(JTDS_task_space_traj(1,:),JTDS_task_space_traj(2,:),JTDS_task_space_traj(3,:),20,'o','filled'); hold on;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      If you are happy with the results, export the model       %%
 %        for execution with the rtk-DS cpp class                 %%

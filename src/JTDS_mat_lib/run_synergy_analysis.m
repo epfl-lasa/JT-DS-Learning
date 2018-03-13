@@ -209,17 +209,8 @@ for dof=1:7
 end
 legend('Raw','Reconstructed')
 
-
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Compare executed motion with JT-DS vs Demonstrated one %%
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dt = 0.1; % the timestep
-q_initial = [-0.728371429443359;-1.3605418920517;2.69252680319093;0.620675325393677;0.955035626888275;0.141930669546127;-0.17979271709919];
-x_targets = [[-.5; -.5; 0.3]];
-max_trajectory_duration = 60; % How long to interpolate the trajectory
-goal_tolerance = 0.05; % How far away from the goal we need to get to accept
-
-
-
 
 
