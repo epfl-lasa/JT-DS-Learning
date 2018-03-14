@@ -5,7 +5,7 @@ function [Data, index] = preprocess_demos_jtds(robotplant, demos, time, tol_cutt
 % trims the data. The function can be
 % called using:
 %
-%          [Data, index] = preprocess_demos(demos,time,tol_cutting)
+%          [Data, index, data] = preprocess_demos(demos,time,tol_cutting)
 %
 % Inputs -----------------------------------------------------------------
 %
@@ -105,7 +105,7 @@ for i=1:length(demos)
     
     % saving demos next to each other
     Data = [Data tmp_full];
-    index = [index size(Data,2)+1];
+    index = [index size(Data,2)+1];    
 end
 
 end

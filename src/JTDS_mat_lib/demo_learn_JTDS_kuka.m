@@ -2,14 +2,14 @@
 %%     Learning JTDS Models (including orientation) on Different Datasets     %%                                                       %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% STEP 1: Load and Process dataset %
+%%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
 choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Load and Process dataset %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch choosen_dataset
     case 'back'
@@ -69,9 +69,9 @@ if do_plots
     end    
 end
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%    Train a JTDS model on the current dataset   %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  STEP 2: Prepare Data for Learning and Initial Model Parameters   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Choose Lower-Dimensional Mapping Technique
 mapping = {'PCA'}; % 'None', 'PCA', 'KPCA'
@@ -120,7 +120,7 @@ robotplant = RobotPlant(robot, 'end_trans');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       Split Dataset for Training/Testing        %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tt_ratio = 0.7;
+tt_ratio = 0.6;
 train = round(length(Qs)*tt_ratio);
 Qs_train = []; Ts_train = [];
 Qs_test = [];   Ts_test = [];
@@ -134,12 +134,12 @@ for ii=1:length(Qs)
 end
 
 %%% Pre-process Data %%%
-[Data_train, ~] = preprocess_demos_jtds(robotplant, Qs_train, Ts_train, options.tol_cutting,options.orientation_flag);
-[Data_test, ~]  = preprocess_demos_jtds(robotplant, Qs_test, Ts_test, options.tol_cutting,options.orientation_flag);
+[Data_train, index_train] = preprocess_demos_jtds(robotplant, Qs_train, Ts_train, options.tol_cutting,options.orientation_flag);
+[Data_test, index_test]  = preprocess_demos_jtds(robotplant, Qs_test, Ts_test, options.tol_cutting,options.orientation_flag);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%       Learn JTDS model for the Current Dataset      %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    STEP 3:   Learn JTDS model for the Current Dataset      %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 mapping_name = mapping{1};
 fprintf('Training JTDS generator using %s mapping...\n', mapping_name);
 options.latent_mapping_type = mapping_name;
@@ -163,11 +163,12 @@ fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name
 rmse_test = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_test(dimq+1:2*dimq, :), Data_test(2*dimq+1:end, :),options.orientation_flag));
 fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test);
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%    Plot Lower-Dimensional Embedding and Synergies   %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%    STEP 4:  Plot Lower-Dimensional Embedding and Synergies   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Extract Lower Dimensional Embedding of Demonstrations
 figure('Color',[1 1 1])  
+pca_dim  = size(latent_mapping.M,2);
 for p=1:pca_dim
     subplot(pca_dim,1,p)    
     for i=1:length(Qs)
@@ -206,6 +207,29 @@ if pca_dim == 3
     ylabel('$\phi_2(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
     zlabel('$\phi_3(q)$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 end
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   STEP 5: If you are happy with the results, export the model       %%
+%%        for execution with the rtk-DS cpp class                      %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
+mkdir(model_dir); 
+cd(model_dir)
+if strcmp(mapping_name, 'None')
+    M_p = eye(7);
+else
+    M_p = latent_mapping.M';
+end
+out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', latent_mapping.mean, Data_train, index_train);
+
+% save mat file of variables
+M = latent_mapping.M';
+save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'index_train','robotplant','latent_mapping')
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                    THE FOLLOWING CODE BLOCKS ARE ONLY FOR DEBUGGING!!!                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Reproduce learned motion and compute tasks-space metrics == Works with JTDS on position only! %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,9 +307,10 @@ ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 err_pos = norm(JTDS_task_space_traj_pos(:,end) - task_space_traj(end-2:end,end))
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Compare position and orientation from CPP simulation (JTDS) vs Training Data == THIS WORKS! %%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure('Color',[1 1 1])
 JTDS_orientation = zeros(6,ceil(length(TheRobotTrajectory1)/10));
 for i=1:10:length(TheRobotTrajectory1)
@@ -363,27 +388,3 @@ ylabel('$\theta_2$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 zlabel('$\theta_3$', 'Interpreter', 'LaTex', 'Fontsize', 15)
 err_pos = norm(JTDS_position(:,end) - task_space_traj(end-2:end,end))
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%      If you are happy with the results, export the model       %%
-%        for execution with the rtk-DS cpp class                 %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% All parameters in 1 file
-% model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
-% mkdir(model_dir); 
-% filename = strcat(model_dir,'/JTDS_model.txt')
-% out = export2JSEDS_Cpp_lib(filename,Priors,Mu,Sigma,robot, As, latent_mapping.M);
-
-% 1 file per paramater
-model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
-mkdir(model_dir); 
-cd(model_dir)
-if strcmp(mapping_name, 'None')
-    M_p = eye(7);
-else
-    M_p = latent_mapping.M';
-end
-out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', latent_mapping.mean, Data_train);
-
-% save mat file of variables
-M = latent_mapping.M';
-save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'robotplant','latent_mapping')
