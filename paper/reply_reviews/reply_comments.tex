@@ -4,6 +4,8 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{subcaption}
 \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
 
 
@@ -205,11 +207,11 @@ If your question was about each specific $\theta_k(q)$, they are scalars, as is 
 \item \textit{``For the test, why not comparing also with the JT control method? In
 other terms, is it possible to use a SEDS + JT, especially for the
 third case "Transiting through singular configurations"?"}\\
-\textcolor{blue}{\texttt{Response:} \small This could be done, but it is mathematically incorrect. The original JT control method is a DS that converges to a unique equilibrium point, i.e. the task-space target $x^*\in \mathbb{R}^{N\times 1}$, with a gain matrix $K \in \mathbb{R}^{M\times M}$ as:\begin{equation}
-\dot{q} = K J(q)^T(H(q)- x^*) 
+\textcolor{blue}{\texttt{Response:} \small This could be done, but it is mathematically incorrect. The original JT control method is a DS that converges to a unique equilibrium point, i.e. the task-space target $x^d\in \mathbb{R}^{N\times 1}$, with a gain matrix $K \in \mathbb{R}^{M\times M}$ as:\begin{equation}
+\dot{q} = K J(q)^T(H(q)- x^d) 
 \label{eq:JT}
 \end{equation}
-SEDS on the other hand, is a DS-based motion generator that converges also to a unique equilibrium point, as:
+SEDS, is a DS-based motion generator that converges also to a unique equilibrium point, as:
 \begin{equation}
 \hfill \begin{aligned}
 &  \dot{x}  = \mathbf{f}(x)
@@ -220,15 +222,28 @@ SEDS on the other hand, is a DS-based motion generator that converges also to a 
 \end{aligned}  \hfill
 \label{eq:simple-ds}
 \end{equation}
-where $\mathbf{f}(\cdot): \mathbb{R}^M \rightarrow \mathbb{R}^M$ is a continuous differentiable vector-valued function representing a non-linear DS that converges to a single stable equilibrium point $x^*$. SEDS is used in the following way: Given the current state of the robot $x$ the next desired velocity $\dot{x}_d$ is computed with \eqref{eq:simple-ds} this is then fed to a velocity-based IK solver as shown in Fig. \ref{}:}\\
-\textcolor{red}{TO SINA: Include typical SEDS-like control-loop here}\\
-\textcolor{blue}{ \small If we were to use SEDS with the JT-control method, we would have to integrate the desired velocity to generate a desired position $x_d$ at each time-step and define it as the target in \eqref{eq:JT}, which would yield the following controller:
-\begin{equation}
-\dot{q} = K J(q)^T(H(q)- x_d) 
-\end{equation} Note that, the JT control method assumes that the target is static, hence, in order for this controller to actually converge, the output of \eqref{eq:simple-ds} must seem constant for a period of time. This is contradicting as \eqref{eq:simple-ds} is always trying to converge to $x^*$. Thus, merging these two approaches is theoretically ill-fitting. To better highlight this, we show an illustration of the supposed SEDS+JT control loop in Fig. \ref{}:}\\
-\textcolor{red}{TO SINA: Include SEDS+JT control-loop here}\\
-\textcolor{red}{\small Describe this control-loop and state more reasons (if any) why it's wrong...}
+where $\mathbf{f}(\cdot): \mathbb{R}^M \rightarrow \mathbb{R}^M$ is a continuous differentiable vector-valued function representing a non-linear DS that converges to a single stable equilibrium point $x^*$. In order to prove the stability of SEDS, one needs to assume that the dynamic of the robot is perfectly compensated by the built-in position-level controller. In other words, the transfer function of the dynamic of the robot+ the low-level controller and the IK solver must be one. \\
+Almost all the commercially available robots are equipped by a very precises joint position controller. Hence, the transfer function of the robot+ the low-level controller can be assumed one. Whereas, the transfer function of the Jacobian transpose IK solver can not be assumed one as the JT control method assumes that the target is static. Hence, in order for the JT controller to actually converge, the output of \eqref{eq:simple-ds} must seem constant for a period of time. This is contradicting as \eqref{eq:simple-ds} is always trying to converge to $x^*$. Thus, merging these two approaches is theoretically ill-fitting.\\
+ Note that,  To better highlight this, we show an illustration of the supposed SEDS+JT and JT-DS control loops in Figure \ref{fig:schematic:SEDS} and  Figure \ref{fig:schematic:jt}, respectively.}\\
 
+
+
+\begin{figure}[t]
+\centering
+	\begin{subfigure}[t]{0.8\textwidth}
+	\centering
+		\includegraphics[trim={0 0 0.25cm 0.0cm},clip,width=\textwidth]{Pics/Drawing2.png}
+		\caption{ A Cartesian motion generator (e.g., SEDS) with the Jacobian transpose IK solver.}
+		\label{fig:schematic:SEDS}
+	\end{subfigure}\\
+	\begin{subfigure}[t]{0.8\textwidth}
+	\centering
+		\includegraphics[trim={0.25cm 0 0.0cm 0.0cm},clip,width=\textwidth]{Pics/JT_DS.png}
+		\caption{ JT-DS.}
+		\label{fig:schematic:jt}
+	\end{subfigure}\\
+	\caption{A simplified schematic comparing the standard control architecture using Cartesian dynamical systems with the Jacobian transpose IK solver (top) and our propose approach. By integrating the "inverse kinematic (IK) solver" and "motion generator" blocks into a unified block, the proposed approach eliminates undesirable effects of the IK solver. }
+\end{figure}
 
 \item \textit{``Minors:
 - SEDS + IK: what does SEDS mean?"}\\
