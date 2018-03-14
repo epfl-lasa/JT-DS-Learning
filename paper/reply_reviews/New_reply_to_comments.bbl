@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{Averta:FRAI:2017}
+Giuseppe Averta, Cosimo Della~Santina, Edoardo Battaglia, Federica Felici,
+  Matteo Bianchi, and Antonio Bicchi.
+\newblock Unvealing the principal modes of human upper limb movements through
+  functional analysis.
+\newblock {\em Frontiers in Robotics and AI}, 4:37, 2017.
+
+\bibitem{Dai:IROS:2013}
+W.~Dai, Y.~Sun, and X.~Qian.
+\newblock Functional analysis of grasping motion.
+\newblock In {\em 2013 IEEE/RSJ International Conference on Intelligent Robots
+  and Systems}, pages 3507--3513, Nov 2013.
+
+\bibitem{khansari2011learning}
+S~Mohammad Khansari-Zadeh and Aude Billard.
+\newblock Learning stable nonlinear dynamical systems with gaussian mixture
+  models.
+\newblock {\em IEEE Transactions on Robotics}, 27(5):943--957, 2011.
+
+\end{thebibliography}

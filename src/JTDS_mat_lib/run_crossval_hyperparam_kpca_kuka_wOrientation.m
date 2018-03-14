@@ -6,7 +6,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -94,11 +94,11 @@ clc;
 %%% Type of DR Methods %%%
 do_plots = 1;
 mapping_name = 'KPCA';
-rbf_range = logspace(log10(max_rbf/2),log10(max_rbf*5),10);
+rbf_range = logspace(log10(max_rbf/2),log10(max_rbf*5),10)
 
 %%% Learning options %%%
 options = [];
-options.orientation_flag=1;
+options.orientation_flag = 1;
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -185,9 +185,13 @@ if do_plots
     end    
 end
 
-
 % Truncate the range to values whose exp. var < dimq
-new_rbf_range      = rbf_range(p_s <= dimq);
+new_rbf_range      = rbf_range(p_s <= dimq)
+
+if isempty(new_rbf_range)
+    warning('Try a new range!!')
+end
+
 adjusted_rbf_range = logspace(log10(new_rbf_range(1)),log10(new_rbf_range(end)),10)
 
 display('Press ENTER to continue with this range:');
@@ -197,10 +201,10 @@ pause;
 %%% Learn JTDS Model with different methods and parameters %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 repetitions = 10;
-K_s         = zeros(repetitions,length(rbf_range));
-rmse_train  = zeros(repetitions,length(rbf_range));
-rmse_test   = zeros(repetitions,length(rbf_range));
-kpca_dims   = zeros(repetitions,length(rbf_range));
+K_s         = zeros(repetitions,length(adjusted_rbf_range));
+rmse_train  = zeros(repetitions,length(adjusted_rbf_range));
+rmse_test   = zeros(repetitions,length(adjusted_rbf_range));
+kpca_dims   = zeros(repetitions,length(adjusted_rbf_range));
 for j = 1:repetitions
     Qs_train = []; Ts_train = [];
     Qs_test = [];   Ts_test = [];
@@ -240,11 +244,11 @@ for j = 1:repetitions
         
         % Compute RMSE on training data
         rmse_train(j,k) = mean(trajectory_error(motion_generator, Data_train(1:dimq, :), Data_train(dimq+1:2*dimq, :), Data_train(2*dimq+1:end, :),options.orientation_flag));
-        fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name, rmse_train(i,j));
+        fprintf('Using %s mapping, got prediction RMSE on training: %d \n', mapping_name, rmse_train(j,k));
         
         % Compute RMSE on testing data
         rmse_test(j,k) = mean(trajectory_error(motion_generator, Data_test(1:dimq, :), Data_test(dimq+1:2*dimq, :), Data_test(2*dimq+1:end, :),options.orientation_flag));
-        fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test(i,j));
+        fprintf('Using %s mapping, got prediction RMSE on testing: %d \n', mapping_name, rmse_test(j,k));
         
     end
     fprintf('*************************************************************\n');

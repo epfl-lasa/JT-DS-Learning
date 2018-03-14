@@ -65,15 +65,12 @@ MA, 02139 USA. E-mail: yonadav.shavit@gmail.com.}% <-this % stops a space
 
 
 \begin{abstract}
-In this paper, we propose an asymptotically stable joint-space dynamical system that captures desired behaviors in joint-space while converging towards a task-space attractor. % Our method is fast to compute and smoothly moves through classic kinematic singularities by avoiding the use of the pseudo-inverse Jacobian; moreover, it stably converges towards its task-space attractor. 
- To encode joint-space behaviors while meeting the stability criteria, the dynamical system is constructed as a Linear Parameter Varying (LPV) system combining different behavior synergies, and we provide a method for learning these synergy matrices from demonstrations. Specifically, we use dimensionality reduction to find a low-dimensional embedding space for modulating joint synergies, and then estimate the parameters of the corresponding synergies by solving a convex semi-definite optimization problem that minimizes the joint velocity prediction error from the demonstrations. Our proposed approach is empirically validated on a variety of motions. %for a 7-DOF KUKA LWR4+ robot arm.
+In this paper, we propose an asymptotically stable joint-space dynamical system (DS) that captures desired behaviors in joint-space while converging towards a task-space attractor in both position and orientation.  To encode joint-space behaviors while meeting the stability criteria, we propose a DS constructed as a Linear Parameter Varying (LPV) system combining different behavior synergies and provide a method for learning these synergy matrices from demonstrations. Specifically, we use dimensionality reduction to find a low-dimensional embedding space for modulating joint synergies, and then estimate the parameters of the corresponding synergies by solving a convex semi-definite optimization problem that minimizes the joint velocity prediction error from the demonstrations. Our proposed approach is empirically validated on a variety of motions that reach a target in position and orientation, while following a desired joint-space behavior.
  \end{abstract}
 
 %\begin{IEEEkeywords}
 %Dynamical Systems, Imitation learning, Robot Kinematics, Gaussian Mixture Models
 %\end{IEEEkeywords}
-
-
 
 \IEEEpeerreviewmaketitle
 \section{Introduction}
