@@ -8,7 +8,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'pour'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'back'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load and Process dataset %
@@ -150,7 +150,7 @@ if isempty(regexp(path,['GMR_lib' pathsep], 'once'))
 end
 
 %% SEDS learning algorithm
-[x0 , xT, Data, index] = preprocess_demos(demos_train,dt,options.tol_cutting); %preprocessing datas
+[x0 , xT, Data, index, xTargets] = preprocess_demos(demos_train,dt,options.tol_cutting); %preprocessing datas
 [Priors_0, Mu_0, Sigma_0] = initialize_SEDS(Data,K); %finding an initial guess for GMM's parameter
 [Priors Mu Sigma]=SEDS_Solver(Priors_0,Mu_0,Sigma_0,Data,options); %running SEDS optimization solver
 
@@ -230,6 +230,7 @@ end
 model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-out = exportSEDS_Cpp_lib(Priors,Mu,Sigma, demos_train{1})
+out = exportSEDS_Cpp_lib(Priors,Mu,Sigma, Data, index, xTargets)
+
 % save mat file of variables
-save('model.mat','Priors','Mu','Sigma','demos_train')
+save('model.mat','Priors','Mu','Sigma','Data', 'index', 'robotplant')

@@ -9,7 +9,7 @@
 clear all; close all; clc;
 do_plots  = 1;
 data_path = '../../Data/mat/'; % <-Insert path to datasets folder here
-choosen_dataset = 'singularity'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
+choosen_dataset = 'foot'; % Options: 'back','fore','pour','pour_obst','foot','singularity';
 
 switch choosen_dataset
     case 'back'
@@ -46,7 +46,7 @@ end
 % demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
 % satisfactorily reconstruct the shape of the trajectory.
 % In the KUKA case, we get 500 datapoints per second, so we recommend shrinking the data density considerably
-thinning_ratio = 20; % Same as demonstrations recorded at 10->50Hz, 20->25Hz
+thinning_ratio = 2; % Same as demonstrations recorded at 10->50Hz, 20->25Hz
 Qs = []; Ts= [];
 for i = 1:length(demo_ids)
     Qs{i,1} = Qs_{demo_ids(i)}(:, 1:thinning_ratio:end);
@@ -82,7 +82,7 @@ options = [];
 % To remove orientation from target 
 % simply set flag = 0 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-options.orientation_flag = 0; 
+options.orientation_flag = 1; 
 options.tol_cutting = 0.1;
 
 %%% Dim-Red options %%%
@@ -216,11 +216,11 @@ end
 model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-if strcmp(mapping_name, 'None')
-    M_p = eye(7);
-else
-    M_p = latent_mapping.M';
-end
+% if strcmp(mapping_name, 'None')
+%     M_p = eye(7);
+% else
+%     M_p = latent_mapping.M';
+% end
 out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', latent_mapping.mean, Data_train, index_train);
 
 % save mat file of variables

@@ -1,4 +1,4 @@
-function [x0 , xT, Data, index] = preprocess_demos(demos,time,tol_cutting)
+function [x0 , xT, Data, index, xT_] = preprocess_demos(demos,time,tol_cutting)
 %
 % This function preprocess raw data and put them in a format suitable for
 % SEDS. The function computes the first time derivative of demonstrations,
@@ -123,5 +123,6 @@ for i=1:length(demos)
     index = [index size(Data,2)+1];
 end
 
+xT_ = xT;
 xT = mean(xT,2); %we consider the mean value of all demonstraions' final point as the target
 x0 = mean(x0,2); %the mean value of all demonstrations' initial point
