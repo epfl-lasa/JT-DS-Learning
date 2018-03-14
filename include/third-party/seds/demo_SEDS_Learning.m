@@ -230,7 +230,15 @@ end
 model_dir = strcat('./learned_SEDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-out = exportSEDS_Cpp_lib(Priors,Mu,Sigma, Data, index, xTargets)
+out = exportSEDS_Cpp_lib(Priors,Mu,Sigma, Data, index, xTargets);
+
+% Print q_init's
+q_init = zeros(7,length(Qs_train));
+for q=1:length(Qs_train)
+    q_init(:,q) = Qs_train{q}(:,1);
+end
+q_init
+dlmwrite('q_init.txt', q_init,'newline','pc','-append','Delimiter','\t','precision','%.3f');
 
 % save mat file of variables
 save('model.mat','Priors','Mu','Sigma','Data', 'index', 'robotplant')

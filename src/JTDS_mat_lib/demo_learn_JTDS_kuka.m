@@ -216,11 +216,11 @@ end
 model_dir = strcat('./learned_JTDS_models/',choosen_dataset);
 mkdir(model_dir); 
 cd(model_dir)
-% if strcmp(mapping_name, 'None')
-%     M_p = eye(7);
-% else
-%     M_p = latent_mapping.M';
-% end
+if strcmp(mapping_name, 'None')
+    M_p = eye(7);
+else
+    M_p = latent_mapping.M';
+end
 out = export2JSEDS_Cpp_lib_v2(Priors, Mu, Sigma, As, latent_mapping.M', latent_mapping.mean, Data_train, index_train);
 
 % save mat file of variables
@@ -234,7 +234,7 @@ save('model.mat','Priors','Mu','Sigma', 'As', 'M', 'Data_train', 'index_train','
 %% Reproduce learned motion and compute tasks-space metrics == Works with JTDS on position only! %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Extract task-space demonstrations %%%
-% Hacks to know which demos to use
+% Hacks to know which demos to use for comparison
 selected_demo = 1;
 num = 59;
 task_space_traj = zeros(9,num);

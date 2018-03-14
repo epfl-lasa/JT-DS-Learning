@@ -7,10 +7,20 @@ for i=1:size(Mu,2)
     dlmwrite('Sigma.txt', Sigma(:,:,i),'newline','pc','-append','Delimiter','\t','precision','%.3f');
 end
 
-x_init    = [];
-for l = 1:length(index-1)
-    x_init   = [x_init Data(1:6,l)]    
+if index(end) > length(Data)
+    num_demos = length(index)-1;
+else
+    num_demos = length(index);
 end
+x_init    = zeros(6, num_demos);
+
+for l = 1:num_demos
+    x_init(:,l) = Data(1:6,index(l)); 
+end
+
+index
+x_init
+x_target
 
 dlmwrite('x_init.txt', x_init,'newline','pc','-append','Delimiter','\t','precision','%.3f');
 dlmwrite('x_target.txt', x_target,'newline','pc','-append','Delimiter','\t','precision','%.3f');

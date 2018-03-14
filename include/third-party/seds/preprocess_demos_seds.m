@@ -63,6 +63,7 @@ function [Data] = preprocess_demos_seds(robotplant, demos,orientation_flag)
 
 
 Data=[];
+QData=[];
 
 
 for i=1:length(demos)
