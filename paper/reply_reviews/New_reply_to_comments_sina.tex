@@ -301,10 +301,11 @@ Each ``synergy" is a joint-space transformation that biases the resulting motion
 
 \item \textit{`some details about the optimization problem in (8) might be given
 (nature of the problem, complexity, feasibility)."}\\
-\textcolor{red}{\texttt{Response:} \small The following has been added near Eq. (8):\\
-``The resulting optimization minimizes the mean squared joint velocity error from \eqref{eq:optim_error}, resulting in a convex semidefinite optimization with a quadratic objective..."
-``This optimization is always feasible (the only constraint is that the $A_k$s be independently PSD), and the number of terms in the objective is $O\left(k^2d^3\left( \sum_{n=1}^N T_n\right)\right)$."\\
-To elaborate about the prior calculation: the number of terms in the sum is proportional to the number of recorded points, times the number of matrices (k) required to generate the predicted velocity from (7) squared, times the number of terms in a matrix multiplication of two $d x d$ matrices ($d^3$).}\\
+\textcolor{blue}{\texttt{Response:} \small The following has been added near (8):\\
+``The resulting optimization minimizes the mean squared joint velocity error from (2), resulting in a convex semidefinite optimization with a quadratic objective..."
+``This optimization is always feasible (the only constraint is that the $A_k$s be independently PSD)."\\
+%To elaborate about the prior calculation: the number of terms in the sum is proportional to the number of recorded points, times the number of matrices (k) required to generate the predicted velocity from (7) squared, times the number of terms in a matrix multiplication of two $d x d$ matrices ($d^3$).
+}\\
 
 
 
