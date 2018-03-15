@@ -274,37 +274,32 @@ where $f(q_{t,n})$ is calculated by %combining our dynamical system formulation
     & & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $p$}} & \multicolumn{1}{c}{\multirow{2}{*}{Optimal $K$}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Train}} & \multicolumn{1}{c}{\multirow{2}{*}{RMSE Test}}	\\ \\ \hline
            
 	\multicolumn{1}{c}{\multirow{3}{*}{(1) Forward Reaching}} & None & 7 & 5 $\pm$ (2.90) & \textbf{ 	0.234 $\pm$ (0.027) } & \cellcolor{blue!5} 0.633 $\pm$ (0.458)  \\
-    \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1424$)}} & PCA & 4.1 $\pm$ (0.316) & 4.8 $\pm$ (2.347) & 0.276 $\pm$ (0.033)  & \cellcolor{blue!10} 0.589 $\pm$ (0.367) \\	
-		& K-PCA ($\sigma_{opt} = 5.488$) & \textbf{3.9 $\pm$ (0.316)} & \textbf{3.2 $\pm$ (0.421)} & 0.305 $\pm$ (0.021) & \cellcolor{blue!15} 0.433 $\pm$ (0.104)  \\
+    \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1424$)}} & PCA & 3.1 $\pm$ (0.316) & 3.8 $\pm$ (1.549) & 0.247 $\pm$ (0.017)  & \cellcolor{blue!10} 0.484 $\pm$ (0.263) \\	
+		& K-PCA ($\sigma_{opt} = 5.111$) & \textbf{3 $\pm$ (0)} & \textbf{3.5 $\pm$ (1.204)} & 0.2532 $\pm$ (0.019) & \cellcolor{blue!15} 0.385 $\pm$ (0.098)  \\
 		\hline
-		
-	\multicolumn{1}{c}{\multirow{3}{*}{(2) Backward Reaching}} & None & 7 & 5.1 $\pm$ (2.643) &\textbf{ 0.192 $\pm$ (0.033)} &  \cellcolor{blue!5} 0.728 $\pm$ (0.709)  \\
-		    \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1223$)}} & PCA & 3.1 $\pm$ (0.316) & 3.5 $\pm$ (0.971) & 0.216 $\pm$ (0.021) & \cellcolor{blue!10} 0.469 $\pm$ (0.164) \\	
-			& K-PCA ($\sigma_{opt} = 6.238$) & \textbf{3.1 $\pm$ (0.316)} & \textbf{3.1 $\pm$ (0.316)} & 0.219 $\pm$ (0.013) & \cellcolor{blue!15} 0.355 $\pm$ (0.068)   \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(2) Backward Reaching}} & None & 7 & 5.8 $\pm$ (2.097) &\textbf{ 0.281 $\pm$ (0.015)} &  \cellcolor{blue!5} 0.647 $\pm$ (0.354)  \\
+		    \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1223$)}} & PCA & 4.4 $\pm$ (0.516) & 6 $\pm$ (3.091) & 0.282 $\pm$ (0.044) & \cellcolor{blue!10} 0.466 $\pm$ (0.102) \\	
+			& K-PCA ($\sigma_{opt} = 6.238$) & \textbf{3.5 $\pm$ (0.5)} & \textbf{3.1 $\pm$ (0.3)} & 0.319 $\pm$ (0.025) & \cellcolor{blue!15} 0.482 $\pm$ (0.114)   \\
 			\hline
-		
-	\multicolumn{1}{c}{\multirow{3}{*}{(3) Pouring - Free}} & None & 7 & \textbf{ 4.1 $\pm$ (1.286)} & 0.163 $\pm$ (0.026) & 7.609 $\pm$ (18.99) \\
-   \multicolumn{1}{c}{\multirow{3}{*}{($N=9,M=1032$)}} & PCA & \textbf{ 2.3 $\pm$ (0.483)} & 4.8 $\pm$ (2.044) & \textbf{ 0.161 $\pm$ (0.034) } & \cellcolor{blue!10} 0.623 $\pm$ (0.301) \\	
-	& K-PCA ($\sigma_{opt} = 3.92$) & 3 & 4.3 $\pm$ (1.767) & 0.171 $\pm$ (0.106) & \cellcolor{blue!15} 0.511 $\pm$ (0.305)   \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(3) Pouring - Free}} & None & 7 &  4.6 $\pm$ (1.897) & \textbf{0.181 $\pm$ (0.019)} & 1.099 $\pm$ (1.140) \\
+   \multicolumn{1}{c}{\multirow{3}{*}{($N=9,M=1032$)}} & PCA & 2.6 $\pm$ (0.5164) & 4 $\pm$ (1.054) &  0.186 $\pm$ (0.026)  & \cellcolor{blue!10} 0.419 $\pm$ (0.119) \\	
+	& K-PCA ($\sigma_{opt} = 3.92$) & \textbf{2} & \textbf{3.5 $\pm$ (0.5)} & 0.183 $\pm$ (0.0204) & \cellcolor{blue!15} 0.397 $\pm$ (0.105)   \\
 				\hline
-	\multicolumn{1}{c}{\multirow{3}{*}{(4) Pouring - Obstacle 1}} & None & 7 & 6.2 $\pm$ (2.573) & \textbf{0.247 $\pm$ (0.039)} & 3.049 $\pm$ (3.113) \\
-   \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1232$)}} & PCA & 3.8 $\pm$ (0.421) & 3.8 $\pm$ (1.549) & 0.292 $\pm$ (0.018) & \cellcolor{blue!10} 0.486 $\pm$ (0.125) \\	
-				& K-PCA ($\sigma_{opt} = 7.695$) & \textbf{ 3.1 $\pm$ (0.421) } & \textbf{ 3.1 $\pm$ (0.316) } & 0.288 $\pm$ (0.020) & \cellcolor{blue!15} 0.482 $\pm$ (0.078)   \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(4) Pouring - Obstacle 1}} & None & 7 & 7 $\pm$ (2.357) & \textbf{0.296 $\pm$ (0.029)} & 0.984 $\pm$ (0.55) \\
+   \multicolumn{1}{c}{\multirow{3}{*}{($N=11,M=1232$)}} & PCA & 3.9 $\pm$ (0.316) & 3.6 $\pm$ (0.699) & 0.321 $\pm$ (0.028) & \cellcolor{blue!10} 0.402 $\pm$ (0.0587) \\	
+				& K-PCA ($\sigma_{opt} = 7.695$) & \textbf{ 3 } & \textbf{ 3.2 $\pm$ (0.4) } & 0.311 $\pm$ (0.011) & \cellcolor{blue!15} 0.388 $\pm$ (0.040)   \\
 				\hline	
-
-	\multicolumn{1}{c}{\multirow{3}{*}{(5) Pouring - Obstacle 2}} & None & 7 & 4.3 $\pm$ (1.418) & \textbf{ 0.122 $\pm$ (0.014) } & 3.095 $\pm$ (3.406) \\
-   \multicolumn{1}{c}{\multirow{3}{*}{($N=7,M=1406$)}} & PCA & \textbf{ 2.9 $\pm$ 0.316 } & 3.7 $\pm$ (2.213) & 0.126 $\pm$ (0.02) & \cellcolor{blue!10} 0.825 $\pm$ (0.764) \\	
-	& K-PCA ($\sigma_{opt} = 2.86$) & 3.9 $\pm$ (0.316) & \textbf{3} & 0.129 $\pm$ (0.013) & \cellcolor{blue!15} 0.738 $\pm$ (0.507)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(5) Pouring - Obstacle 2}} & None & 7 & 4.1 $\pm$ (1.7288) & \textbf{ 0.1242 $\pm$ (0.0169) } & 1.0907 $\pm$ (1.0686) \\
+   \multicolumn{1}{c}{\multirow{3}{*}{($N=7,M=1406$)}} & PCA & \textbf{ 2.8 $\pm$ 0.4216 } & 3.6 $\pm$ (1.8974) & 0.1345 $\pm$ (0.0218) & \cellcolor{blue!10} 0.693 $\pm$ (1.0541) \\	
+	& K-PCA ($\sigma_{opt} = 2.86$) & 3.4 $\pm$ (0.4899) & \textbf{3.1 $\pm$ (0.3)} & 0.1345 $\pm$ (0.0182) & \cellcolor{blue!15} 0.4028 $\pm$ (0.1377)  \\
 				\hline
-
-	\multicolumn{1}{c}{\multirow{3}{*}{(6) Foot Step}} & None & 7 & 4.4 $\pm$ (2.366) & \textbf{ 0.080 $\pm$ (0.008) } & 0.368 $\pm$ (0.265)  \\
-	\multicolumn{1}{c}{\multirow{3}{*}{($N=8,M=1058$)}} & PCA & \textbf{1} & 3.2 $\pm$ (0.421) & 0.084 $\pm$ (0.004) & \cellcolor{blue!10}  0.123 $\pm$ (0.011) \\	
-	& K-PCA ($\sigma_{opt} = 1.513$) & 3.2 $\pm$ (0.421) & \textbf{3} &  0.091 $\pm$ (0.007) & \cellcolor{blue!15} 0.115 $\pm$ (0.015)   \\
+	\multicolumn{1}{c}{\multirow{3}{*}{(6) Foot Step}} & None & 7 & 4.2 $\pm$ (1.4757) & \textbf{ 0.1396 $\pm$ (0.0252) } & 1.0697 $\pm$ (0.6574)  \\
+	\multicolumn{1}{c}{\multirow{3}{*}{($N=8,M=1058$)}} & PCA & \textbf{1} & 3.1 $\pm$ (0.3162) & 0.1494 $\pm$ (0.0143) & \cellcolor{blue!10}  0.2578 $\pm$ (0.0795) \\	
+	& K-PCA ($\sigma_{opt} = 1.513$) & 2 & \textbf{3} &  0.1557 $\pm$ (0.0116) & \cellcolor{blue!15} 0.2271 $\pm$ (0.0466)   \\
 				\hline		
-	
-	\multicolumn{1}{c}{\multirow{3}{*}{(7) Singularity Motions}} & None & 7 & 6.2 $\pm$ (2.898) & 0.054 $\pm$ (0.009) & 0.137 $\pm$ (0.098)  \\
-    \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1467$)}} & PCA & \textbf{2} & 6 $\pm$ (2.357) & \textbf{ 0.053 $\pm$ (0.010) } & \cellcolor{blue!10} 0.105 $\pm$ (0.046) \\	
-	& K-PCA ($\sigma_{opt} = 1.769$) & 3.6 $\pm$ (0.516) & \textbf{5.3 $\pm$ (2.452)} & 0.055 $\pm$ (0.018) & \cellcolor{blue!15} 0.071 $\pm$ (0.010)   \\ \hline\hline
+	\multicolumn{1}{c}{\multirow{3}{*}{(7) Singularity Motions}} & None & 7 & 6.4 $\pm$ (1.5055) & \textbf{0.048 $\pm$ (0.0158)} & 0.2365 $\pm$ (0.0768)  \\
+    \multicolumn{1}{c}{\multirow{3}{*}{($N=10,M=1467$)}} & PCA & \textbf{1.9 $\pm$ (0.3162)} & 5.7 $\pm$ (1.6364) &  0.0503 $\pm$ (0.0153) & \cellcolor{blue!10} 0.1802 $\pm$ (0.0748) \\	
+	& K-PCA ($\sigma_{opt} = 1.769$) & 3.9 $\pm$ (0.3) & \textbf{5.2 $\pm$ (2.1817)} & 0.0593 $\pm$ (0.0122) & \cellcolor{blue!15} 0.1276 $\pm$ (0.0591)   \\ \hline\hline
 \end{tabular}}
       \captionof{table}{\scriptsize Performance Comparison of Learning Approach with different Dim. Red. Schemes. We present the \texttt{mean(std)} for the optimal $p$, $K$ and joint-velocity RMSE on training and testing set, found for every learning scheme over 10 runs. $M = \sum_{n=1}^{N}T_n$.\label{tab:learning}}.
     \end{minipage}
