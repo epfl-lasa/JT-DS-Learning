@@ -1,0 +1,11 @@
+Cover Note for RA-L Submission
+
+I, Nadia Figueroa, on behalf of my co-authors, hereby re-submit the manuscript of our recent work entitled "Learning Augmented Joint-Space Task-Oriented Dynamical Systems: A Linear Parameter Varying and Synergetic Control Approach" to the Special Issue on Learning and Control for Autonomous Manipulation Systems: the Role of Dimensionality Reduction. 
+
+In the presented manuscript, we propose an asymptotically stable joint-space dynamical system that captures desired behaviors in joint-space while stably converging towards a task-space attractor in both position and orientation. To encode joint-space behaviors while meeting the stability criteria, the dynamical system is constructed as a Linear Parameter Varying (LPV) system combining different local behavior synergies, and we provide a method for learning these synergy matrices from demonstrations. Specifically, we use dimensionality reduction to find a low-dimensional embedding space for modulating joint synergies, and then estimate the parameters of the corresponding synergies by solving a convex semi-definite optimization problem that minimizes the joint velocity prediction error from the demonstrations. We believe the presented contributions are highly relevant to this journal and specifically to this Special Issue and have thoroughly addressed all of the comments and suggestions from the reviewers.
+
+I hereby certify that this work is original in its content, not under review or published at any other journal/conference and does not impose any conflict of interest with the editorial board.
+
+With best regards,
+
+Nadia Figueroa

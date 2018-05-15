@@ -112,12 +112,9 @@ S.~S.~M. Salehian, N.~Figueroa, and A.~Billard, ``Coordinated multi-arm motion
   June 2016.
 
 \bibitem{KIM201728}
-\BIBentryALTinterwordspacing
 S.~Kim, R.~Haschke, and H.~Ritter, ``Gaussian mixture model for 3-dof
   orientations,'' \emph{Robotics and Autonomous Systems}, vol.~87, pp. 28 --
-  37, 2017. [Online]. Available:
-  \url{http://www.sciencedirect.com/science/article/pii/S0921889015302244}
-\BIBentrySTDinterwordspacing
+  37, 2017.
 
 \bibitem{6907291}
 A.~Ude, B.~Nemec, T.~Petrić, and J.~Morimoto, ``Orientation in cartesian space

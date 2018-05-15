@@ -1,0 +1,9 @@
+Cover Note for RA-L Submission
+
+I, Nadia Figueroa, on behalf of my co-authors, hereby submit the final version our manuscript entitled "Learning Augmented Joint-Space Task-Oriented Dynamical Systems: A Linear Parameter Varying and Synergetic Control Approach" to the Special Issue on Learning and Control for Autonomous Manipulation Systems: the Role of Dimensionality Reduction.  
+
+We have addressed the clarifications suggested by Reviewer 4. Further, I hereby certify that this work is original in its content, not under review or published at any other journal/conference and does not impose any conflict of interest with the editorial board.
+
+With best regards,
+
+Nadia Figueroa

@@ -1,0 +1,40 @@
+This paper proposes a dynamical system (DS) that operates in joint
+space and converges to a desired position in task space - orientation
+and position. For doing so, the authors use a linear parameter varying
+system and use dimensionality reduction to learn these parameters
+efficiently. I think the paper is well written, experiments are well
+conducted and
+explained, and the results are promising. I especially appreciate the
+effort the authors put in reproducing the results taking orientation of
+the goal into account. Some more comments for authors:
+
+1. It is not immediately clear how the authors measure "distance" or
+error in orientation space. Does H(q) return a rotation matrix? How do
+the authors measure difference between rotation matrices?
+
+2. In Section III, what is the "task-space velocity of a proportional
+controller"?
+
+3. It might be worth mentioning other research in the graphics
+community which develops low-order representations of full-body
+movements, and also possibly extend the present work to full body
+motions. [1]
+[1] Safonova, Alla, Jessica K. Hodgins, and Nancy S. Pollard.
+"Synthesizing physically realistic human motion in low-dimensional,
+behavior-specific spaces." ACM Transactions on Graphics (ToG) 23.3
+(2004): 514-521.
+
+4. Of course the current work is kinematic plans alone, it would be
+interesting to see how such low-dimensional plans could be generated in
+dynamic tasks which also include external forces, etc. 
+
+5. I would like to see a comparison with classical DMPs (without
+orientations) which are fairly successful at reproducing the motions
+described in this text, and converge to goal as well. On the other
+hand, authors could explain why they do not hold for the current
+problems at hand in the text. I believe they will have singularity
+issues similar to SEDS, but would avoid obstacles from demonstration.
+
+Overall, I think this is an interesting paper. It is well written and
+easy to read. I like the thoroughness of experiments on hardware, but
+some dynamic tasks would be interesting to see. 

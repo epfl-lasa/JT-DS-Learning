@@ -1,0 +1,5 @@
+The authors have revised their paper carefully addressing all the
+reviewers' remarks. They have reasonably modified the paper to comply
+to such comments. My comment that the stability proof is valid only
+when the Jacobian is full rank has not be worked out that much, but
+this is overall acceptable.
