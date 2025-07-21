@@ -276,6 +276,7 @@ for dof = 1:7
     plot(q_ref(dof,:),'-','Color', [0 0 0], 'LineWidth',2); hold on;
     xlabel('Time (samples)','Interpreter', 'LaTex', 'Fontsize', 15)
     ylabel('Angle (rad)','Interpreter', 'LaTex', 'Fontsize', 15)
+    legend('learned','ref')
     grid on;
 end
 title(sprintf('Raw and Reconstructed Demonstrations for $q_%d$',dof), 'Interpreter', 'LaTex', 'Fontsize', 15)

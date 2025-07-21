@@ -1,5 +1,7 @@
 function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotplant, options)
 %JTDS_LEARNING 
+% Updated by Nanami Hashimoto from Chalmers University on July 21, 2025
+% This code now works on Matlab 2024-2025 versions
 % This function takes as input a set of demonstrations and a kinematic
 % system, and outputs parameters for a Joint-space Task-oriented Dynamical
 % System model. 
@@ -371,12 +373,20 @@ function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotpla
     end
     
     % Calculate our estimated joint velocities caused by each local behavior
-    Qd_approximated_raw = sdpvar(k,n, dimq, 'full');%zeros(size(Qd));
+    % Qd_approximated_raw = sdpvar(k,n, dimq, 'full');%zeros(size(Qd));
+    % for j = 1:k
+    %     for i = 1:n
+    %         % This is the overall JT-DS expression, combining all previous
+    %         % parts
+    %         Qd_approximated_raw(j,i, :) = Ss(:,:,i)*(h(j, i)*A_vars{j})*Ss(:,:,i)'*Qd_basis(:, i);
+    %     end
+    % end
+    Qd_approximated_raw = cell(k, n); % Use cell array instead of 3D sdpvar
     for j = 1:k
         for i = 1:n
             % This is the overall JT-DS expression, combining all previous
             % parts
-            Qd_approximated_raw(j,i, :) = Ss(:,:,i)*(h(j, i)*A_vars{j})*Ss(:,:,i)'*Qd_basis(:, i);
+            Qd_approximated_raw{j,i} = Ss(:,:,i)*(h(j, i)*A_vars{j})*Ss(:,:,i)'*Qd_basis(:, i);
         end
     end
 
@@ -388,10 +398,24 @@ function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotpla
     % each point
     Qd_approximated = sdpvar(dimq, n, 'full');
     for i = 1:n
-        for j = 1:dimq
-            Qd_approximated(j,i) = sum(Qd_approximated_raw(:,i,j));
+        temp_sum = zeros(dimq, 1);
+        for j = 1:k
+            temp_sum = temp_sum + Qd_approximated_raw{j,i};
         end
+        Qd_approximated(:,i) = temp_sum;
     end
+    if options.verbose
+        disp('Calculating estimated joint velocities approx.');
+    end
+    
+    % Sum each of the local behaviors to generate the overall behavior at
+    % each point
+    % % Qd_approximated = sdpvar(dimq, n, 'full');
+    % % for i = 1:n
+    % %     for j = 1:dimq
+    % %         Qd_approximated(j,i) = sum(Qd_approximated_raw(:,i,j));
+    % %     end
+    % % end
     
     if options.verbose
        disp('Calculating error.');
@@ -400,9 +424,15 @@ function [Priors, Mu, Sigma, As, latent_mapping] = JTDS_Solver_v2(Data, robotpla
     % Then calculate the difference between estimated joint velocity (i.e.
     % behavior) h*A*qd_basis with the true qd from demonstrations
     Qd_error = Qd_approximated - Qd;
-    Qd_total_error = sdpvar(1,1); Qd_total_error(1,1) = 0;
+    % Qd_total_error = sdpvar(1,1); Qd_total_error(1,1) = 0;
+    % for i = 1:n
+    %     Qd_total_error = Qd_total_error + norm(Qd_error(:, i));
+    % end
+    % Objective = Qd_total_error;
+    Qd_total_error = 0;
     for i = 1:n
-        Qd_total_error = Qd_total_error + norm(Qd_error(:, i));
+        error_col = Qd_error(:, i);
+        Qd_total_error = Qd_total_error + (error_col' * error_col);
     end
     Objective = Qd_total_error;
     
