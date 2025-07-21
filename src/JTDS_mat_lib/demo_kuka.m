@@ -27,20 +27,26 @@ fig = initialize_robot_figure(robot);
 robotplant = RobotPlant(robot, 'end_trans');
 %% Upload the demonstration data
 % --------------- REPLACE THIS WITH KUKA DEMONSTRATIONS LOCATION ---------
-%demos_location = 'path/to/kuka/demo/raw_data.mat';
-demos_location = '~/Downloads/pour_no_obst/data.mat';
-% ------------------------------------------------------------------------
-[Qs, Ts] = ImportDemonstrations(demos_location);
+% %demos_location = 'path/to/kuka/demo/raw_data.mat';
+% demos_location = '~/Downloads/pour_no_obst/data.mat';
+% % ------------------------------------------------------------------------
+% [Qs, Ts] = ImportDemonstrations(demos_location);
+% 
+% % If the data is very dense, initializing the semidefinite program may take
+% % a long time. In this case, it may help to thin down the number of
+% % demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
+% % satisfactorily reconstruct the shape of the trajectory.
+% thinning_ratio = 50; % In the KUKA case, we get 500 datapoints per second, so we shrink the data density considerably
+% for i = 1:length(Qs)
+%     Qs{i} = Qs{i}(:, 1:thinning_ratio:end);
+%     Ts{i} = Ts{i}(:, 1:thinning_ratio:end);
+% end
 
-% If the data is very dense, initializing the semidefinite program may take
-% a long time. In this case, it may help to thin down the number of
-% demonstrated points (by varying "thinning_ratio", so long as there are still sufficient points to
-% satisfactorily reconstruct the shape of the trajectory.
-thinning_ratio = 50; % In the KUKA case, we get 500 datapoints per second, so we shrink the data density considerably
-for i = 1:length(Qs)
-    Qs{i} = Qs{i}(:, 1:thinning_ratio:end);
-    Ts{i} = Ts{i}(:, 1:thinning_ratio:end);
-end
+
+
+
+Qs = Qs_train;
+Ts = Ts_train;
 
 %%  Execute the learning phase
 
