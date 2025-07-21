@@ -43,11 +43,8 @@ robotplant = RobotPlant(robot, 'end_trans');
 % end
 
 
-
-
-Qs = Qs_train;
-Ts = Ts_train;
-
+% -->> Should copy code for demo_learn_JTDS_kuka (first block) to load
+% trajectory data
 %%  Execute the learning phase
 
 time = Ts;
